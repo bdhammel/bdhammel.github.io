@@ -1,2 +1,1 @@
-See a more detailed write up of my code repositories:
-(Blog)[https://bdhammel.github.io]
+See a more detailed write up of my code repositories:  https://bdhammel.github.io
