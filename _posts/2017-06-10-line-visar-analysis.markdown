@@ -4,11 +4,8 @@ title:  "Line-VISAR analysis"
 date:   2017-06-10 13:48:19 -0700
 ---
 
-This post is more-or-less a chapter out of my dissertation. Unfortunitly, my dissertation has a very glaring error in it (in my method of phase unwrapping) - the kind that keeps me awake at night. This mistake only added a small error to my analysis (which is why it escaped my attention); Nevertheless, it is --obviously-- wrong. I try and clear my concious by correcting that here...
+This post outlines the FFT analysis routine for line-VISAR data. The code implementing this  routine can be found here: [https://github.com/bdhammel/line-visar-analysis](https://github.com/bdhammel/line-visar-analysis). I benchmark this script against the published data by [Smith et al.](#ref) on the ramp compression of diamond to 5 TPa.
 
-Additionally, I benchmark this script against the published data by [Smith et al.](#ref) on the ramp compression of diamond to 5 TPa.
-
-The code for my new and improved analysis routine can be found here: [https://github.com/bdhammel/line-visar-analysis](https://github.com/bdhammel/line-visar-analysis).
 
 
 ## Velocity Interferometer System for Any Reflector
@@ -27,7 +24,7 @@ $$
 
 The Doppler shifted light is passed through a Mach-Zehnder interferometer, where one leg of the interferometer is delayed by placing an etalon in the ray path. The recombination of the two legs generates a fringe comb pattern overlaid on the image of the target surface. A line-out of this is then recorded using a white-light streak camera. The result is an image with spatial and temporal information of the target, as seen in in the below figure [[smith]](#ref).
 
-![VISAR Raw data]({{ site.url}}/assets/visar/smith.png)
+![VISAR Raw data]({{ site.url}}/assets/visar/Raw_Data.png)
 
 
 The shift in the fringes is directly proportional to the velocity of the object that the light was reflected from, 
@@ -66,7 +63,6 @@ $$
 \phi(t) = 2\pi F(t)
 \end{equation}
 $$
-
 
 such that $F(t)$ is the fractional fringe shift, proportional to the velocity of the target. The intensities can then be grouped into a background term, $b(t)$, and amplitude of the interference, $a(t)$, for a general form:
 
@@ -160,7 +156,11 @@ $$
 $$
 
 
-Applying a Fourier transform to the data at each point-in-time allows for the filtering of specific frequencies, such that the background, $b(x,t)$, can be removed by setting the pixel values to zero:
+Applying a Fourier transform to the data at each point-in-time 
+
+![VISAR Spectrogram]({{ site.url}}/assets/visar/Spectrogram.png)
+
+allows for the filtering of specific frequencies, such that the background, $b(x,t)$, can be removed by setting the pixel values to zero:
 
 $$
 \require{cancel}
@@ -171,7 +171,10 @@ F(f,t) &= B(f,t)+\int_{ -\infty }^{\infty} c(x,t) e^{i2\pi f_{0}x}e^{-ifx} \; dx
 \end{align*}
 $$
 
-Applying an inverse Fourier transform (Figure ), this can be written as:
+![VISAR Reference Frequencies]({{ site.url}}/assets/visar/Reference_frequencies.png)
+
+
+Applying an inverse Fourier transform, written as:
 
 $$
 \begin{align}
@@ -181,8 +184,11 @@ d(x,t) &= \int_{-\infty}^{\infty}C(f-f_0,t)e^{ixf} \; df \nonumber \\
 \end{align}
 $$
 
+results in a filterd image. 
 
-The above equation has both a real and imaginary valued functions. Where
+![VISAR Filtered]({{ site.url}}/assets/visar/Filtered.png)
+
+The above image has both a real and imaginary valued function. Where
 
 $$
 \begin{align}
@@ -190,7 +196,6 @@ $$
 \text{and} && \operatorname{Im} [d(x,t) ] &\propto  \cos( \phi (x,t) + 2\pi f_0x + \delta_0) \label{eqn:im},
 \end{align}
 $$
-
 
 are $\pi/2$ out of phase. Taking the $\arctan$ of the ratio (Figure ) allows the phase, $\phi (x,t) + 2\pi f_0x + \delta_0$, to be extracted: 
 
@@ -200,24 +205,26 @@ W( \phi (x,t) + 2\pi f_0x + \delta_0) = \arctan\left ( \frac{\operatorname{Re} [
 \end{equation*}
 $$
 
+![VISAR Wrapped Phase]({{ site.url}}/assets/visar/Wrapped_Phase.png)
 
 The resulting function $W$ has discontinuities representing $\pi$ shifts as the $\arctan$ moves through full rotations. The velocity signal can be constructed by setting these shifts to zero and scaling the values by the proportionality factor VPF. The programatic method for reconstructing the velocity trace from the time dependent values in wrapped_phase parameters can be accomplished via the psudocode bellow:
  
 ~~~python
-_threshold = .07
 _max_dphase = np.pi/2. - _threshold
 _min_dphase = -1 * _max_dphase
 vpf = 1.998 # velocity per fringe shift for a given etalon
  
-for i in range(1, len(wrapped_phase)):
-    dphase = row[i] - row[i-1] 
-    if dphase < _min_dphase:
-        dphase += np.pi
-    elif dphase > _max_dphase:
-        dphase -= np.pi
-    v += dphase * vpf / (2*np.pi)
+for row in image:
+    for column_idx in lenth_of_row):
+        dphase = row[i] - row[i-1] 
+        if dphase < _min_dphase:
+            dphase += np.pi
+        elif dphase > _max_dphase:
+            dphase -= np.pi
+        v += dphase * vpf / (2*np.pi)
 ~~~
 
+![VISAR Velocity Map]({{ site.url}}/assets/visar/Velocity_Map.png)
 
 ### <a name="ref"></a> References
 
