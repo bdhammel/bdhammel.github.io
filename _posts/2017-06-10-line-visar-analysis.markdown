@@ -188,7 +188,7 @@ $$
 
 results in the filterd image. 
 
-![VISAR Filtered]({{ site.url}}/assets/visar/Filtered.png)
+![VISAR Filtered]({{ site.url}}/assets/visar/filtered.png)
 
 The above image has both a real and imaginary valued function. Where
 
@@ -229,7 +229,7 @@ for row in image:
 ![VISAR Velocity Map]({{ site.url}}/assets/visar/Velocity_Map.png)
 
 
-![VISAR velocity]({{ site.url}}/assets/visar/velocity.png)
+![VISAR velocity]({{ site.url}}/assets/visar/Velocity.png)
 
 ### <a name="ref"></a> References
 
