@@ -142,9 +142,11 @@ $$
 
 ## Analysis
 
-As discussed in the first section of this chapter, the fringe shift recorded is directly proportional to the velocity of the target. It is, therefore, the goal of the analysis routine to extract the percentage fringe shift (at a given location and time). Several methods exist for accomplishing this. However, the Fourier transform method (described below), first proposed by [Takeda et al](#ref), has been determined to be the most accurate [[Celliers]](#ref).
+As stated above, the fringe shift recorded is directly proportional to the velocity of the target. It is, therefore, the goal of the analysis routine to extract the percentage fringe shift at a given location and time. Several methods exist for accomplishing this. However, the Fourier transform method (described here), first proposed by [Takeda et al](#ref), has been determined to be the most accurate [[Celliers]](#ref).
 
-The raw data (shown above) is typically cropped to analyze the region of planar shock breakout (Figure). 
+The raw data (shown above) is typically cropped to analyze the region of planar shock breakout (enclosed in the red rectangle, with reference fringes enclosed in green). 
+
+![VISAR working data]({{ site.url}}/assets/visar/cropped_data.png)
 
 This image can be described mathematically using the equation for intensity, $I(x, t)$,  with $ b(x,t ) = I_1+I_2 $ being the background and $ a(x,t) =  2\mathbf{E_1}\mathbf{E_2} $ describing the intensity of the fringes. $\phi (x,t)$ represents the phase of the fringes and $2\pi f_{0}x + \delta_{0} $ describes the linear phase ramp of the background fringe pattern. The goal is to find $ \phi (x,t) $, which is directly proportional to the velocity of the target. Rewriting the intensity equation in terms of its complex components yields:
 
@@ -156,11 +158,11 @@ $$
 $$
 
 
-Applying a Fourier transform to the data at each point-in-time 
+A Fourier transform is applied to the data at each point-in-time 
 
 ![VISAR Spectrogram]({{ site.url}}/assets/visar/Spectrogram.png)
 
-allows for the filtering of specific frequencies, such that the background, $b(x,t)$, can be removed by setting the pixel values to zero:
+the background, $b(x,t)$, can then be removed by filtering specific frequencies (such that the pixel values are set to zero):
 
 $$
 \require{cancel}
@@ -174,7 +176,7 @@ $$
 ![VISAR Reference Frequencies]({{ site.url}}/assets/visar/Reference_frequencies.png)
 
 
-Applying an inverse Fourier transform, written as:
+Applying an inverse Fourier transform:
 
 $$
 \begin{align}
@@ -184,7 +186,7 @@ d(x,t) &= \int_{-\infty}^{\infty}C(f-f_0,t)e^{ixf} \; df \nonumber \\
 \end{align}
 $$
 
-results in a filterd image. 
+results in the filterd image. 
 
 ![VISAR Filtered]({{ site.url}}/assets/visar/Filtered.png)
 
@@ -197,7 +199,7 @@ $$
 \end{align}
 $$
 
-are $\pi/2$ out of phase. Taking the $\arctan$ of the ratio (Figure ) allows the phase, $\phi (x,t) + 2\pi f_0x + \delta_0$, to be extracted: 
+are $\pi/2$ out of phase. Taking the $\arctan$ of the ratio allows the phase, $\phi (x,t) + 2\pi f_0x + \delta_0$, to be extracted: 
 
 $$
 \begin{equation*}
@@ -207,7 +209,7 @@ $$
 
 ![VISAR Wrapped Phase]({{ site.url}}/assets/visar/Wrapped_Phase.png)
 
-The resulting function $W$ has discontinuities representing $\pi$ shifts as the $\arctan$ moves through full rotations. The velocity signal can be constructed by setting these shifts to zero and scaling the values by the proportionality factor VPF. The programatic method for reconstructing the velocity trace from the time dependent values in wrapped_phase parameters can be accomplished via the psudocode bellow:
+The resulting function $W$ has discontinuities representing $\pi$ shifts as the $\arctan$ moves through full rotations. The velocity signal can be constructed by removing these discontinuites and scaling the values by the proportionality factor VPF. The programatic method for reconstructing the velocity trace from the time dependent values in the wrapped phase can be accomplished via the psudocode bellow:
  
 ~~~python
 _max_dphase = np.pi/2. - _threshold
@@ -225,6 +227,9 @@ for row in image:
 ~~~
 
 ![VISAR Velocity Map]({{ site.url}}/assets/visar/Velocity_Map.png)
+
+
+![VISAR velocity]({{ site.url}}/assets/visar/velocity.png)
 
 ### <a name="ref"></a> References
 
