@@ -81,12 +81,12 @@ Considering the 1D case, with the optical system in perfect alignment such that 
 
 $$
 \begin{equation}
-\tau = \frac{2d}{c}(n-1).
+\tau = \frac{2h}{c}(n-1).
 \end{equation}
 $$
 
 
-In which $\tau$ is a function of the etalon (thickness $d$) placed in the path of one leg of the interferometer. The Doppler-shifted frequency of the reference beam and the time delayed beam can then be used to find $\theta$.
+In which $\tau$ is a function of the etalon (thickness $h$) placed in the path of one leg of the interferometer. The Doppler-shifted frequency of the reference beam and the time delayed beam can then be used to find $\theta$.
 
 What this $\tau$ ends up meaning is that we'll observe the Doppler-shifted frequency of the probe beam at two different times of its history. Because the position of the reflector has changed during these two times, the phase will have propagated a different distance, $r_1$ and $r_2$, for the interfering rays, $E_1$ and $E_2$. We rewrite the phase, $\psi$, as if the time of propagation, $t$, is the same - allowing us to drop the term $\omega t$ and considering the phase propagation as a function of distance, $r$:[[Dolan]](#ref)
 
@@ -127,7 +127,7 @@ $$
 $$
 
 
-Substituting in the definition for $k$ and assuming that $v(t') << c$ leads to the expression:
+Substituting in the definition for $k$ and assuming that $v(t') \ll c$ leads to the expression:
 
 $$
 \begin{align*}
@@ -158,7 +158,7 @@ The equations for VPF and $\tau$ are then adjusted to account for dispersion of 
 $$
 \begin{align}
 {\rm VPF} &= \frac{\lambda_0}{2\tau(1+\delta)}, \\ 
-\tau &= \frac{2d}{c}(n-1/n).
+\tau &= \frac{2h}{c}(n-1/n).
 \end{align}
 $$
 

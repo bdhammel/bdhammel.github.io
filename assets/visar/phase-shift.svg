@@ -11,34 +11,34 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="297mm"
-   height="210mm"
-   viewBox="0 0 1052.3622 744.09448"
-   id="svg2"
-   version="1.1"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="phase-shift.svg"
-   inkscape:export-filename="/Users/bdhammel/Documents/programming/github_blog/assets/visar/phase-shift.png"
+   inkscape:export-ydpi="56.650555"
    inkscape:export-xdpi="56.650555"
-   inkscape:export-ydpi="56.650555">
+   inkscape:export-filename="/Users/bdhammel/Documents/programming/github_blog/assets/visar/phase-shift.png"
+   sodipodi:docname="phase-shift.svg"
+   inkscape:version="0.91 r13725"
+   version="1.1"
+   id="svg2"
+   viewBox="0 0 1052.3622 744.09448"
+   height="210mm"
+   width="297mm">
   <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="0.58874926"
-     inkscape:cx="536.93295"
-     inkscape:cy="386.20779"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:window-maximized="0"
+     inkscape:window-y="0"
+     inkscape:window-x="1370"
+     inkscape:window-height="874"
+     inkscape:window-width="1600"
      showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="755"
-     inkscape:window-x="1541"
-     inkscape:window-y="65"
-     inkscape:window-maximized="0" />
+     inkscape:current-layer="svg2"
+     inkscape:document-units="px"
+     inkscape:cy="517.86698"
+     inkscape:cx="403.92327"
+     inkscape:zoom="0.59193878"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base" />
   <defs
      id="defs4">
     <marker
@@ -297,7 +297,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
