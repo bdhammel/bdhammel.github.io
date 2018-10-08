@@ -15,12 +15,15 @@
 # in the templates via {{ site.myvariable }}.
 title: B. D. Hammel
 email: bdhammel@gmail.com
-description: I'm an experimental physicist, python junkie, machine learning / artificial intelligence enthusiast, wannabe electrical engineer, and lover of doing things outdoors.
+description: AI researcher, physicist, python junkie, wannabe electrical engineer, lover of the outdoors
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username:
+twitter_username: bdhammel
 github_username:  bdhammel
 linkedin_username:  bdhammel
+
+google_analytics: UA-46949041-4
+
 
 # Build settings
 markdown: kramdown
