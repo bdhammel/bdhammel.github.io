@@ -1,7 +1,6 @@
 ---
 layout: post
 title:  "The Ising model"
-date:   2017-06-10 13:48:19 -0700
 ---
 
 This post provides a more detailed discussion of the theory behind [my python routine](https://github.com/bdhammel/ising-model) for simulating phases transition in the Ising model of a ferromagnet.

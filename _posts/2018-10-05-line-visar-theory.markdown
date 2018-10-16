@@ -1,7 +1,6 @@
 ---
 layout: post
 title:  "Line-VISAR Theory"
-date:   2017-06-10 13:48:19 -0700
 ---
 
 
