@@ -101,7 +101,7 @@ print("The equation for the line is y = {:.0f}x + {:.0f}".format(*W.flatten()))
 
 `The equation for the line is y = 3x + 1`
 
-In practice, obtaining the answer analytically is impractical. Only in well-behaved scenarios is the matrix $X$ invertible, and, in cases where it is, this is extremely computationally expensive to do when $X$ is large. Instead, we obtain the solution numerically, typically using gradient decent (section 3.3).
+In practice it can be impractical to obtain the answer from this analytic solution. Only in well-behaved scenarios is the matrix $X$ invertible, and, in cases where it is, this is extremely computationally expensive to do when $X$ is large. Instead, methods like [Generalized least squares](https://en.wikipedia.org/wiki/Generalized_least_squares) are used; Or, we obtain the solution numerically using gradient decent (section 3.3).
 
 ### 1.2 What scenario should you use linear regression
 Linear regression is an appropriate choice for predicting continuous target values, $y$, from continuous descriptive variables, $x_i$. It is commonly used in scenarios where the speed of predicting the target value is most desired attribute, and where less emphasis needs to be placed on accuracy of the prediction (the reason for this will be apparent in the next section).
@@ -254,7 +254,7 @@ $$
 P(y | \mu, b) = \frac{1}{2b} \exp \left \{ -\frac{\left | y - \mu \right |}{b}  \right \}.
 $$
 
-Then we would have arrived at a different loss function. In the case of a Laplace distribution, this would be the L1 loss function.
+Then we would have arrived at a different loss function. In the case of a Laplace distribution, this would be the L1 loss function [[Murphy Section 7.4]](#ref).
 
 ### 3.3 Derivations
 #### 3.3.1 Derivation of the analytic solution
@@ -287,11 +287,11 @@ $$
 W = (X^TX)^{-1}X^TY.
 $$
 
+See [this wikipedia page on linear regression estimation methods](https://en.wikipedia.org/wiki/Linear_regression#Estimation_methods) for other analytic solutions.
+
 #### 3.3.2 Derivation of gradient decent
 
-It is often infeasible to obtain the solution analytically (as done above) - for example in the case of $X$ being non-invertible. Moreover, inverting large matrices can be extremely computationally expensive (on the order of $\mathcal{O}\left(N^3 \right)$).
-
-Instead, we find a solution numerically by iteratively converging on the condition $d\mathcal{L}/dw = 0$. We define this action as
+In cases where it is infeasible to obtain the solution analytically, we find a solution numerically by iteratively converging on the condition $d\mathcal{L}/dw = 0$. We define this action as
 
 $$
 w \leftarrow w - \eta \cdot \frac{d}{dw}\mathcal{L}
@@ -381,7 +381,7 @@ The notes above have been compiled from a variety of sources:
 
  1. [G. James, D. Witten, T. Hastie, and R. Tibshirani. An Introduction to Statistical Learning. Springer, 2017.](https://www.amazon.com/Introduction-Statistical-Learning-Applications-Statistics/dp/1461471370)
  2. [C. M. Bishop. Pattern Recognition and Machine Learning. Springer, 2011.](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
- 3. [K. P. Murphy. Machine Learning: A Probabilistic Perspective. The MIT Press, 2012.](http://liuchengxu.org/books/src/Theory/Machine-Learning-A-Probabilistic-Perspective.pdf)
+ 3. [K. P. Murphy. Machine Learning: A Probabilistic Perspective. The MIT Press, 2012.](https://mitpress.mit.edu/books/machine-learning-1)
  4. [T. Hastie, R. Tibshirani, and J. Friedman. The Elements of Statistical Learning, Second Edition. Springer, 2016.](https://web.stanford.edu/~hastie/Papers/ESLII.pdf)
  5. [I. Goodfellow, Y. Bengio, and A. Courville. Deep Learning. MIT Press, 2016.](https://www.deeplearningbook.org/)
  6. [A. Ng, CS229 Lecture notes, 2018](http://cs229.stanford.edu/notes/cs229-notes1.pdf)
