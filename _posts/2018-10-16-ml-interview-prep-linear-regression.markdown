@@ -42,7 +42,7 @@ $$
 y=wx+b
 $$
 
-The relationship between $y$ and $x$ is dictated by the proportionality factor $w$ (or 'weight') and the offset value, $b$ (otherwise called the 'bias'). The goal in training a linear regression model is to find these coefficients, $w$ and $b$.  
+The relationship between $y$ and $x$ is dictated by the proportionality factor $w$ (or 'weight') and the offset value, $b$ (otherwise called the 'bias'). The goal in training a linear regression model is to find these coefficients, $w$ and $b$ [[Goodfellow, Section 5.1.4]](#ref).  
 
 A closed form solution exists to find these values; meaning, we can find $w$ and $b$ without the use of numerical tricks or iterative methods.   
 
@@ -127,7 +127,7 @@ $$
 
 ![]({{ site.url}}/assets/ml-linear-regress/fig3.png)
 
-It might seem like this problem is non-linear; however, an important thing to remember is that linear regression only requires the problem to be linear w.r.t. the coefficients of the descriptive variables. To understand this, consider the above example, but rewritten as
+It might seem like this problem is non-linear; however, an important thing to remember is that linear regression only requires the problem to be linear w.r.t. the coefficients of the descriptive variables [[James et al. Section 3.3.2]](#ref). To understand this, consider the above example, but rewritten as
 
 $$
 \begin{align*}
@@ -170,7 +170,7 @@ If a linear dependence is not obtainable or if the appropriate equation can not 
 ### 2.1 Normalization of data
 
 Although normalization is not strictly necessary for linear regression, properly scaling the feature variables can make a huge difference in the speed of convergence during the learning phase.
-Consider a dataset with two features which are of significantly different magnitude, for example predicting housing prices based on yard size and number of bedrooms in the house [[6]](#ref). The yard size could be of order 1000 ft² while the number of bedrooms might range from 0–5. While learning, slight variations in the weights of one feature can cause large swings in the error function. In this case, gradient decent will preferentially try to optimize to this variable. This can lead to oscillations in the loss-space, slowing down the rate of convergence (illustrated below) [[5, 6]](#ref).
+Consider a dataset with two features which are of significantly different magnitude, for example predicting housing prices based on yard size and number of bedrooms in the house. The yard size could be of order 1000 ft² while the number of bedrooms might range from 0–5. While learning, slight variations in the weights of one feature can cause large swings in the error function. In this case, gradient decent will preferentially try to optimize to this variable. This can lead to oscillations in the loss-space, slowing down the rate of convergence (illustrated below) [[Goodfellow et al. Section 4.3.1]](#ref).
 
 ![]({{ site.url}}/assets/ml-linear-regress/scaling_gd.png)
 
@@ -191,7 +191,7 @@ $$
 \mathcal{L} = \sum^N_i \left | XW - Y \right |
 $$
 
-This solution is not unique, due to the discontinuity in the derivative at $ Y=XW$; however, it often performs better in situations with more outliers.
+This solution is not unique, due to the discontinuity in the derivative at $ Y=XW$; however, it often performs better in situations with more outliers [[Murphy, Section 7.5]](#ref).
 
 ### 2.3 What's the complexity
 
@@ -203,7 +203,7 @@ Wherein $n$ is the number of training sample and $p$ is the number of features [
 ## 3. In-depth
 
 ### 3.1 Probabilistic interpretation
-We are trying to find the line, $\hat{y} = XW$, which maximizes the probability that a given point, $(y_i, x_i)$, from our dataset will fall on that line.
+We are trying to find the line, $\hat{y} = XW$, which maximizes the probability that a given point, $(y_i, x_i)$, from our dataset will fall on that line [[Bishop Section 1.2.5]](#ref).
 
 To say that another way, "what is the probability that our best-fit-line is correct, given the data we have". This is denoted mathematically as $P( \hat{y}_i \| y_i)$.
 
@@ -215,7 +215,7 @@ $$
 
 To answer the above question, and find the best-fit-line, we need to maximize the likelihood, $P( y_i \| \hat{y}_i )$, that a single data point, $y_i$, from our dataset will come from a distribution given by our best-fit-line, $\hat{y}_i$. It is our responsibility to select the distribution function that represents this likelihood.
 
-It is commonly assumed that the noise, or scatter, in the observed data is due to random observational error. If we make this assumption, it is acceptable to assume probability of a given value, $y_i$, would fall within a normal (Gaussian) distribution - where the value $\hat{y}_i$ is the mean of the distribution, $\mu$.
+It is commonly assumed that the noise, or scatter, in the observed data is due to random observational error [[Bishop, Section 3.1.1]](#ref). If we make this assumption, it is acceptable to assume probability of a given value, $y_i$, would fall within a normal (Gaussian) distribution - where the value $\hat{y}_i$ is the mean of the distribution, $\mu$.
 
 For a given input $x_i$ the likelihood of guessing the correct output is given as.
 
@@ -225,7 +225,7 @@ $$
 
 ![]({{ site.url}}/assets/ml-linear-regress/fig7_mod.png)
 
-(Modified from [C. Bishop](#ref).)
+(Modified from [Bishop](#ref).)
 
 To calculate this efficiently when we extend to all input points $x_i$, we take the $\log$ of $P$ because it is less computationally expensive.
 
@@ -239,7 +239,7 @@ $$
 \log P \propto  -\sum_i \frac{(y_i-\mu_i)^2}{\sigma^2}.
 $$
 
-At this point, we've derived our L2 error function by showing that **maximizing** the log-likelihood is equivalent to **minimizing** the squared error [[2, 4]](#ref):
+At this point, we've derived our L2 error function by showing that **maximizing** the log-likelihood is equivalent to **minimizing** the squared error [[Murphy Section 7.3]](#ref):
 
 $$
 \begin{align*}
@@ -311,7 +311,7 @@ $$
 \frac{d}{dw}\mathcal{L} = \sum^N_i 2(w^Tx_i-y_i) x_i
 $$
 
-Using matrix notation and absorbing the 2 into the learning rate, $\eta$, we can then use the following equation to minimize the loss using gradient decent [[4]](#ref)
+Using matrix notation and absorbing the 2 into the learning rate, $\eta$, we can then use the following equation to minimize the loss using gradient decent [[Goodfellow, Section 5.9]](#ref)
 
 $$
 W \leftarrow W-\eta X^T (XW-Y)
@@ -379,10 +379,10 @@ if __name__ == '__main__':
 
 The notes above have been compiled from a variety of sources:
 
- 1. [G. James, D. Witten, T. Hastie, and R. Tibshirani. An Introduction to Statistical Learning: with Applications in R. Springer, 2017.](https://www.amazon.com/Introduction-Statistical-Learning-Applications-Statistics/dp/1461471370)
- 2. [C. M. Bishop. Pattern Recognition and Machine Learning (Information Science and Statistics). Springer, 2011.](http://users.isr.ist.utl.pt/~wurmd/Livros/school/Bishop%20-%20Pattern%20Recognition%20And%20Machine%20Learning%20-%20Springer%20%202006.pdf)
- 3. [K. P. Murphy. Machine Learning: A Probabilistic Perspective (Adaptive Computation and Machine Learning). The MIT Press, 2012.](https://www.amazon.com/Machine-Learning-Probabilistic-Perspective-Computation/dp/0262018020)
- 5. [Ng.A, CS229 Lecture notes](http://cs229.stanford.edu/notes/cs229-notes1.pdf)
- 6. [Ng. A, Machine Learning, Coursera](https://www.coursera.org/lecture/machine-learning/gradient-descent-in-practice-i-feature-scaling-xx3Da)
- 7. [About Feature Scaling](http://sebastianraschka.com/Articles/2014_about_feature_scaling.html)
- 8. [Computational complexity learning algorithms](https://www.thekerneltrip.com/machine/learning/computational-complexity-learning-algorithms/)
+ 1. [G. James, D. Witten, T. Hastie, and R. Tibshirani. An Introduction to Statistical Learning. Springer, 2017.](https://www.amazon.com/Introduction-Statistical-Learning-Applications-Statistics/dp/1461471370)
+ 2. [C. M. Bishop. Pattern Recognition and Machine Learning. Springer, 2011.](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
+ 3. [K. P. Murphy. Machine Learning: A Probabilistic Perspective. The MIT Press, 2012.](http://liuchengxu.org/books/src/Theory/Machine-Learning-A-Probabilistic-Perspective.pdf)
+ 4. [T. Hastie, R. Tibshirani, and J. Friedman. The Elements of Statistical Learning, Second Edition. Springer, 2016.](https://web.stanford.edu/~hastie/Papers/ESLII.pdf)
+ 5. [I. Goodfellow, Y. Bengio, and A. Courville. Deep Learning. MIT Press, 2016.](https://www.deeplearningbook.org/)
+ 6. [A. Ng, CS229 Lecture notes, 2018](http://cs229.stanford.edu/notes/cs229-notes1.pdf)
+ 7. [Computational complexity learning algorithms, 2018](https://www.thekerneltrip.com/machine/learning/computational-complexity-learning-algorithms/)
