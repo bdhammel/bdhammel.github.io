@@ -23,7 +23,7 @@ These series of posts are designed to be a quick overview of each machine learni
 	2. Derivation
 	3. Simple implementation
 
-4. More on training the model (not model-specific, this should be common for most of the models):
+4. More on training the model:
 	1. How can you validate the model?
 	2. How do you deal with over-fitting?
 	3. How to deal with imbalanced data?
@@ -168,7 +168,11 @@ If a linear dependence is not obtainable or if the appropriate equation can not 
 
 ## 2. A bit more detail
 ### 2.1 Normalization of data
-Normalizing data is critical for application of linear regression. To emphasize this, consider an example of predicting housing prices based on yard size and number of bedrooms in the house. The yard size could  be of order 1000 ft² while the number of bedrooms might range from 0–5. Because slight variations in in the yard size lead to a larger MSE, the loss function will preferentially try to optimize to this variable. When in actuality, the difference between 2 and 7 bedrooms might have a more significant effect on the price of the house.
+
+Although normalization is not strictly necessary for linear regression, properly scaling the feature variables can make a huge difference in the speed of convergence during the learning phase.
+Consider a dataset with two features which are of significantly different magnitude, for example predicting housing prices based on yard size and number of bedrooms in the house [[6]](#ref). The yard size could be of order 1000 ft² while the number of bedrooms might range from 0–5. While learning, slight variations in the weights of one feature can cause large swings in the error function. In this case, gradient decent will preferentially try to optimize to this variable. This can lead to oscillations in the loss-space, slowing down the rate of convergence (illustrated below) [[5, 6]](#ref).
+
+![]({{ site.url}}/assets/ml-linear-regress/scaling_gd.png)
 
 ### 2.2 Loss function
 #### 2.2.1 Mean Squared Error (L2 loss)
@@ -194,10 +198,7 @@ This solution is not unique, due to the discontinuity in the derivative at $ Y=X
 **training**: $\mathcal{O}(p^2n+p^3) $  
 **prediction**: $\mathcal{O}(p)$
 
-Wherein $n$ is the number of training sample and $p$ is the number of features
-
-[https://www.thekerneltrip.com/machine/learning/computational-complexity-learning-algorithms/](https://www.thekerneltrip.com/machine/learning/computational-complexity-learning-algorithms/)
-
+Wherein $n$ is the number of training sample and $p$ is the number of features [[7]](#ref)
 
 ## 3. In-depth
 
@@ -224,7 +225,7 @@ $$
 
 ![]({{ site.url}}/assets/ml-linear-regress/fig7_mod.png)
 
-(Modified from C. Bishop "Pattern Recognition and Machine learning".)
+(Modified from [C. Bishop](#ref).)
 
 To calculate this efficiently when we extend to all input points $x_i$, we take the $\log$ of $P$ because it is less computationally expensive.
 
@@ -238,7 +239,7 @@ $$
 \log P \propto  -\sum_i \frac{(y_i-\mu_i)^2}{\sigma^2}.
 $$
 
-At this point, we've derived our L2 error function by showing that **maximizing** the log-likelihood is equivalent to **minimizing** the squared error:
+At this point, we've derived our L2 error function by showing that **maximizing** the log-likelihood is equivalent to **minimizing** the squared error [[2, 4]](#ref):
 
 $$
 \begin{align*}
@@ -288,12 +289,12 @@ $$
 
 #### 3.3.2 Derivation of gradient decent
 
-It is often infeasible to obtain the solution analytically (as done above); for example, in the case of $X$ being non-invertible. Moreover, inverting large matrices can be extremely computationally expensive (on the order of $\mathcal{O}\left(N^3 \right)$).
+It is often infeasible to obtain the solution analytically (as done above) - for example in the case of $X$ being non-invertible. Moreover, inverting large matrices can be extremely computationally expensive (on the order of $\mathcal{O}\left(N^3 \right)$).
 
-Instead, we find a numerical solution by iteratively converging on the condition $d\mathcal{L}/dw = 0$. We define this action as
+Instead, we find a solution numerically by iteratively converging on the condition $d\mathcal{L}/dw = 0$. We define this action as
 
 $$
-w \leftarrow w - \alpha \cdot \frac{d}{dw}\mathcal{L}
+w \leftarrow w - \eta \cdot \frac{d}{dw}\mathcal{L}
 $$
 
 Such that, at every iteration we update the weights with the R.H.S. When $d\mathcal{L}/dw = 0$, the weights will have converged to their optimal solution i.e. $w \leftarrow w$.
@@ -310,13 +311,13 @@ $$
 \frac{d}{dw}\mathcal{L} = \sum^N_i 2(w^Tx_i-y_i) x_i
 $$
 
-Using matrix notation and absorbing the 2 into the learning rate, $\alpha$, we can then use the following equation to minimize the loss using gradient decent
+Using matrix notation and absorbing the 2 into the learning rate, $\eta$, we can then use the following equation to minimize the loss using gradient decent [[4]](#ref)
 
 $$
-W \leftarrow W-\alpha X^T (XW-Y)
+W \leftarrow W-\eta X^T (XW-Y)
 $$
 
-The learning-rate is a somewhat-arbitrary constant chosen to dictate the rate-of-convergence. However, care must be exercised in selecting this value. Too high of a learning rage can lead to divergence of the problem.
+The learning-rate is a somewhat-arbitrary constant chosen to dictate the rate-of-convergence. However, care must be exercised in selecting this value. Too high of a learning rage can lead to divergence of the problem [[learning-rate finder]]({{site.url}}/2018/10/22/learning-rate-finder.html).
 
 ### 3.4 Simple implementation
 
@@ -326,14 +327,14 @@ class LinearRegression:
     def __init__(self, order):
         self.W = np.random.randn((order+1))
     
-    def fit(self, X, Y, alpha=1e-5, epochs=1000):
+    def fit(self, X, Y, lr=1e-5, epochs=1000):
         X = np.vstack((X, np.ones_like(X))).T
         Y = Y.T
         
         for _ in range(epochs):
             err = self.perdict(X) - Y  # (Y_hat - Y)
-            dL = X.T.dot(err)          # 2 X^T (Y_hat - Y), absorbing 2 into alpha
-            self.W -= alpha*dL         # W <- W - alpha * dL/dW
+            dL = X.T.dot(err)          # 2 X^T (Y_hat - Y), absorbing 2 into the learning rate
+            self.W -= lr*dL         # W <- W - lr * dL/dW
     
     def perdict(self, X):
         return X.dot(self.W)
@@ -358,7 +359,7 @@ if __name__ == '__main__':
     plt.ylabel("y")
     plt.show()
 
-    print("Equation of the line is y = {:.0f}x + {:.0f}".format(w, b))
+    print(f"Equation of the line is y = {w:.0f}x + {b:.0f}")
 ```
 
 
@@ -373,11 +374,15 @@ if __name__ == '__main__':
 ### 4.4 How do you regularize the model? Trade-offs?
 ### 4.5 Does the model emphasize Type 1 or Type 2 errors?
 
+<div id='ref'></div>
 ## 5. References
 
 The notes above have been compiled from a variety of sources:
- -  [G. James, D. Witten, T. Hastie, and R. Tibshirani. An Introduction to Statistical Learning: with Appli- cations in R (Springer Texts in Statistics). Springer, 2017.](https://www.amazon.com/Introduction-Statistical-Learning-Applications-Statistics/dp/1461471370)
- -  [C. M. Bishop. Pattern Recognition and Machine Learning (Information Science and Statistics). Springer, 2011.](https://www.amazon.com/Pattern-Recognition-Learning-Information-Statistics/dp/0387310738)
- -  [K. P. Murphy. Machine Learning: A Probabilistic Perspective (Adaptive Computation and Machine Learning). The MIT Press, 2012.](https://www.amazon.com/Machine-Learning-Probabilistic-Perspective-Computation/dp/0262018020)
- -  [deeplearningcourses.com](https://deeplearningcourses.com/)
- -  [Victor Lavrenko youtube channel](https://www.youtube.com/user/victorlavrenko/playlists)
+
+ 1. [G. James, D. Witten, T. Hastie, and R. Tibshirani. An Introduction to Statistical Learning: with Applications in R. Springer, 2017.](https://www.amazon.com/Introduction-Statistical-Learning-Applications-Statistics/dp/1461471370)
+ 2. [C. M. Bishop. Pattern Recognition and Machine Learning (Information Science and Statistics). Springer, 2011.](http://users.isr.ist.utl.pt/~wurmd/Livros/school/Bishop%20-%20Pattern%20Recognition%20And%20Machine%20Learning%20-%20Springer%20%202006.pdf)
+ 3. [K. P. Murphy. Machine Learning: A Probabilistic Perspective (Adaptive Computation and Machine Learning). The MIT Press, 2012.](https://www.amazon.com/Machine-Learning-Probabilistic-Perspective-Computation/dp/0262018020)
+ 5. [Ng.A, CS229 Lecture notes](http://cs229.stanford.edu/notes/cs229-notes1.pdf)
+ 6. [Ng. A, Machine Learning, Coursera](https://www.coursera.org/lecture/machine-learning/gradient-descent-in-practice-i-feature-scaling-xx3Da)
+ 7. [About Feature Scaling](http://sebastianraschka.com/Articles/2014_about_feature_scaling.html)
+ 8. [Computational complexity learning algorithms](https://www.thekerneltrip.com/machine/learning/computational-complexity-learning-algorithms/)
