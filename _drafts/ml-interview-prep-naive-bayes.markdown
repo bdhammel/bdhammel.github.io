@@ -3,6 +3,8 @@ layout: post
 title:  "ML Interview Prep: Naive Bayes"
 ---
 
+***Under construction***
+
 These series of posts are designed to be a quick overview of each machine learning model. The target audience is people with some ML background who want a quick reference or refresher. The following questions are compiled out of common things brought up in interviews.
 
 1. Top-level
@@ -21,7 +23,7 @@ These series of posts are designed to be a quick overview of each machine learni
 	2. Derivation
 	3. Simple implementation
 
-4. More on training the model (not model-specific, this should be common for most of the models):
+4. More on training the model:
 	1. How can you validate the model?
 	2. How do you deal with over-fitting?
 	3. How to deal with imbalanced data?
@@ -31,49 +33,69 @@ These series of posts are designed to be a quick overview of each machine learni
 
 ---
 
+# Introduction
+
+Often you'll hear people say they "subscribe to the Bayesian philosophy" or "subscribe to a Frequentist philosophy." Sometimes leading to mock rivalries:
+
+<img src="https://imgs.xkcd.com/comics/frequentists_vs_bayesians_2x.png" alt="drawing" width="400"/>
+
+Although this can shape how you approach a problem, it's not a one-or-the-other kind of a thing. Instead it's about using the right tool for the job. In the context of Machine Learning, I've found this description the most helpful in illustrating the difference between the two:
+
+> The frequentist perspective is that the true parameter value $\theta$ is fixed but unknown, while the point estimate $\hat{\theta}$ is a random variable on account of it being a function of the dataset (which is seen as random). The Bayesian perspective on statistics is quite different... The dataset is directly observed and so is not random. On the other hand, the true parameter $\theta$ is unknown or uncertain and thus is represented as a random variable.
+> 
+> -- [Goodfellow et al. Section 5.6](#ref)
+
+In other words:
+ - Frequentist statistics for when you have fixed weights and you want to investigate the input data.
+ - Bayesian statistics for when you have a fixed dataset and you want to find the optimal weights.
+
+This post discusses the Naive Bayes model. When I was first learning about ML, understanding this model was a major key-stone in my overall understanding of ML and Bayesian statistics. In hopes of passing that along, I try to build up an illustrative picture of how this classifier works and do my best to not cloud the difference between the Naïve Bayes model and Bayesian statistics in general.
+
 ## 1. Top-level
 
 ### 1.1 High-level Explanation
-Naive Bayes is a generative model. That is, instead of finding a decision boundary, it builds up a probability map to predict a classification of input features.
+
+Naive Bayes is a model for classification which falls under the category of "generative" machine learning models. Generative models model the probability function of data. This is different from descrimanative models, which find a decision boundary to  it builds up a probability map to govern classification of given input features.  such as [logistic-regression]({{site.url}}/2018/12/11/ml-interview-prep-logistic-regression.html) or Decision Trees.
 
 ![http://www.inf.ed.ac.uk/teaching/courses/iaml/2011/slides/naive.pdf]({{site.url}}/assets/ml-naive-bayes/generative_model.png)
 
-The model's prediction of the probability that the data belongs to a class is given by Bayes' Law:
+Bayes' Law,
 
 $$
-P(Y|X) = \frac{P(X|Y) P(Y)}{P(X)}
+P(Y|X) = \frac{P(X|Y) P(Y)}{P(X)},
 $$
 
-Wherein $P(Y)$ is defined as our prior belief of the probability of occurrence of the class $Y$; $P(X\|Y)$ is the likelihood that features $X$ will occur given that we are looking at class $Y$; and $P(X)$ is the overall probability occurrences of the features.
+provides the necessary mechanics to construct these probability maps.
+
+Wherein $P(Y)$ is defined as our prior belief about the probability of occurrence for class $Y$; $P(X\|Y)$ is the likelihood that the features $X$ will occur given that we are looking at class $Y$; and $P(X)$ is the overall probabilities of the  occurrences of the features.
 
 This is easier to understand with an example:
 
-Lets consider a Naive Bayes approach to the MNIST dataset. We select an image of a number, 'two', and flatten it to a vector with the intensity values plotted.
+Lets consider a Naive Bayes approach to the MNIST dataset. We select an image of a number, 'two', and flatten it to a vector. Below is a plot of pixel intensity v pixel number (e.g. $\left \{ x_1, x_2, \cdots, x_784 \right \} correspond to \left \{ {\rm pixel}_1, {\rm pixel}_2, \cdots, {\rm pixel}_784 \right \}).
 
 ![]({{site.url}}/assets/ml-naive-bayes/two.png)
 
-We can do this for every single 'two', and build up an understanding of the average intensity at each pixel (mean), as well as what pixels see the widest variety of intensities (standard deviation).
+We can do this for every single 'two', and build up an understanding of the average intensity at each pixel (mean, $\mu$), as well as what pixels see the widest variety of intensities (standard deviation, $\sigma$).
 
 ![]({{site.url}}/assets/ml-naive-bayes/all_twos.png)
 
-We make the fundamental assumption now that the occurrence of intensities follows a normal distribution. Doing so, we can generate a probability map based on these two parameters ($\mu$ and $\sigma$).
+We now have to make an explicit assumption about what probability function we expect the data to fall into. For this we will use a  normal distribution [[cite]](#ref). Doing so, we can generate a probability map based on these two parameters ($\mu$ and $\sigma$).
 
+We now repeat this for all other classes (numbers) in the dataset.
 
 ![Likelihood of pixel occurrence for each digit, 0–9]({{site.url}}/assets/ml-naive-bayes/two_prob_map.png)
 
-Each one of these probability maps acts as a thumb-print to describe a class, in this case the class is the digit. Mathematically, we've built up the probability of occurrences of features given a class,
+Each these probability maps acts as a thumb-print to describe a class. Mathematically, we've built up the probability of occurrences of features given a class,
 
 $$
-P(X|Y)
+P(X|Y).
 $$
 
-this is defined as the likelihood, e.g. What is the *likelihood* that a given pixel will have a value of 255 *given* the digit is a 2.
+This is defined as the likelihood, e.g. What is the *likelihood* that a given pixel will have a value of 255 *given* the digit is a 2.
 
 ### 1.2 What scenario should you use it in (classification vs regression, noisy data vs clean data)?
 
-#### 1.2.1 Classification vs Regression
-
-NB is a generative model for classification
+NB is a generative model for classification.
 
 #### 1.2.2 Noisy data
 
@@ -121,7 +143,7 @@ As long as you can build a descriptive distribution for the likelihood, it is ap
 
 ### 1.3 What assumptions does the model make about the data? (Linear, etc)?
 
-This model makes the fundamental assumptions that the data points are distributed by the probability function you select as a the likelihood. In the example about NB will classify the data as described by a Normal distribution. It will make this assumption even if the sample histogram does not immediately mimic the assume PDF, as below.
+This model makes the fundamental assumptions that the data points are distributed by the probability function select to represent the likelihood. In the example above, NB will classify the data as described by a Normal distribution. It will make this assumption even if the sample histogram does not immediately mimic the assume PDF, as below.
 
 ![]({{site.url}}/assets/ml-naive-bayes/pdf.png)
 
@@ -324,7 +346,16 @@ Must be evaluated against the base preformance, i.e. the prior.
 
 Not much literature on it. But intuitively, you should be able to tune your priors to adjust FPR/FNR. or adjust threshold, Data-dependent.
 
-## 6. References
- 
-  1. http://www.inf.ed.ac.uk/teaching/courses/iaml/slides/naive-2x2.pdf
-  2. https://www.quora.com/Which-is-more-robust-to-noisy-data-a-Decision-Tree-or-Naive-Bayes
+<div id='ref'></div>
+## 5. References
+
+The notes above have been compiled from a variety of sources:
+
+ 1. http://www.inf.ed.ac.uk/teaching/courses/iaml/slides/naive-2x2.pdf
+ 1. [V. Lavrenko, Naive Bayes Classifier, 2015](https://www.youtube.com/playlist?list=PLBv09BD7ez_6CxkuiFTbL3jsn2Qd1IU7B)
+ 1. [G. James, D. Witten, T. Hastie, and R. Tibshirani. An Introduction to Statistical Learning. Springer, 2017.](https://www.amazon.com/Introduction-Statistical-Learning-Applications-Statistics/dp/1461471370)
+ 2. [C. M. Bishop. Pattern Recognition and Machine Learning. Springer, 2011.](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
+ 3. [K. P. Murphy. Machine Learning: A Probabilistic Perspective. The MIT Press, 2012.](https://mitpress.mit.edu/books/machine-learning-1)
+ 4. [T. Hastie, R. Tibshirani, and J. Friedman. The Elements of Statistical Learning, Second Edition. Springer, 2016.](https://web.stanford.edu/~hastie/Papers/ESLII.pdf)
+ 5. [I. Goodfellow, Y. Bengio, and A. Courville. Deep Learning. MIT Press, 2016.](https://www.deeplearningbook.org/)
+ 6. [A. Ng, CS229 Lecture notes, 2018](http://cs229.stanford.edu/notes/cs229-notes1.pdf)

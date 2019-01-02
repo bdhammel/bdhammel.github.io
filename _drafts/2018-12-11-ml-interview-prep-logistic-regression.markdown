@@ -170,7 +170,7 @@ $$
 \begin{align*}
 P(X | y) &= P(x_1, x_2, \cdots, x_N | y) \\ 
 &= \prod_{i}^{N} P(x_i | y) \\
-&= \prod_{i}^{N} y_i^{t_i}(1-y_i)^{t_i}
+&= \prod_{i}^{N} y_i^{t_i}(1-y_i)^{1-t_i}
 \end{align*}
 $$
 
@@ -294,9 +294,9 @@ print(f"The decision boundary is along: x2 = {m:.0f}x1 + {b:.0f}")
 plt.plot(x, y, '--')
 ~~~
 
-`The decision boundary is along: x2 = -1x1 + 0`
-
 ![]({{ site.url}}/assets/ml-logistic-regress/fig5.png)
+
+`The decision boundary is along: x2 = -1x1 + 0`
 
 ## 4. Training the model:
 ### 4.1 How can you validate the model?

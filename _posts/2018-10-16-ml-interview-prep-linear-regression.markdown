@@ -101,7 +101,7 @@ print("The equation for the line is y = {:.0f}x + {:.0f}".format(*W.flatten()))
 
 `The equation for the line is y = 3x + 1`
 
-In practice it can be impractical to obtain the answer from this analytic solution. Only in well-behaved scenarios is the matrix $X$ invertible, and, in cases where it is, this is extremely computationally expensive to do when $X$ is large. Instead, methods like [Generalized least squares](https://en.wikipedia.org/wiki/Generalized_least_squares) are used; Or, we obtain the solution numerically using gradient decent (section 3.3).
+In practice it can be impractical to obtain the answer from this analytic solution. Only in well-behaved scenarios is the matrix $X$ invertible, and, in cases where it is, this is extremely computationally expensive to do when $X$ is large. Moreover, $X^{-1}$ can only be represented to a limited precision on a digital computer, further introducing errors [[Goodfellow Section 2.3]](#ref). Instead, methods like [Generalized least squares](https://en.wikipedia.org/wiki/Generalized_least_squares) are used; Or, we obtain the solution numerically using gradient decent (section 3.3).
 
 ### 1.2 What scenario should you use linear regression
 Linear regression is an appropriate choice for predicting continuous target values, $y$, from continuous descriptive variables, $x_i$. It is commonly used in scenarios where the speed of predicting the target value is most desired attribute, and where less emphasis needs to be placed on accuracy of the prediction (the reason for this will be apparent in the next section).
@@ -248,7 +248,7 @@ L_2 &= \sum_i (y_i-\hat{y}_i)^2  .
 \end{align*}
 $$
 
-Similarly, if we had assumed a different likelihood distribution, such as a [Laplace distribution](https://en.wikipedia.org/wiki/Laplace_distributionr):
+Therefore, the using the mean-squared-error as a loss function is a direct consequence of assuming noise in the dataset is drawn from a Normal distribution [[Bishop Section 1.2.5]](#ref). Similarly, if we had assumed a different likelihood distribution, such as a [Laplace distribution](https://en.wikipedia.org/wiki/Laplace_distributionr):
 
 $$
 P(y | \mu, b) = \frac{1}{2b} \exp \left \{ -\frac{\left | y - \mu \right |}{b}  \right \}.
