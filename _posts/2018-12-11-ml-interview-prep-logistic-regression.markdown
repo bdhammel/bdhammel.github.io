@@ -158,19 +158,21 @@ Logistic regression operates on the fundamental assumption that the data falls i
 
 We approach this derivation this using [Bayes' Law](https://en.wikipedia.org/wiki/Bayes%27_theorem). For a justification of the Bayesian approach, check out the [probablistic interpretation section, 3.1, of my post on linear regression]({{site.url}}/2018/10/16/ml-interview-prep-linear-regression.html).
 
+To learn the system, we want to maximize the probability that we correctly predict the correct answer $\hat{Y},$ determined by the equation $\hat{Y} = \sigma \left ( WX \right )$, given our input features $X$ and the true class values $T$. i.e. we want to maximize $ P(\hat{Y}\|X, T).$ This is equivalent to saying, "we want to maximise the probability that the weights are correct, given our inputs and class labels, $P(W \| X, T)$. Using Bayes rule, we can now write:
+
 $$
-P(y|X) = \frac{P(y) P(X|y)}{P(X)} 
+P(W | X, T) = \frac{P(T | W, X) P(W)}{P(T)}
 $$
 
-The term in this that we have control over is the likelihood, $P(X\|y)$ [[Bishop, Section 4.3.2]](#ref). We want to maximize this term during training, thereby maximizing the probability that a data point falls into the correct class, $P(y\|X)$.
+We assume all weights are equally likely and the dataset is balanced, therefore the term in this that we have control over is the likelihood, $P(T \|W, X)$ [[Bishop, Section 4.3.2]](#ref). We want to maximize this term during training, thereby maximizing the probability that the data points, $X$, fall into the correct class for a given weight configuration, $W$, $P(T\|W,X)$.
 
 We define the likelihood based on out prior belief that the data will fall into a [binomial distribution](https://en.wikipedia.org/wiki/Binomial_distribution).
 
 $$
 \begin{align*}
-P(X | y) &= P(x_1, x_2, \cdots, x_N | y) \\ 
-&= \prod_{i}^{N} P(x_i | y) \\
-&= \prod_{i}^{N} y_i^{t_i}(1-y_i)^{1-t_i}
+P(T | W) &= P(t_1, t_2, \cdots, t_N | W) \\ 
+&= \prod_{i}^{N} P(t_i | W) \\
+&= \prod_{i}^{N} \hat{y}_i^{t_i}(1-\hat{y}_i)^{1-t_i}
 \end{align*}
 $$
 
@@ -179,6 +181,8 @@ Taking the negative log of this, to reduce the complexity of calculating exponen
 $$
 -  \log P(X|y) = \sum_i \left \{ t_i\log y_i + (1-t_i)\log (1-y_i) \right \}
 $$
+
+Where $\hat{y_i} = P(C \| W, x_i) = \sigma (Wx_i)$.
 
 To summarize, logistic regression fundamentally assumes the data falls into a binomial distribution, and by **maximizing** the log of the likelihood (log-likelihood) we **minimizing** the cross-entropy error [[Bishop, Section 4.3.2]](#ref). 
 
