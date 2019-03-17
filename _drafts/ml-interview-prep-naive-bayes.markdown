@@ -71,7 +71,7 @@ Wherein $P(Y)$ is defined as our prior belief about the probability of occurrenc
 
 This is easier to understand with an example:
 
-Lets consider a Naive Bayes approach to the MNIST dataset. We select an image of a number, 'two', and flatten it to a vector. Below is a plot of pixel intensity v pixel number (e.g. $\left \{ x_1, x_2, \cdots, x_784 \right \} correspond to \left \{ {\rm pixel}_1, {\rm pixel}_2, \cdots, {\rm pixel}_784 \right \}).
+Lets consider a Naive Bayes approach to the MNIST dataset. We select an image of a number, 'two', and flatten it to a vector. Below is a plot of pixel intensity v pixel number (e.g. $\left \{ x_1, x_2, \cdots, x_784 \right \} correspond to \left \{ {\rm pixel}_1, {\rm pixel}_2, \cdots, {\rm pixel}_784 \right \}$ ).
 
 ![]({{site.url}}/assets/ml-naive-bayes/two.png)
 
