@@ -169,7 +169,7 @@ $$
 
 This will get us to the bottom in one step. And sure enough, if we examine our derived value on the loss v lr plots above, we see a minimum at this location - showing that we've reached the bottom on the loss surface.
 
-Now, in practice (e.g. the VGG-56 loss surface, above), the Taylor series is unlikely to remain accurate for large $\eta$ [[Goodfellow 4.3.1]](https://www.deeplearningbook.org/). So, we pick a more conservative value to avoid over shooting our minima. 1e-2 is a pretty good choice, which is enforced by our learning-rate finder.
+Now, in practice (e.g. the VGG-56 loss surface, above), the Taylor series is unlikely to remain accurate for large $\eta$ [[Goodfellow 4.3.1]](https://www.deeplearningbook.org/). So, we pick a more conservative value to avoid over shooting our minima. 1e-2 is a pretty good choice, which is encouraged by our learning-rate finder.
  
 
 ## Additional Notes
@@ -182,9 +182,7 @@ Now, in practice (e.g. the VGG-56 loss surface, above), the Taylor series is unl
 
 ### Local minima in deep learning
 
-It's worth noting that finding the [global minimum actually represents overfitting](https://arxiv.org/pdf/1412.0233v3.pdf). As the global minimum indicates you've converged to a place where you can exactly reproduce your training set.
-
-Second, difficulty in convergence during neural network training is due to traversing [saddle points, not becoming stuck in local minima](https://arxiv.org/pdf/1406.2572.pdf). In high-dimensional problems, saddle points are surrounded by "high-error plateaus that can dramatically slow down learning". This behavior gives the impression of the existence of a local minimum.
+Difficulty in convergence during neural network training is due to traversing [saddle points, not becoming stuck in local minima](https://arxiv.org/pdf/1406.2572.pdf). In high-dimensional problems, saddle points are surrounded by "high-error plateaus that can dramatically slow down learning". This behavior gives the impression of the existence of a local minimum.
 
 This was very well addressed on the [Data Science Stack Exchange](https://datascience.stackexchange.com/questions/22853/local-minima-vs-saddle-points-in-deep-learning) by David Masip. I'll include the justification here in case the link dies.
 
