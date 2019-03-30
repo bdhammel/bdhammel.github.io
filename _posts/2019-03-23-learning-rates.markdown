@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "What learning rate should I use?"
-image: /assets/learning-rate/lr-types.png
+image: http://www.bdhammel.com/assets/learning-rate/lr-types.png/
 tags: [deep learning, learning rate]
 ---
 
