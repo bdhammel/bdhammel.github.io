@@ -33,45 +33,26 @@ These series of posts are designed to be a quick overview of each machine learni
 
 ---
 
-# Introduction
-
-Often you'll hear people say they "subscribe to the Bayesian philosophy" or "subscribe to a Frequentist philosophy." Sometimes leading to mock rivalries:
-
-<img src="https://imgs.xkcd.com/comics/frequentists_vs_bayesians_2x.png" alt="drawing" width="400"/>
-
-Although this can shape how you approach a problem, it's not a one-or-the-other kind of a thing. Instead it's about using the right tool for the job. In the context of Machine Learning, I've found this description the most helpful in illustrating the difference between the two:
-
-> The frequentist perspective is that the true parameter value $\theta$ is fixed but unknown, while the point estimate $\hat{\theta}$ is a random variable on account of it being a function of the dataset (which is seen as random). The Bayesian perspective on statistics is quite different... The dataset is directly observed and so is not random. On the other hand, the true parameter $\theta$ is unknown or uncertain and thus is represented as a random variable.
-> 
-> -- [Goodfellow et al. Section 5.6](#ref)
-
-In other words:
- - Frequentist statistics for when you have fixed weights and you want to investigate the input data.
- - Bayesian statistics for when you have a fixed dataset and you want to find the optimal weights.
-
-This post discusses the Naive Bayes model. When I was first learning about ML, understanding this model was a major key-stone in my overall understanding of ML and Bayesian statistics. In hopes of passing that along, I try to build up an illustrative picture of how this classifier works and do my best to not cloud the difference between the Naïve Bayes model and Bayesian statistics in general.
-
 ## 1. Top-level
 
 ### 1.1 High-level Explanation
 
-Naive Bayes is a model for classification which falls under the category of "generative" machine learning models. Generative models model the probability function of data. This is different from descrimanative models, which find a decision boundary to  it builds up a probability map to govern classification of given input features.  such as [logistic-regression]({{site.url}}/2018/12/11/ml-interview-prep-logistic-regression.html) or Decision Trees.
+Naive Bayes is a model for classification which falls under the category of "generative" machine learning models. Generative models get their name by generating a probability distribution which describes the occurrence of data given the condition that it belongs to a target class (in Bayesian speak, this is the likelihood). This is different from discriminative models, which find a hard decision boundary in data that separates the target classes. Examples of descriptive modes would be [logistic-regression]({{site.url}}/2018/12/11/ml-interview-prep-logistic-regression.html) or Decision Trees.
+
 
 ![http://www.inf.ed.ac.uk/teaching/courses/iaml/2011/slides/naive.pdf]({{site.url}}/assets/ml-naive-bayes/generative_model.png)
 
-Bayes' Law,
+As I already alluded to, Naive Bayes is governed by Bayes' Law,
 
 $$
 P(Y|X) = \frac{P(X|Y) P(Y)}{P(X)},
 $$
 
-provides the necessary mechanics to construct these probability maps.
+Where our goal is to obtain an understanding of the probability that a selection of data, $X$, describes a class $Y$, i.e. $P(Y\|X)$. Our ability to find this probability depends on our prior belief about the probability that we will see an occurrence of class $Y$, $P(Y)$; the likelihood that the data $X$ will occur given that we are looking at class $Y$, $P(X\|Y)$; and the overall probabilities of seeing the occurrences of the data $P(X)$.
 
-Wherein $P(Y)$ is defined as our prior belief about the probability of occurrence for class $Y$; $P(X\|Y)$ is the likelihood that the features $X$ will occur given that we are looking at class $Y$; and $P(X)$ is the overall probabilities of the  occurrences of the features.
+This is easier to understand with an example (Inspired by [[V. Lavrenko]](#ref) lectures):
 
-This is easier to understand with an example:
-
-Lets consider a Naive Bayes approach to the MNIST dataset. We select an image of a number, 'two', and flatten it to a vector. Below is a plot of pixel intensity v pixel number (e.g. $\left \{ x_1, x_2, \cdots, x_784 \right \} correspond to \left \{ {\rm pixel}_1, {\rm pixel}_2, \cdots, {\rm pixel}_784 \right \}$ ).
+Lets consider a Naive Bayes approach to the MNIST dataset. We select an image of the number 'two' and flatten it to a vector. We then plot the intensity for each pixel vs. the pixel number.
 
 ![]({{site.url}}/assets/ml-naive-bayes/two.png)
 
@@ -79,13 +60,13 @@ We can do this for every single 'two', and build up an understanding of the aver
 
 ![]({{site.url}}/assets/ml-naive-bayes/all_twos.png)
 
-We now have to make an explicit assumption about what probability function we expect the data to fall into. For this we will use a  normal distribution [[cite]](#ref). Doing so, we can generate a probability map based on these two parameters ($\mu$ and $\sigma$).
+We now have to make an explicit assumption about what probability function we expect the data to fall into. For this we will use a  normal distribution. By doing this we can generate a probability map based on these two parameters ($\mu$ and $\sigma$).
 
 We now repeat this for all other classes (numbers) in the dataset.
 
 ![Likelihood of pixel occurrence for each digit, 0–9]({{site.url}}/assets/ml-naive-bayes/two_prob_map.png)
 
-Each these probability maps acts as a thumb-print to describe a class. Mathematically, we've built up the probability of occurrences of features given a class,
+Each these probability maps acts as a thumb-print to describe a class. Mathematically, we've built up the probability of occurrences of features given a class, i.e.
 
 $$
 P(X|Y).
@@ -93,9 +74,11 @@ $$
 
 This is defined as the likelihood, e.g. What is the *likelihood* that a given pixel will have a value of 255 *given* the digit is a 2.
 
-### 1.2 What scenario should you use it in (classification vs regression, noisy data vs clean data)?
+We then include our prior belief that any given number is just as likely as to occur 
 
-NB is a generative model for classification.
+### 1.2 What scenario should you use it in?
+
+NB is a generative model for classification. It works particularly well under certain data scenarios: Datasets with noisy data, missing data, many outliers, or large class imbalances are particularly well suites for the application of NB.
 
 #### 1.2.2 Noisy data
 
@@ -141,14 +124,14 @@ For the same reason, Naive Bayes is not used for outliers detection.
 As long as you can build a descriptive distribution for the likelihood, it is appropriate model to use.
 
 
-### 1.3 What assumptions does the model make about the data? (Linear, etc)?
+### 1.3 What assumptions does the model make about the data?
 
 This model makes the fundamental assumptions that the data points are distributed by the probability function select to represent the likelihood. In the example above, NB will classify the data as described by a Normal distribution. It will make this assumption even if the sample histogram does not immediately mimic the assume PDF, as below.
 
 ![]({{site.url}}/assets/ml-naive-bayes/pdf.png)
 
 
-### 1.4 When does the model break / fail (adv & dis-advantages)?
+### 1.4 When does the model break / fail?
 
 Naive Bayes fails when independence is not true between the input features. For example: consider classifying the phrase: "Chicago Bulls". Naive Bayes will classify this as a 'location' and an 'animal'. However, we know from context that this is neither of these things, and the input should instead be classified as 'basketball team'.
 
@@ -166,10 +149,6 @@ P(x_1 + \cdots + x_j + \cdots + x_d | y) = P(x_1|y) \times \cdots \times \underb
 $$
 
 To account for this, a distribution must be assumed. This allows occurrence to be interpolated. 
-
-### 1.5 Use cases / alternatives when it breaks
-
-NB is explainable, just ask Chao
 
 [Typical replacements](https://blogs.sas.com/content/subconsciousmusings/files/2017/04/machine-learning-cheet-sheet.png)
 
@@ -269,6 +248,7 @@ $$
 
 and $\hat{y}$ is equal to the most likely hypothesis for multiple evidence, $X$.
 
+
 ### 3.3 Simple Implementation
 
 ~~~python
@@ -313,6 +293,8 @@ nb = NaiveBayes()
 nb.train(xtrain, ytrain)
 print("Accuracy on MNIST classification: {:.2f}%".format(100*nb.evaluate(xtest, ytest)))
 ~~~
+
+credit: 
 
 `Accuracy on MNIST classification: 80.66%`
 
