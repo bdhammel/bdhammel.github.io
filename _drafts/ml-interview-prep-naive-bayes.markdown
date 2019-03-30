@@ -1,13 +1,14 @@
 ---
 layout: post
 title:  "ML Interview Prep: Naive Bayes"
+description: These posts are designed to be a quick overview of each machine learning model
 image: /assets/ml-naive-bayes/two_prob_map.png
-tags: [machine learning, naive bayes]
+tags: [machine learning, interviews, data science]
 ---
 
 ***Under construction***
 
-These series of posts are designed to be a quick overview of each machine learning model. The target audience is people with some ML background who want a quick reference or refresher. The following questions are compiled out of common things brought up in interviews.
+These posts are designed to be a quick overview of each machine learning model. The target audience is people with some ML background who want a quick reference or refresher. The following questions are compiled out of common things brought up in interviews.
 
 1. Top-level
 	1. What is the high-level version, explain in layman's terms
