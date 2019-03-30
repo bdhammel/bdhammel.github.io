@@ -5,7 +5,7 @@ image: http://www.bdhammel.com/assets/learning-rate/lr-types.png
 tags: [deep learning, learning rate]
 ---
 
-One of the first decisions you make when starting to train a neural network is: **what to set the learning rate to?** Often this is one of those things in deep learning people lump into the "alchemy" category; just because there really isn't a one size-fits-all answer to this. Instead, it takes tinkering on the part of the researcher to find the most appropriate number for that given problem. This post tries to provide a little more intuition around picking appropriate values for your learning rates.
+One of the first questions you'll ask yourself when starting to train a neural network is **"what do I set the learning rate to?"** Often the answer to this is one of those things in deep learning people lump into the "alchemy" category… Just because there really isn't a one size-fits-all answer. Instead, it takes tinkering on the part of the researcher to find the most appropriate number for that given problem. This post tries to provide a little more intuition around picking appropriate values for your learning rates.
 
 The shape of the loss surface, the optimizer, and your choice for learning rate will determine how fast (and _if_) you can converge to the target minimum.
 
