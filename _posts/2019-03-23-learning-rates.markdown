@@ -1,7 +1,8 @@
 ---
 layout: post
 title:  "What learning rate should I use?"
-image: {{site.url}}/assets/learning-rate/lr-types.png
+image:
+  path: /assets/learning-rate/lr-types.png
 tags: [deep learning, learning rate]
 ---
 
