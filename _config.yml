@@ -17,13 +17,12 @@ title: B. D. Hammel
 email: bdhammel@gmail.com
 description: AI researcher, physicist, python junkie, wannabe electrical engineer, lover of the outdoors
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+url: "http://www.bdhammel.com" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: bdhammel
 github_username:  bdhammel
 linkedin_username:  bdhammel
 
 google_analytics: UA-46949041-4
-
 
 # Build settings
 permalink: /:title/

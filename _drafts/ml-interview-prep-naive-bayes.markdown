@@ -1,6 +1,8 @@
 ---
 layout: post
 title:  "ML Interview Prep: Naive Bayes"
+image: http://www.bdhammel.com/assets/ml-naive-bayes/two_prob_map.png
+tags: [machine learning, naive bayes]
 ---
 
 ***Under construction***
