@@ -2,6 +2,7 @@
 layout: post
 title:  "What learning rate should I use?"
 image: /assets/learning-rate/lr-types.png
+tags: [deep learning, learning rate]
 ---
 
 One of the first decisions you make when starting to train a neural network is: **what to set the learning rate to?** Often this is one of those things in deep learning people lump into the "alchemy" category; just because there really isn't a one size-fits-all answer to this. Instead, it takes tinkering on the part of the researcher to find the most appropriate number for that given problem. This post tries to provide a little more intuition around picking appropriate values for your learning rates.
