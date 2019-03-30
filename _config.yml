@@ -24,6 +24,10 @@ linkedin_username:  bdhammel
 
 google_analytics: UA-46949041-4
 
+twitter:
+  username: bdhammel
+  card: summary_large_image
+
 # Build settings
 permalink: /:title/
 markdown: kramdown

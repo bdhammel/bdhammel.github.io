@@ -1,6 +1,8 @@
 ---
 layout: post
 title:  "The Ising model"
+image: /assets/ising_model/monte-carlo-ising-9.png
+tags: [monte carlo, physics, ising, solid state]
 ---
 
 This post provides a more detailed discussion of the theory behind [my python routine](https://github.com/bdhammel/ising-model) for simulating phases transition in the Ising model of a ferromagnet.

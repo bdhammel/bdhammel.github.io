@@ -1,6 +1,8 @@
 ---
 layout: post
 title:  "ML Interview Prep: Logistic Regression"
+image: /assets/ml-logistic-regress/fig1.png
+tags: [machine learning, interviews, data science]
 ---
 
 ***Under construction***
@@ -105,7 +107,7 @@ Therefore, logistic regression is an appropriate choice when classifying data th
 
 ![]({{ site.url}}/assets/ml-logistic-regress/fig3.png)
 
-This is not a linear classification problem - no straight line will separate these classes. However, similar to the polynomial problem in my [post on linear regression]({{site.url}}/2018/10/16/ml-interview-prep-linear-regression.html), we can construct a custom representation of the data by adding an extra dimension:
+This is not a linear classification problem - no straight line will separate these classes. However, similar to the polynomial problem in my [post on linear regression]({{site.url}}/ml-interview-prep-linear-regression/), we can construct a custom representation of the data by adding an extra dimension:
 
 $$
 x_3 = \sqrt{x_2^2 + x_1^2}

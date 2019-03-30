@@ -1,6 +1,8 @@
 ---
 layout: post
 title:  "Line-VISAR Theory"
+image: https://raw.githubusercontent.com/bdhammel/simulated-visar/master/media/sin.png
+tags: [physics, shock wave, fusion, velocity]
 ---
 
 

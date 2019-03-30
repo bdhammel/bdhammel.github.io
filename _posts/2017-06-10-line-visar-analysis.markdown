@@ -1,6 +1,8 @@
 ---
 layout: post
 title:  "Line-VISAR Analysis"
+image: /assets/visar/Velocity.png
+tags: [physics, shock wave, fusion, velocity]
 ---
 
 This post outlines the FFT analysis routine for line-VISAR data. The code implementing this  routine can be found here: [https://github.com/bdhammel/line-visar-analysis](https://github.com/bdhammel/line-visar-analysis). I benchmark this script against the published data by [Smith et al.](#ref) on the ramp compression of diamond to 5 TPa.

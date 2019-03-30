@@ -1,6 +1,8 @@
 ---
 layout: post
 title:  "ML Interview Prep: Linear Regression"
+image: /assets/ml-linear-regress/fig7_mod.png
+tags: [machine learning, interviews, data science]
 ---
 
 ***Under construction***
@@ -115,7 +117,7 @@ $$
 y = w_1 x_1 + w_2 x_2.
 $$
 
-![]({{ site.url}}/assets/ml-linear-regress/fig2.png)
+![linear relationship for linear regression]({{ site.url}}/assets/ml-linear-regress/fig2.png)
 
 Where it should be obvious that $y$ is a linear combination of $x_i$.
 
@@ -125,7 +127,7 @@ $$
 y = w_1 x + w_2 x^2
 $$
 
-![]({{ site.url}}/assets/ml-linear-regress/fig3.png)
+![quadratic relationship for linear regression]({{ site.url}}/assets/ml-linear-regress/fig3.png)
 
 It might seem like this problem is non-linear; however, an important thing to remember is that linear regression only requires the problem to be linear w.r.t. the coefficients of the descriptive variables [[James et al. Section 3.3.2]](#ref). To understand this, consider the above example, but rewritten as
 
@@ -139,7 +141,7 @@ $$
 \end{align*}
 $$
 
-![]({{ site.url}}/assets/ml-linear-regress/fig4.png)
+![linear feature selection from quadratic relation]({{ site.url}}/assets/ml-linear-regress/fig4.png)
 
 This shows that the non-linear term in $x$ can be treated as a separate feature. That is, by considering an extra dimension to the problem, we can map the non-linear behavior into a linear representation.
 
@@ -149,7 +151,7 @@ $$
 y = w^x
 $$
 
-![]({{ site.url}}/assets/ml-linear-regress/fig5.png)
+![exponential relationship for linear regression]({{ site.url}}/assets/ml-linear-regress/fig5.png)
 
 all hope is not lost. Consider a decomposition of the form
 
@@ -157,14 +159,14 @@ $$
 \log y = x \log w
 $$
 
-![]({{ site.url}}/assets/ml-linear-regress/fig6.png)
+![linear feature selection from exponential relation]({{ site.url}}/assets/ml-linear-regress/fig6.png)
 
 It should now be obvious that a significant amount of feature engineering is required to construct a linear regression model which accurately describes the target values. Doing this requires careful cleaning of the dataset and sufficient domain knowledge, such that the form of the equation is known *a priori*, and linear regression is only used to solve for the unknown dependencies, $w_i$.
 
 ### 1.4 When the model breaks & what's a good backup?
 If a linear dependence is not obtainable or if the appropriate equation can not be assumed, linear regression will fail. Depending on your application, you need to decide if the introduced errors from this are within your range of acceptability. If they are not, a new model will need to be implemented.
 
-![](https://blogs.sas.com/content/subconsciousmusings/files/2017/04/machine-learning-cheet-sheet.png)
+![machine learning cheat sheet](https://blogs.sas.com/content/subconsciousmusings/files/2017/04/machine-learning-cheet-sheet.png)
 
 ## 2. A bit more detail
 ### 2.1 Normalization of data
@@ -172,7 +174,7 @@ If a linear dependence is not obtainable or if the appropriate equation can not 
 Although normalization is not strictly necessary for linear regression, properly scaling the feature variables can make a huge difference in the speed of convergence during the learning phase.
 Consider a dataset with two features which are of significantly different magnitude, for example predicting housing prices based on yard size and number of bedrooms in the house. The yard size could be of order 1000 ft² while the number of bedrooms might range from 0–5. While learning, slight variations in the weights of one feature can cause large swings in the error function. In this case, gradient decent will preferentially try to optimize to this variable. This can lead to oscillations in the loss-space, slowing down the rate of convergence (illustrated below) [[Goodfellow et al. Section 4.3.1]](#ref).
 
-![]({{ site.url}}/assets/ml-linear-regress/scaling_gd.png)
+![Normalization improves gradient descent]({{ site.url}}/assets/ml-linear-regress/scaling_gd.png)
 
 ### 2.2 Loss function
 #### 2.2.1 Mean Squared Error (L2 loss)
@@ -223,7 +225,7 @@ $$
 N_j(\mu, \sigma) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp \left \{ - \frac{1}{2} \left ( \frac{y-\mu}{\sigma} \right )^2 \right \}.
 $$
 
-![]({{ site.url}}/assets/ml-linear-regress/fig7_mod.png)
+![Gaussian assumption for linear regression]({{ site.url}}/assets/ml-linear-regress/fig7_mod.png)
 
 (Modified from [Bishop](#ref).)
 
@@ -317,7 +319,7 @@ $$
 W \leftarrow W-\eta X^T (XW-Y)
 $$
 
-The learning-rate is a somewhat-arbitrary constant chosen to dictate the rate-of-convergence. However, care must be exercised in selecting this value. Too high of a learning rage can lead to divergence of the problem [[learning-rate finder]]({{site.url}}/2018/10/22/learning-rate-finder.html).
+The learning-rate is a somewhat-arbitrary constant chosen to dictate the rate-of-convergence. However, care must be exercised in selecting this value. Too high of a learning rage can lead to divergence of the problem [[learning-rate finder]]({{site.url}}/learning-rates/).
 
 ### 3.4 Simple implementation
 
@@ -362,8 +364,7 @@ if __name__ == '__main__':
     print(f"Equation of the line is y = {w:.0f}x + {b:.0f}")
 ```
 
-
-![]({{ site.url}}/assets/ml-linear-regress/fig8.png)
+![Solution from linear regression model]({{ site.url}}/assets/ml-linear-regress/fig8.png)
 
 `Equation of the line is y = 3x + 1`
 

@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "ML Interview Prep: Naive Bayes"
-image: http://www.bdhammel.com/assets/ml-naive-bayes/two_prob_map.png
+image: /assets/ml-naive-bayes/two_prob_map.png
 tags: [machine learning, naive bayes]
 ---
 
@@ -39,20 +39,19 @@ These series of posts are designed to be a quick overview of each machine learni
 
 ### 1.1 High-level Explanation
 
-Naive Bayes is a model for classification which falls under the category of "generative" machine learning models. Generative models get their name by generating a probability distribution which describes the occurrence of data given the condition that it belongs to a target class (in Bayesian speak, this is the likelihood). This is different from discriminative models, which find a hard decision boundary in data that separates the target classes. Examples of descriptive modes would be [logistic-regression]({{site.url}}/2018/12/11/ml-interview-prep-logistic-regression.html) or Decision Trees.
-
+Naive Bayes is a model for classification which falls under the category of "generative" machine learning models. Generative models get their name by generating a probability distribution which describes the occurrence of data given the condition that it belongs to a target class (in Bayesian speak, this is the likelihood). This is different from discriminative models, which find a hard decision boundary in data that separates the target classes. Examples of descriptive modes would be [logistic-regression]({{site.url}}/ml-interview-prep-logistic-regression/) or Decision Trees.
 
 ![http://www.inf.ed.ac.uk/teaching/courses/iaml/2011/slides/naive.pdf]({{site.url}}/assets/ml-naive-bayes/generative_model.png)
 
 As I already alluded to, Naive Bayes is governed by Bayes' Law,
 
 $$
-P(Y|X) = \frac{P(X|Y) P(Y)}{P(X)},
+P(Y|X) = \frac{P(X|Y) P(Y)}{P(X)}.
 $$
 
 Where our goal is to obtain an understanding of the probability that a selection of data, $X$, describes a class $Y$, i.e. $P(Y\|X)$. Our ability to find this probability depends on our prior belief about the probability that we will see an occurrence of class $Y$, $P(Y)$; the likelihood that the data $X$ will occur given that we are looking at class $Y$, $P(X\|Y)$; and the overall probabilities of seeing the occurrences of the data $P(X)$.
 
-This is easier to understand with an example (Inspired by [[V. Lavrenko]](#ref) lectures):
+This is easier to understand with an example:
 
 Lets consider a Naive Bayes approach to the MNIST dataset. We select an image of the number 'two' and flatten it to a vector. We then plot the intensity for each pixel vs. the pixel number.
 
@@ -62,13 +61,13 @@ We can do this for every single 'two', and build up an understanding of the aver
 
 ![]({{site.url}}/assets/ml-naive-bayes/all_twos.png)
 
-We now have to make an explicit assumption about what probability function we expect the data to fall into. For this we will use a  normal distribution. By doing this we can generate a probability map based on these two parameters ($\mu$ and $\sigma$).
+We now have to make an explicit assumption about what probability function we expect the data to fall into. For this we will use a normal distribution. By doing this, we can generate a probability map based on these two parameters ($\mu$ and $\sigma$).
 
 We now repeat this for all other classes (numbers) in the dataset.
 
 ![Likelihood of pixel occurrence for each digit, 0–9]({{site.url}}/assets/ml-naive-bayes/two_prob_map.png)
 
-Each these probability maps acts as a thumb-print to describe a class. Mathematically, we've built up the probability of occurrences of features given a class, i.e.
+Each of these probability maps acts as a thumb-print to describe a class. Mathematically, we've built up the **probability of seeing a set of features given a class**, i.e.
 
 $$
 P(X|Y).
@@ -76,7 +75,23 @@ $$
 
 This is defined as the likelihood, e.g. What is the *likelihood* that a given pixel will have a value of 255 *given* the digit is a 2.
 
-We then include our prior belief that any given number is just as likely as to occur 
+Next we need to encode our prior knowledge about the occurrence of the classes $Y$. For digits, we'll say all values $\\{0, \cdots, 9\\}$ are equally likely. i.e. $P(Y) = 1/10$. However, if we knew this was not the case, we can encode this information as well. For example, if we knew we were classifying binary values we would set $P(Y{=}0) = P(Y{=}1) = .5$ and $P(Y{=}2, \cdots, 9) = 0$.
+
+Now, if all were doing is picking the most likely class. Then we can actually drop the denominator $P(X)$. This is the probability of features in the dataset and only serves as a normalization constant, so it will be constant for each class. We can drop it and still obtain the most likely class:
+
+$$
+\begin{align*}
+\hat{y} &= \arg \max_i \left \{ P(y_i | X)  \right \} \\
+&= \arg \max_i \left \{ P(X | y_i) P(y_i) \right \}.
+\end{align*}
+$$
+
+If we want a probability, then we have to calculate $P(X)$
+
+$$
+P(X) = \sum_{i} P(X|y_i)P(y_i)
+$$
+
 
 ### 1.2 What scenario should you use it in?
 
@@ -194,7 +209,7 @@ Only decision trees are more compact. [[1]](#refs)o
 
 ### 3.1 Probabilistic Interpretation
 
-The model assumes that the features, $X$, are *conditionally* independent from one another. For example, in a data set it might appear that there is a correlation between the occurrences of $B$ and $C$. However, if it can be assumed that $B$ and $C$ are actually *mutually* independent then the correlation can be described by the existence of an external factor, $A$.
+The model assumes that the features, $X$, are *conditionally* independent from one another. For example, in a data set it might appear that there is a correlation between the occurrences of $B$ and $C$. However, if it can be assumed that $B$ and $C$ are actually *mutually* independent then the correlation can be attributed to the existence of an external factor, $A$, then we can apply Naive Bayes.
 
 ![]({{site.url}}/assets/ml-naive-bayes/cond_indp.png)
 
@@ -256,7 +271,7 @@ and $\hat{y}$ is equal to the most likely hypothesis for multiple evidence, $X$.
 ~~~python
 class NaiveBayes:
     
-    def train(self, X, Y, epsilon=1e-2):
+    def fit(self, X, Y, epsilon=1e-2):
         self.params = {}
         
         for c in np.unique(Y):
@@ -292,11 +307,9 @@ data = data / data.max()
 xtrain, xtest, ytrain, ytest = train_test_split(data, mnist.target)
 
 nb = NaiveBayes()
-nb.train(xtrain, ytrain)
+nb.fit(xtrain, ytrain)
 print("Accuracy on MNIST classification: {:.2f}%".format(100*nb.evaluate(xtest, ytest)))
 ~~~
-
-credit: 
 
 `Accuracy on MNIST classification: 80.66%`
 
@@ -309,8 +322,6 @@ As long as you can build a discriptive distribution for the liklihood, it is app
 ### 4.2 How to stop the model from over/under fitting?
 
 NB will not over-fit, high bias model, ask Andy.
-
-
 
 ### 4.3 What if you have MANY more features than sample points? Vice versa? (A variation of the above over/under fitting)
 

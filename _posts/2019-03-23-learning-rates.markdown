@@ -13,7 +13,7 @@ $$
 w \leftarrow w - \eta \frac{d\mathcal{L}}{dw},
 $$
 
-![]({{site.url}}/assets/learning-rate/lr-types.png)
+![Behavior or different learning rate values]({{site.url}}/assets/learning-rate/lr-types.png)
 
   - A learning rate that is too low will take a long time to converge. This is especially true if there are a lot of saddle points in the loss-space. Along a saddle point, $d \mathcal{L} / dw$ will be close to zero in many directions. If the learning rate $\eta$ is also very low, it can slow down the learning substantially. 
   - A learning rate that is too high can "jump" over the best configurations
@@ -29,7 +29,7 @@ I'm a visual learner, and that can make it difficult to build intuition in a fie
 
 I have found this work to be helpful in building up some intuition for understanding the [neural network loss surfaces](https://www.cs.umd.edu/~tomg/projects/landscapes/).
 
-![]({{site.url}}/assets/learning-rate/loss_surf.png)
+![Neural network loss surface]({{site.url}}/assets/learning-rate/loss_surf.png)
 
 This is, of course, a 3D projection of a very high-dimensional function; it shouldn't be believed blindly. Nevertheless, I think it's helpful to hold this image in your mind for the discussion below.
 
@@ -75,7 +75,7 @@ The most effective method I've found for managing learning rate is the approach 
  - [PyTorch](https://pytorch.org/docs/stable/optim.html#torch.optim.lr_scheduler.ReduceLROnPlateau)
  - [TensorFlow](https://www.tensorflow.org/api_docs/python/tf/train/exponential_decay)
 
-![]({{site.url}}/assets/learning-rate/resnet_loss.png)
+![Reducing learning rate for resnet training]({{site.url}}/assets/learning-rate/resnet_loss.png)
 
 Every time the loss begins to plateau, the learning rate decreases by a set fraction. The belief is that the model has become caught in region similar to the "high learning rate" scenario shown at the start of this post (or visualized in the 'chaotic' landscape of the VGG-56 model above). Reducing the learning rate will allow the optimizer to more efficiently find the minimum in the loss surface. At this time, one might be concerned about converging to a local minimum. This is where building intuition from an illustrative representation can betray you, I encourage you to convince yourself of the discussion in the "Local minima in deep learning" section.
 
@@ -96,7 +96,7 @@ $$
 
 If we step through values for $w$ systematically, we can built out a plot of the loss surface. Because this in 1D we can easily visualize it, exactly.
 
-![]({{site.url}}/assets/learning-rate/loss.png)
+![linerar regression loss surface]({{site.url}}/assets/learning-rate/loss.png)
 
 As we expect, we see a minimum for $\mathcal{L}$ when $w=2.5$. In practice, we wouldn't want to generate this plot. The problem would quickly become intractable if you were to search over every permutation of parameters. Instead, we want to use gradient decent to iteratively converge on the correct $w$.
 
@@ -110,13 +110,13 @@ We then take a tiny step, which is determined by the smallest learning rate we w
 
 We keep doing that, slowly increasing the $\eta$ each time. Eventually, we'll find a point where we start moving down the loss function faster. We can see this if we plot our loss vs the lr during this exploration.
 
-![]({{site.url}}/assets/learning-rate/loss_v_lr.png)
+![Finding optimal learning rate with searcher]({{site.url}}/assets/learning-rate/loss_v_lr.png)
 
 We're interested in the region where we're moving down the loss function the fastest, i.e. the region of the largest change in loss for a given learning rate. So, we select ~1e-2 as our optimal learning rate.
 
 We can repeat this experiment multiple times. Even though we initialize our $w$ at different points on the loss surface, we see the optimal learning rate works out to be the same.
 
-![]({{site.url}}/assets/learning-rate/loss_trials.png)
+![Multi-trial learning rate searcher]({{site.url}}/assets/learning-rate/loss_trials.png)
 
 #### Theoretical justification
 
