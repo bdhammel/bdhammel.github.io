@@ -43,7 +43,7 @@ One of the choices you'll make before picking a learning rate is "What optimizer
  - [An overview of gradient descent optimization algorithms](http://ruder.io/optimizing-gradient-descent/)
  - [AdamW and Super-convergence is now the fastest way to train neural nets](https://www.fast.ai/2018/07/02/adam-weight-decay/)
 
-For this post, I'll only be talking about SGD. But, be aware that you're choice of optimizer will also effect the learning rate you pick.
+For this post, I'll only be talking about SGD. But, be aware that your choice of optimizer will also effect the learning rate you pick.
 
 ## The connection between learning rate and batch size 
 
