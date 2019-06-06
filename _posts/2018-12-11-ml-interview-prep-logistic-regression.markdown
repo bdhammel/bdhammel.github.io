@@ -39,7 +39,7 @@ These posts are designed to be a quick overview of each machine learning model. 
 
 Logistic regression is a machine learning model for classification, most commonly used for binary classification. The model can be extended to multi-class classification; however, in practice, other approaches are considered more favorable for this task. [[James et al. Section 4.3.5]](#ref). In this post, we will only discuss the mechanics for binary classification.
 
-Logistic regression finds a line-of-separation, otherwise called a 'decision boundary', representing the separation in classes of the given input features.
+Logistic regression finds a line-of-separation, otherwise called a 'decision boundary', representing the separation in classes describing the given input features.
 
 It is defined by the functional form:
 
@@ -62,7 +62,7 @@ $$
 f(x_1, x_2) = x_2 + x_1 = 0
 $$
 
-Where we get $w_1=1$ and $w_2=1$ from the dividing line $x_2=-x_1$, which we know a priori in this example. We now have the following relationship:
+Where we get $w_1=1$ and $w_2=1$ from the dividing line $x_2=-x_1$ (we know this a priori in this example). We now have the following relationship:
 
 $$
 f(x, x) = \left\{\begin{matrix}
@@ -95,7 +95,7 @@ Now, the values 2 or -2 are not particularly illuminating. So, we use the sigmoi
 
 ### 1.2 What scenario should you use logistic regression?
 
-"Logistic regression models are used mostly as a data analysis and inference tool, where the goal is to understand the role of the input variables in explaining the outcome" [[Hastie et al. Section 4.4.1]](#ref)
+Logistic regression models are used mostly as a data analysis and inference tool, where the goal is to understand the role of the input variables in explaining the outcome. [[Hastie et al. Section 4.4.1]](#ref)
 
 ### 1.3 Assumptions of linear regression
 
