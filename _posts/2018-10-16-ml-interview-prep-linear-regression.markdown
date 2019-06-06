@@ -227,7 +227,7 @@ $$
 <center><small>Modified from <a href='#ref'>Bishop</a></small></center><br/>
 
 
-To calculate this efficiently when we extend to all input points $x_i$, we take the $\log$ of $P$ because it is less computationally expensive.
+To calculate this efficiently when we extend to all input points $x_i$, we take the $\log$ of $P$; otherwise, we'll be multiplying many numbers <1 together (if we don't, we'll end up with inaccuracies due to underflow) and also because it is less computationally expensive to compute.
 
 $$
 \log P = \sum_i \left [ -\frac{1}{2} \log (2\pi \sigma) - \frac{1}{2} \frac{(y_i - \mu_i)^2}{\sigma^2} \right ] 

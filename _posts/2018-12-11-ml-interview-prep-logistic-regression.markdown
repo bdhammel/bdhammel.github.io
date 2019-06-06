@@ -176,7 +176,7 @@ P(T | W) &= P(t_1, t_2, \cdots, t_N | W) \\
 \end{align*}
 $$
 
-Taking the negative log of this, to reduce the complexity of calculating exponents, renders the cross-entropy loss function. 
+Taking the negative log of this, to avoid multiply small numbers together and to reduce the complexity of calculating exponents, renders the cross-entropy loss function. 
 
 $$
 -  \log P(X|y) = \sum_i \left \{ t_i\log y_i + (1-t_i)\log (1-y_i) \right \}
