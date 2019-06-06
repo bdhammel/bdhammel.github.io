@@ -13,26 +13,23 @@ These posts are designed to be a quick overview of each machine learning model. 
 1. Top-level
 	1. What is the high-level version, explain in layman's terms
 	2. What scenario should you use it in (classification vs regression, noisy data vs clean data)?
-	3. What assumptions does the model make about the data? (Linear, etc)?
+	3. What assumptions does the model make about the data?
 	4. When does the model break/fail (adv & dis-advantages)? What are alternatives?
 
-2. A bit more detail  
-	1. How do you normalize the data for the model, if you need to? How does this deal with outliers? Skewed data?  
+2. A bit more detail
+	1. How do you normalize the data for the model?
 	2. What's the loss function used?  
-	3. What's the complexity - runtime, parameters? How does it scale with # of features or input data  
+	3. What's the complexity?
 
 3. In-depth
 	1. Probabilistic interpretation
 	2. Derivation
 	3. Simple implementation
 
-4. More on training the model:
+4. More on training the model
 	1. How can you validate the model?
 	2. How do you deal with over-fitting?
 	3. How to deal with imbalanced data?
-	4. How do you regularize the model? Trade-offs?
-	5. Does the model emphasize Type 1 or Type 2 errors?
-
 
 ---
 
@@ -309,8 +306,6 @@ plt.plot(x, y, '--')
 ### 4.1 How can you validate the model?
 ### 4.2 How do you deal with over-fitting?
 ### 4.3 How to deal with imbalanced data?
-### 4.4 How do you regularize the model? Trade-offs?
-### 4.5 Does the model emphasize Type 1 or Type 2 errors?
 
 <div id='ref'></div>
 ## 5. References

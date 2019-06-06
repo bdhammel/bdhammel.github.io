@@ -64,7 +64,50 @@ $$
 \hat{\eta} = k\eta
 $$
 
-To improve initial stability with larger learning rate: Train with a lower learning rate and increment by a constant amount at each iterator to target value over 5 epochs.
+Let's try this out. Pull down this [simple cifar10 classifier](https://gist.github.com/bdhammel/ca7c12ccb24e326a8521594a7f7ef208) and run it:
+
+~~~
+$ python cifar10.py
+
+    Hyperparameters
+    ---------------
+    Batch size: 4
+    learning rate: 0.001
+
+loss: 0.823: 100%|###################################################| 10/10 [03:19<00:00, 19.90s/it]
+Test Accuracy: 64.72%
+~~~
+
+We get ~63% accuracy, not bad for this little model. But this was pretty slow, it took about 20s/epoch on my Titian 1080ti. Lets bump up the batch size to 512 so it trains a bit faster.
+
+~~~
+$ python cifar10.py --batch-size 512 --lr .001
+
+    Hyperparameters
+    ---------------
+    Batch size: 512
+    learning rate: 0.001
+
+loss: 2.293: 100%|###################################################| 10/10 [00:30<00:00,  3.10s/it]
+Test Accuracy: 17.67%
+~~~
+
+Well... It trained faster, about 3s/epoch, but our accuracy plummeted. Let's apply what we learned above. We increased our batch size by approximately 100, so let's do the same to learning rate.
+
+~~~
+$ python cifar.py --batch-size 512 --lr .1
+
+    Hyperparameters
+    ---------------
+    Batch size: 512
+    learning rate: 0.1
+
+loss: 0.888: 100%|###################################################| 10/10 [00:30<00:00,  3.09s/it]
+Test Accuracy: 62.42%
+~~~
+
+And we're back! In practice, it's best to train with a lower learning rate initially and increment by a constant amount over ~5 epochs to improve stability. Check out this repo for a lr scheduler that does exactly that: [pytorch-gradual-warmup-lr](https://github.com/ildoonet/pytorch-gradual-warmup-lr)
+
 
 ## Picking the best learning rate
 

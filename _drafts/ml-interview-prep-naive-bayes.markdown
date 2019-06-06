@@ -13,26 +13,23 @@ These posts are designed to be a quick overview of each machine learning model. 
 1. Top-level
 	1. What is the high-level version, explain in layman's terms
 	2. What scenario should you use it in (classification vs regression, noisy data vs clean data)?
-	3. What assumptions does the model make about the data? (Linear, etc)?
+	3. What assumptions does the model make about the data?
 	4. When does the model break/fail (adv & dis-advantages)? What are alternatives?
 
 2. A bit more detail  
-	1. How do you normalize the data for the model, if you need to? How does this deal with outliers? Skewed data?  
+	1. How do you normalize the data for the model?
 	2. What's the loss function used?  
-	3. What's the complexity - runtime, parameters? How does it scale with # of features or input data  
+	3. What's the complexity?
 
 3. In-depth
 	1. Probabilistic interpretation
 	2. Derivation
 	3. Simple implementation
 
-4. More on training the model:
+4. More on training the model
 	1. How can you validate the model?
 	2. How do you deal with over-fitting?
 	3. How to deal with imbalanced data?
-	4. How do you regularize the model? Trade-offs?
-	5. Does the model emphasize Type 1 or Type 2 errors?
-
 
 ---
 
@@ -40,25 +37,26 @@ These posts are designed to be a quick overview of each machine learning model. 
 
 ### 1.1 High-level Explanation
 
-Naive Bayes is a model for classification which falls under the category of "generative" machine learning models. Generative models get their name by generating a probability distribution which describes the occurrence of data given the condition that it belongs to a target class (in Bayesian speak, this is the likelihood). This is different from discriminative models, which find a hard decision boundary in data that separates the target classes. Examples of descriptive modes would be [logistic-regression]({{site.url}}/ml-interview-prep-logistic-regression/) or Decision Trees.
+Naive Bayes is a generative model for classification. Generative models are called generative because they generate a probability distribution which describes a given class given the occurrence of data. Generative models differ from discriminative models which find a hard decision boundary that separates the target classes. Examples of discriminative modes would be [logistic regression]({{site.url}}/ml-interview-prep-logistic-regression/) or Decision Trees.
 
 ![http://www.inf.ed.ac.uk/teaching/courses/iaml/2011/slides/naive.pdf]({{site.url}}/assets/ml-naive-bayes/generative_model.png)
+<center><small>Image credit: <a href='#ref'>V. Lavrenko</a></small></center><br/>
 
-As I already alluded to, Naive Bayes is governed by Bayes' Law,
+Unsurprisingly, Naive Bayes is governed by Bayes' Law:
 
 $$
-P(Y|X) = \frac{P(X|Y) P(Y)}{P(X)}.
+\underbrace{P(Y|X)}_{\rm posterior} = \frac{\overbrace{P(X|Y)}^{\rm likelihood} \overbrace{P(Y)}^{\rm prior}}{\underbrace{P(X)}_\text{probability of seeing the data}}.
 $$
 
-Where our goal is to obtain an understanding of the probability that a selection of data, $X$, describes a class $Y$, i.e. $P(Y\|X)$. Our ability to find this probability depends on our prior belief about the probability that we will see an occurrence of class $Y$, $P(Y)$; the likelihood that the data $X$ will occur given that we are looking at class $Y$, $P(X\|Y)$; and the overall probabilities of seeing the occurrences of the data $P(X)$.
+Our goal is to obtain an understanding of the probability that a given selection of data, $X$, will indicate the presence of a class $Y$, i.e. $P(Y\|X)$. Our ability to find this relation depends on our prior belief about the probability that we will see class $Y$, $P(Y)$; the likelihood that the data $X$ will occur given that we are looking at class $Y$, $P(X\|Y)$; and the overall probabilities of seeing the occurrences of the data $P(X)$.
 
 This is easier to understand with an example:
 
-Lets consider a Naive Bayes approach to the MNIST dataset. We select an image of the number 'two' and flatten it to a vector. We then plot the intensity for each pixel vs. the pixel number.
+Let's consider a Naive Bayes approach to the MNIST dataset. We select an image of the number 'two' and flatten it to a vector. We then plot the intensity for each pixel vs. the pixel number.
 
 ![]({{site.url}}/assets/ml-naive-bayes/two.png)
 
-We can do this for every single 'two', and build up an understanding of the average intensity at each pixel (mean, $\mu$), as well as what pixels see the widest variety of intensities (standard deviation, $\sigma$).
+We can do this for every 'two' and build up an understanding of the average intensity at each pixel (mean, $\mu$), as well as what pixels see the widest variety of intensities (standard deviation, $\sigma$).
 
 ![]({{site.url}}/assets/ml-naive-bayes/all_twos.png)
 
@@ -68,7 +66,7 @@ We now repeat this for all other classes (numbers) in the dataset.
 
 ![Likelihood of pixel occurrence for each digit, 0–9]({{site.url}}/assets/ml-naive-bayes/two_prob_map.png)
 
-Each of these probability maps acts as a thumb-print to describe a class. Mathematically, we've built up the **probability of seeing a set of features given a class**, i.e.
+Each of these probability maps acts as a thumb-print to describe a class. Mathematically, we've built up the **probability of seeing a set of features (pixel intensities) given a class**,
 
 $$
 P(X|Y).
@@ -76,51 +74,47 @@ $$
 
 This is defined as the likelihood, e.g. What is the *likelihood* that a given pixel will have a value of 255 *given* the digit is a 2.
 
-Next we need to encode our prior knowledge about the occurrence of the classes $Y$. For digits, we'll say all values $\\{0, \cdots, 9\\}$ are equally likely. i.e. $P(Y) = 1/10$. However, if we knew this was not the case, we can encode this information as well. For example, if we knew we were classifying binary values we would set $P(Y{=}0) = P(Y{=}1) = .5$ and $P(Y{=}2, \cdots, 9) = 0$.
+Next we need to encode our **prior knowledge about the occurrence of the classes** $Y$. For digits, we'll say all values $\\{0, \cdots, 9\\}$ are equally likely. i.e. $P(Y) = 1/10$. However, if we knew this was not the case, we can encode this information as well. For example, if we knew we were classifying binary values we would set $P(Y{=}0) = P(Y{=}1) = .5$ and $P(Y{=}2, \cdots, 9) = 0$.
 
-Now, if all were doing is picking the most likely class. Then we can actually drop the denominator $P(X)$. This is the probability of features in the dataset and only serves as a normalization constant, so it will be constant for each class. We can drop it and still obtain the most likely class:
+Now, if all were doing is picking the most likely class, we can drop the denominator $P(X)$. This is the **probability of features in the dataset** and only serves as a normalization constant, so it will be constant for each class. We can drop it and still obtain the most likely class:
 
 $$
 \begin{align*}
-\hat{y} &= \arg \max_i \left \{ P(y_i | X)  \right \} \\
-&= \arg \max_i \left \{ P(X | y_i) P(y_i) \right \}.
+\hat{y} &= \arg \max_i \left \{ P(Y{=}y_i | X)  \right \} \\
+&= \arg \max_i \left \{ P(X | Y{=}y_i) P(Y{=}y_i) \right \}.
 \end{align*}
 $$
 
-If we want a probability, then we have to calculate $P(X)$
+If we want the true probability, then we have to calculate $P(X)$
 
 $$
-P(X) = \sum_{i} P(X|y_i)P(y_i)
+P(X) = \sum_{i} P(X|Y{=}y_i)P(Y{=}y_i)
 $$
 
 
 ### 1.2 What scenario should you use it in?
 
-NB is a generative model for classification. It works particularly well under certain data scenarios: Datasets with noisy data, missing data, many outliers, or large class imbalances are particularly well suites for the application of NB.
+Naive Bayes can work particularly well in scenarios where the datasets contains noisy data, missing data, a large number of outliers, or where there is a large class imbalance. This is assuming an accurate model for the prior and likelihood can be assumed, e.g. Is the data normal distributed? Laplacian?
 
 #### 1.2.2 Noisy data
 
-NB is insensitive to small changes in data. 
-Noisy data will hurt the models performance; however, NB handles the input noise better than any other available models. 
+NB is insensitive to small changes in data. Noisy data will hurt the models performance; however, NB handles the input noise better than any other available models [[T. Pang-Ning. Section 5.3]](#ref).
 
-Consider two cases of noise: **background** and **incorrect classification**.
+If we were building an email spam detector, consider two cases of noise: **background (or irrelevant) data** and **incorrect classification**.
 
-An example of **background** noise might be stop words, like "the", "is", "and", "at", or "which". If you were building a spam/not-spam classifier for emails. Then these words would show up with the same regularity in each classification model, that is, the *likelihood* of seeing "the" is the same for an email that is spam and one that is not spam:
+An example of **background** noise might be stop words, like "the", "is", "and", "at", or "which". In our spam/not-spam classifier for emails, these words would show up with the same regularity in each classification model. That is, the *likelihood* of seeing "the" is the same for an email that is spam and one that is not spam:
 
 $$
-P( X{=}\text{"the"} \,|\, \text{spam} ) = P( X{=}\text{"the"} | \neg \text{spam} ).
+P( X{=}\text{the} \,|\, \text{spam} ) = P( X{=}\text{the} \, | \, \neg \text{spam} ).
 $$
 
-In this case, the  prediction for spam/not-spam would both increase by the same constant, making this feature irrelevant for the classification decision.
+In this case, the likelihood for spam/not-spam would both increase by the same constant, making this feature irrelevant for the classification decision. So we don't need to clean these features from our dataset [[cite this]](#ref).
 
-In summary, NB is very good at handling noisy background data.
-
-In the case of noise introduced by **incorrect classifications**. NB is the best model to use [[2]](#ref) .
-
+In the case of noise introduced by **incorrect classifications**. NB is the best model to use [[cite this]](#ref).
 
 #### 1.2.3 Missing values
 
-Naive Bayes is very capable of handling missing values. In this case, only the likelihoods based on the observed values are calculated. 
+Naive Bayes is very capable of handling missing values during inference. In this case, only the likelihoods based on the observed values are calculated [[cite this]](#ref). 
 
 $$
 P(x_1 + \cdots + x_j + \cdots + x_d | y) = \prod^d_{i \neq j} P(x_i | y)
@@ -128,26 +122,28 @@ $$
 
 Wherein $x_j$ is a value missing during inference.
 
+Training a NB model with missing values can be problematic in some situations, see the section on the zero-frequency problem for a discussion of this.
+
 #### 1.2.4 Outliers
 
-Outliers will not skew the learning model, because of the assumption of the data distribution. In the below example, the outlier does not significantly skew the PDF because its location can be described by $P(x)$ **[check this reasoning]**
+Outliers will not skew the learning model, because of the assumption of the data distribution. In the below example, the outlier does not significantly skew the PDF because its location can be described by $P(x)$ [[cite this]](#ref)
 
 ![]({{site.url}}/assets/ml-naive-bayes/gauss.png)
 
-
-For the same reason, Naive Bayes is not used for outliers detection.
+For the same reason, Naive Bayes is not used for outlier detection.
 
 #### 1.2.5 Minority Class
 
-As long as you can build a descriptive distribution for the likelihood, it is appropriate model to use.
 
 
 ### 1.3 What assumptions does the model make about the data?
 
-This model makes the fundamental assumptions that the data points are distributed by the probability function select to represent the likelihood. In the example above, NB will classify the data as described by a Normal distribution. It will make this assumption even if the sample histogram does not immediately mimic the assume PDF, as below.
+This model makes the fundamental assumption that the data points are distributed by the probability function select to represent the likelihood. In the example below, NB will classify the data as described by a Normal distribution. It will make this assumption even if the sample histogram does not immediately mimic the assume PDF.
 
 ![]({{site.url}}/assets/ml-naive-bayes/pdf.png)
+<center><small>Image credit: <a href='#ref'>V. Lavrenko</a></small></center><br/>
 
+Additionally, NB will assume all of the features are conditionally independent. 
 
 ### 1.4 When does the model break / fail?
 
@@ -156,6 +152,7 @@ Naive Bayes fails when independence is not true between the input features. For 
 Another failure point with Naive Bayes is it's inability to separate classes when the only thing distinguishing them is their correlation. Because it is inherently taking a naive approach, it cannot distinguish between the two examples in the below image, as the probability distribution functions are completely overlapped. 
 
 ![]({{site.url}}/assets/ml-naive-bayes/correlation.png)
+<center><small>Image credit: <a href='#ref'>V. Lavrenko</a></small></center><br/>
 
  
 **Zero-frequency occurrence**
@@ -166,21 +163,19 @@ $$
 P(x_1 + \cdots + x_j + \cdots + x_d | y) = P(x_1|y) \times \cdots \times \underbrace{P(x_j|y)}_0 \times \cdots \times P(x_d|y)
 $$
 
-To account for this, a distribution must be assumed. This allows occurrence to be interpolated. 
+To account for this a distribution must be assumed. This allows occurrence to be interpolated. However, doing so encode another prior assumption about the data. If this prior is incorrect, this will effect the models ability to accurately classify the data.
 
-[Typical replacements](https://blogs.sas.com/content/subconsciousmusings/files/2017/04/machine-learning-cheet-sheet.png)
-
-http://peekaboo-vision.blogspot.de/2013/01/machine-learning-cheat-sheet-for-scikit.html
+![machine learning cheat sheet](https://blogs.sas.com/content/subconsciousmusings/files/2017/04/machine-learning-cheet-sheet.png)
 
 ## 2. A bit more detail
 
 ### 2.1 How do you normalize the data for the model, if you need to?
 
-Although it is not theoretically necessary to normalize the data going into a NB classifier, not doing so can add unnecessary complexity: 
+Although it is not strictly necessary to normalize the data going into a NB classifier, not doing so can add unnecessary complexity: 
 
-During training of the model, a small number, $\epsilon$ is added to the standard deviation as a smoothing parameter to avoid division by zero. i.e. $ \exp \\{  (\mu-x)^2 / 2(\sigma + \epsilon)^2 \\}$
+During training of the model, a small number, $\epsilon$, is added to the standard deviation as a smoothing parameter to avoid division by zero. i.e. $ \exp \\{  (\mu-x)^2 / 2(\sigma + \epsilon)^2 \\}$
 
-If the features varied in range, then the smoothing parameter would have to change to reflect this. This value can have a significant effect on the accuracy of the model. To convince yourself of this, try changing $\epsilon$ in the code below. Typically a min-max normalization is used [[citation needed]](#ref).
+If the features varied in range, then the smoothing parameter would have to change to reflect this. This value can have a significant effect on the accuracy of the model. To convince yourself of this, try changing $\epsilon$ in the code below.
  
 ### 2.2  What's the complexity — runtime, parameters?
 
@@ -197,14 +192,6 @@ For a single input at inference, the complexity is
 $$
 \mathcal{O}(dc)
 $$
-
-Of the ML models is is the second most compact w.r.t. space complexity, of order
-
-$$
-\mathcal{O}(dc)
-$$
-
-Only decision trees are more compact. [[1]](#refs)o
 
 ## 3. In-depth
 
@@ -316,39 +303,32 @@ print("Accuracy on MNIST classification: {:.2f}%".format(100*nb.evaluate(xtest, 
 
 ## 4. More on training the model
 
-### 4.1  How to deal with imbalanced data?
+### 4.1 How can you validate the model?
 
-As long as you can build a discriptive distribution for the liklihood, it is appropriate model to use.
+Accuracy, F1, precision, recall, some other stuff. 
 
-### 4.2 How to stop the model from over/under fitting?
+Must be evaluated against the base performance, i.e. the prior.  
 
-NB will not over-fit, high bias model, ask Andy.
+### 4.2 How do you deal with over-fitting?
 
-### 4.3 What if you have MANY more features than sample points? Vice versa? (A variation of the above over/under fitting)
+Naive bays is a high-bias model. For the most part, you don't have to worry about over fitting because it only has a few parameters, $\mathcal{O}(dc)$ [[Murphy, 3.5]](#ref). However, the method in which NB is trained will effect is susceptibility to over fit. If the model is trained with a maximum likelihood procedure, then the likelihood is generated directly from the occurrences in the data. This can then creates the zero-frequency problem, discussed above. Under these circumstances, a distribution for the likelihood must be assumed.
 
-One of the (relative) best classifiers for features >> data. Naive assumptions leads to high bias, so no worries of overfitting with lots of features. Not much literature on the inverse.
+### 4.3  How to deal with imbalanced data?
 
-### 4.4 How do you regularize the model? Tradeoffs?
-
-You wouldn't, it wont over-fit.
-
-### 4.5 How can you validate the model?
-
-Accuracy, F1, percision, recall, some other stuff. 
-
-Must be evaluated against the base preformance, i.e. the prior.  
-
-### 4.6 Does the model emphasize Type 1 or Type 2 errors?
-
-Not much literature on it. But intuitively, you should be able to tune your priors to adjust FPR/FNR. or adjust threshold, Data-dependent.
+As long as you can build a descriptive distribution for the likelihood, it is appropriate model to use [[cite this]](#ref).
 
 <div id='ref'></div>
 ## 5. References
 
 The notes above have been compiled from a variety of sources:
 
+ 1. [K. P. Murphy. Machine Learning: A Probabilistic Perspective. The MIT Press, 2012.](https://mitpress.mit.edu/books/machine-learning-1)
+ 2. [V. Lavrenko. Naive Bayes Classifier, 2015](https://www.youtube.com/playlist?list=PLBv09BD7ez_6CxkuiFTbL3jsn2Qd1IU7B)
+ 3. [T. Pang-Ning. Introduction to data mining. 2005.](https://www.youtube.com/playlist?list=PLBv09BD7ez_6CxkuiFTbL3jsn2Qd1IU7B)
+
+----
+
  1. http://www.inf.ed.ac.uk/teaching/courses/iaml/slides/naive-2x2.pdf
- 1. [V. Lavrenko, Naive Bayes Classifier, 2015](https://www.youtube.com/playlist?list=PLBv09BD7ez_6CxkuiFTbL3jsn2Qd1IU7B)
  1. [G. James, D. Witten, T. Hastie, and R. Tibshirani. An Introduction to Statistical Learning. Springer, 2017.](https://www.amazon.com/Introduction-Statistical-Learning-Applications-Statistics/dp/1461471370)
  2. [C. M. Bishop. Pattern Recognition and Machine Learning. Springer, 2011.](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
  3. [K. P. Murphy. Machine Learning: A Probabilistic Perspective. The MIT Press, 2012.](https://mitpress.mit.edu/books/machine-learning-1)
