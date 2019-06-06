@@ -75,7 +75,7 @@ $ python cifar10.py
     learning rate: 0.001
 
 loss: 0.823: 100%|###################################################| 10/10 [03:19<00:00, 19.90s/it]
-Test Accuracy: 64.72%
+Test Accuracy: 62.72%
 ~~~
 
 We get ~63% accuracy, not bad for this little model. But this was pretty slow, it took about 20s/epoch on my Titian 1080ti. Lets bump up the batch size to 512 so it trains a bit faster.
