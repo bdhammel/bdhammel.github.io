@@ -37,7 +37,7 @@ These posts are designed to be a quick overview of each machine learning model. 
 
 ### 1.1 High-level explanation
 
-Logistic regression is a machine learning model for classification. It is most commonly used for binary classification. The model can be extended to multi-class classification; however, in practice, other approaches are considered more favorable for this task. [[James et al. Section 4.3.5]](#ref). In this post, we will only discuss the mechanics for binary classification.
+Logistic regression is a machine learning model for classification, most commonly used for binary classification. The model can be extended to multi-class classification; however, in practice, other approaches are considered more favorable for this task. [[James et al. Section 4.3.5]](#ref). In this post, we will only discuss the mechanics for binary classification.
 
 Logistic regression finds a line-of-separation, otherwise called a 'decision boundary', representing the separation in classes of the given input features.
 
