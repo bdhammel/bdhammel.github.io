@@ -15,6 +15,8 @@ $$
 
 ![Behavior or different learning rate values]({{site.url}}/assets/learning-rate/lr-types.png)
 
+<center><small>cite: <a href='http://cs231n.github.io/neural-networks-3/'>Stanford cs231</a></small></center><br/>
+
   - A learning rate that is too low will take a long time to converge. This is especially true if there are a lot of saddle points in the loss-space. Along a saddle point, $d \mathcal{L} / dw$ will be close to zero in many directions. If the learning rate $\eta$ is also very low, it can slow down the learning substantially. 
   - A learning rate that is too high can "jump" over the best configurations
   - A learning rate that is much too high can lead to divergence
