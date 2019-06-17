@@ -1,10 +1,11 @@
 ---
 layout: post
 title:  "ML Interview Prep: Naive Bayes"
-description: These posts are designed to be a quick overview of each machine learning model
-image: /assets/ml-naive-bayes/two_prob_map.png
+description: Quick overview of Naive Bayes: high-level explanation, when to use it, when it breaks, and how to implement it
+image: /assets/ml-naive-bayes/all_twos.png
 tags: [machine learning, interviews, data science]
 ---
+
 
 These posts are designed to be a quick overview of each machine learning model. The target audience is people with some ML background who want a quick reference or refresher. The following questions are compiled out of common things brought up in interviews.
 
