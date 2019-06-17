@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "ML Interview Prep: Naive Bayes"
-description: Quick overview of Naive Bayes: high-level explanation, when to use it, when it breaks, and how to implement it
+description: Quick overview of Naive Bayes. A high-level explanation, when to use it, when it breaks, and how to implement it
 image: /assets/ml-naive-bayes/all_twos.png
 tags: [machine learning, interviews, data science]
 ---
