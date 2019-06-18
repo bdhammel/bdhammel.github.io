@@ -260,50 +260,81 @@ and $\hat{y}$ is equal to the most likely hypothesis for multiple evidence, $X$.
 ### 3.3 Simple Implementation
 
 ~~~python
+import numpy as np
+from scipy.stats import norm
+from sklearn.datasets import fetch_openml
+from sklearn.model_selection import train_test_split
+
+
 class NaiveBayes:
+
+    def __init__(self):
+        self.params = {}
     
     def fit(self, X, Y, epsilon=1e-2):
-        self.params = {}
-        
-        for c in np.unique(Y):
-            current_x = X[Y==c]
+        """Fit NB classifier assuming a normal pdf for the likelihood
+
+        Parameters
+        ----------
+        X : numpy.ndarray
+            Training features. For MNIST, this is the pixel values
+        Y : numpy.ndarray
+            Target labels. For MNIST, this is the digits
+        """
+        for class_ in np.unique(Y):
+            x_c = X[Y==class_]
             
-            self.params[int(c)] = {
-                'means':current_x.mean(axis=0),
-                'vars':current_x.var(axis=0) + epsilon,
-                'prior':len(Y[Y==c])/len(Y)
+            self.params[class_] = {
+                'means': x_c.mean(axis=0),
+                'std': x_c.std(axis=0) + epsilon,
+                'prior': (Y==class_).mean(keepdims=True),
             }
                 
     def predict(self, X):
-        N, D = X.shape
-        K = len(self.params)
-        P = np.zeros((N,K))
-        
-        for c, p in self.params.items():
-            P[:,c] = mvn.logpdf(X, mean=p['means'], cov=p['vars']) + np.log(p['prior'])
+        """Run inference on data
 
-        return np.argmax(P, axis=1)
+        Parameters
+        ----------
+        X : numpy.ndarray
+            Data to predict on. dims 2: [number of cases, number of features]
+        """
+        N, _ = X.shape
+        num_classes = len(self.params)
+        log_posterior = np.zeros((N, num_classes))  # placeholder, we want to predict a class for each case
+        
+        # Calculate log P(Y|Y) = sum_i{log P(x_i|Y)} + log P(Y)
+        # We do this for all cases simultaneously
+        for class_, pram in self.params.items():
+            log_liklehood = norm.logpdf(X, loc=pram['means'], scale=pram['std']).sum(axis=1)
+            log_prior = np.log(pram['prior'])
+            log_posterior[:, class_] = log_liklehood + log_prior
+
+        return np.argmax(log_posterior, axis=1)
     
     def evaluate(self, X, Y):
         P = self.predict(X)
         return np.mean(Y == P)
 
+
+print("Loading data... ")
+X, Y = fetch_openml('mnist_784', version=1, return_X_y=True)
+Y = Y.astype(int)
+print("Done")
+
 # Normalize with min-max scaling.
 # The data does not need to be normalized; however, the smoothing parameter
 # in training will have to change to compensate for this. If not normalizing,
 # try epsilon = 255
-data =  mnist.data
-data = data - data.min()
-data = data / data.max()
+X = (X - X.min()) / (X.max() - X.min())
 
-xtrain, xtest, ytrain, ytest = train_test_split(data, mnist.target)
+xtrain, xtest, ytrain, ytest = train_test_split(X, Y)
 
 nb = NaiveBayes()
 nb.fit(xtrain, ytrain)
 print("Accuracy on MNIST classification: {:.2f}%".format(100*nb.evaluate(xtest, ytest)))
 ~~~
 
-`Accuracy on MNIST classification: 80.66%`
+`Accuracy on MNIST classification: 70.38%`
 
 ## 4. More on training the model
 
