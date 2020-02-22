@@ -8,7 +8,7 @@ tags: [machine learning, data science]
 
 ## What is the difference between MLE and MAP?
 
-Maximum likelihood is a special case of Maximum A Posterior estimation. To be specific, MLE is what you get when you do MAP estimation using a _uniform_ prior. Both methods come about when we want to answer a question of the form: "What the probability of scenario $Y$ given some data, $X$ i.e. $P(Y\|X)$.
+Maximum likelihood is a special case of Maximum A Posterior estimation. To be specific, MLE is what you get when you do MAP estimation using a _uniform_ prior. Both methods come about when we want to answer a question of the form: "What is the probability of scenario $Y$ given some data, $X$ i.e. $P(Y\|X)$.
 
 A question of this form is commonly answered using Bayes' Law.
 
@@ -17,10 +17,10 @@ $$
 $$
 
 **MLE**  
-If we're doing Maximum Likelihood Estimation, we do not consider prior information (this is another way of saying "we have a uniform prior"). In this case, the above equation reduces to.
+If we're doing Maximum Likelihood Estimation, we do not consider prior information (this is another way of saying "we have a uniform prior") [[K. Murphy 5.3]](#ref). In this case, the above equation reduces to 
 
 $$
-P(Y|X) \propto P(X|Y)
+P(Y|X) \propto P(X|Y).
 $$
 
 In this scenario, we can fit a statistical model to correctly predict the posterior, $P(Y\|X)$, by maximizing the likelihood, $P(X\|Y)$. Hence "Maximum Likelihood Estimation."
@@ -63,10 +63,13 @@ $$
 
 `The weight of the apple is (69.62 +/- 1.03) g`
 
-<small> If the $\sqrt{N}$ doesnt look familiar, this is the "standard error"</small>
+<small> If the $\sqrt{N}$ doesnt look familiar, this is the ["standard error"](https://en.wikipedia.org/wiki/Standard_error)</small>
 
-No surprises, nothing fancy. But the whole reason we're doing this is we wont always be able to measure the apple 100 times - perhaps the scale were using requires us to pay every time we use it. or maybe we're at a carnival, and were trying to win the grand prize by guessing the weight and we can only take 5 measurements. Whatever the reason, there will always be instances in the real world where we don't have enough data. To flush out the mechanics, we'll use this number of samples for now, and we'll look at what happens when we have less data later.
+No surprises, nothing fancy.
 
+If you find yourself asking "Why are we doing this extra work when we could just take the average", remember that this only applies for this special case. It's important to remember, MLE and MAP will give us the **most probable value**. For a normal distribution, this happens to be the mean. So, we will use this to check our work, but they are not equivalent.
+ - MLE = 'mode' (or 'most probable value') of the posterior PDF [[E. Jaynes 6.11.1]](#ref)
+ - mean = expected value from samples
 
 ### Maximum Likelihood Estimation using a grid approximation
 Just as a quick refresher: Our end goal is to find the weight of the apple, given the data we have. To formulate it in a Bayesian way: We'll ask what is the _probability_ of the apple having weight, $w$, given the measurements we took, $X$. And, because were formulating this in a Bayesian way, we use Bayes' Law to find the answer:
@@ -75,9 +78,9 @@ $$
 P(w|X) = \frac{P(X|w)P(w)}{P(X)}
 $$
 
-If we make no assumptions about the initial weight of our apple, then we can drop $P(w)$. We'll say all sizes of apples are equally likely (we'll revisit this assumption in the MAP approximation).
+If we make no assumptions about the initial weight of our apple, then we can drop $P(w)$ [[K. Murphy 5.3]](#ref). We'll say all sizes of apples are equally likely (we'll revisit this assumption in the MAP approximation).
 
-Furthermore, we'll drop $P(X)$ - the probability of seeing our data. This is a normalization constant and will be important if we _do_ want to know the probabilities of apple weights. But, for right now, our end goal is to only to find the _most_ probable weight. P(X) is independent of $w$, so we can drop it if we're doing relative comparisons.
+Furthermore, we'll drop $P(X)$ - the probability of seeing our data. This is a normalization constant and will be important if we _do_ want to know the probabilities of apple weights. But, for right now, our end goal is to only to find the _most_ probable weight. P(X) is independent of $w$, so we can drop it if we're doing relative comparisons [[K. Murphy 5.3.2]](#ref).
 
 This leaves us with $P(X\|w)$, our likelihood, as in, what is the likelihood that we would see the data, $X$, given an apple of weight $w$. If we maximize this, we maximize the probability that we will guess the right weight.
 
@@ -103,7 +106,7 @@ So, if we multiply the probability that we would see each individual data point 
 
 There you have it, we see a peak in the likelihood right around the weight of the apple. 
 
-But, you'll notice that the units on the y-axis are in the range of 1e-164. This is because we took the product of a whole bunch of numbers less that 1. If we were to collect even more data, we would end up fighting numerical instabilities because we just cannot represent numbers that small on the computer. To make life computationally easier, we'll use the logarithm trick.
+But, you'll notice that the units on the y-axis are in the range of 1e-164. This is because we took the product of a whole bunch of numbers less that 1. If we were to collect even more data, we would end up fighting numerical instabilities because we just cannot represent numbers that small on the computer. To make life computationally easier, we'll use the logarithm trick [[Murphy 3.5.3]](#ref).
 
 $$
 \begin{align}
@@ -118,9 +121,14 @@ This is the _log likelihood_. We can do this because the likelihood is a [monoto
 
 These numbers are much more reasonable, and our peak is guaranteed in the same place.
 
+`The weight of the apple is (69.39 +/- 1.03) g`
+
+<small> In this case our standard error is the same, because $\sigma$ is known.</small>  
+
+
 **To implement this in code**
 
-Implementing this in code is very simple. The python snipped below accomplished the what we want to do.
+Implementing this in code is very simple. The python snipped below accomplishes what we want to do.
 
 ```Python
 from scipy.stats import norm
@@ -130,10 +138,11 @@ weight_grid = np.linspace(0, 100)
 
 likelihoods = [
   np.sum(norm(weight_guess, 10).logpdf(DATA))
-  for weight_guess in wieght_grid
+  for weight_guess in weight_grid
 ]
-weight = weight_guess[np.argmax(likelihoods)]
+weight = weight_grid[np.argmax(likelihoods)]
  ```
+
 
 ### MLE grid approximation for multiple parameters
 
@@ -145,7 +154,7 @@ $$
 
 We can use the exact same mechanics, but now we need to consider a new degree of freedom.
 
-In other words, we want to find the weight of the apple and the error of the scale
+In other words, we want to find the mostly likely weight of the apple **and** the most likely error of the scale
 
 $$
 P(w, \sigma |X) \propto P(X|w, \sigma)
@@ -159,6 +168,8 @@ Comparing log likelihoods like we did above, we come out with a 2D heat map
 
 The maximum point will then give us both our value for the apple's weight and the error in the scale.
 
+`The weight of the apple is (69.39 +/- .97) g`
+
 ### Maximum A Posterior with a grid approximation
 
 In the above examples we made the assumption that all apple weights were equally likely. This simplified Bayes' law so that we only needed to maximize the likelihood
@@ -167,13 +178,13 @@ $$
 P(w, \sigma|X) \propto P(X|w, \sigma)
 $$
 
-However, not knowing anything about apples isn't really true. We know an apple probably isn't as small as 10g, and probably not as big as 500g. In fact, a quick internet search will tell us that the average apple is between 70-100g. So, we can use this information to our advantage, and we encode it into our problem in the form of the prior.
+However, not knowing anything about apples isn't really true. We know an apple probably isn't as small as 10g, and probably not as big as 500g. In fact, a quick internet search will tell us that the [average apple is between 70-100g](https://www.google.com/search?client=firefox-b-1-d&q=average+weight+of+an+apple&channel=cus2). So, we can use this information to our advantage, and we encode it into our problem in the form of the prior.
 
 $$
 P(w, \sigma|X) \propto P(X|w, \sigma)P(w, \sigma)
 $$
 
-By recognizing that weight is independent of scale error, we can simplify things a bit. So we split our prior up
+By recognizing that weight is independent of scale error, we can simplify things a bit. So we split our prior up [[R. McElreath 4.3.2]](#ref)
 
 $$
 P(w, \sigma) = P(w)P(\sigma)
@@ -204,7 +215,10 @@ From this, we obtain our Posterior.
 
 ![Posterior]({{ site.url}}/assets/mle-map/posterior.png)
 
-In this example, the answer we get from the MAP method is almost equivalent to our answer from MLE. This is because we have so many data points that it dominates any prior information we put in. But I encourage you to play with the example code at the bottom of this post to explore when each method is the most appropriate.
+`The weight of the apple is (69.39 +/- .97) g`
+
+
+In this example, the answer we get from the MAP method is almost equivalent to our answer from MLE. This is because we have so many data points that it dominates any prior information [[Murphy 3.2.3]](#ref). But I encourage you to play with the example code at the bottom of this post to explore when each method is the most appropriate.
 
 ## Example code
 
@@ -212,8 +226,13 @@ Play around with the code and try to answer the following questions
 
  1. How sensitive is the MAP measurement to the choice of prior?
  2. How sensitive is the MLE and MAP answer to the grid size?
- 3. How many measurements do you need to take before all three methods return the same (or close tot the same) answers?
 
 <script src="https://gist.github.com/bdhammel/8c95b028442e507f961e557c57d65be8.js"></script>
 
 
+<div id='ref'></div>
+## 5. References
+
+ 1. [K. P. Murphy. Machine Learning: A Probabilistic Perspective. The MIT Press, 2012.](https://mitpress.mit.edu/books/machine-learning-1)
+ 2. [R. McElreath. Statistical Rethinking: A Bayesian Course with Examples in R and Stan. Chapman and Hall/CRC. 2015](http://xcelab.net/rmpubs/rethinking/Statistical_Rethinking_sample.pdf)
+ 3. [E. Jaynes. Probability Theory: The Logic of Science. Cambridge University Press. 2003](https://www.amazon.com/Probability-Theory-Science-T-Jaynes/dp/0521592712?SubscriptionId=AKIAIOBINVZYXZQZ2U3A&tag=chimbori05-20&linkCode=xm2&camp=2025&creative=165953&creativeASIN=0521592712)

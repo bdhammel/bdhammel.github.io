@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "The Ising model"
+description: Monte Carlo simulation of the Ising model using in python
 image: /assets/ising_model/monte-carlo-ising-9.png
 tags: [monte carlo, physics, ising, solid state]
 ---
