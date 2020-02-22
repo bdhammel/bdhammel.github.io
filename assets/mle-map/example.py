@@ -11,13 +11,13 @@ ERROR_GUESSES = np.linspace(.1, 50, 100)
 
 # NOTE: Try changing the scale error
 # in practice, you would not know this number
-SCALE_ERR = 5
+SCALE_ERR = 10
 
 # NOTE: Try changing the number of measurements taken
-N_MEASURMENTS = 10
+N_MEASURMENTS = 100
 
 # NOTE: Try changing the prior values and distributions
-PRIOR_WEIGHT = norm(50, 1).logpdf(WEIGHT_GUESSES)
+PRIOR_WEIGHT = norm(85, 20).logpdf(WEIGHT_GUESSES)
 PRIOR_ERR = invgamma(4).logpdf(ERROR_GUESSES)
 
 LOG_PRIOR_GRID = np.add.outer(PRIOR_ERR, PRIOR_WEIGHT)
@@ -49,7 +49,7 @@ def get_map(measurments):
 
 
 # Pick and apple at random
-apple = np.random.choice(BARREL)
+apple = 70  # np.random.choice(BARREL)
 
 # weight the apple
 measurments = np.asarray([read_scale(apple) for _ in range(N_MEASURMENTS)])
