@@ -72,7 +72,7 @@ If you find yourself asking "Why are we doing this extra work when we could just
  - mean = expected value from samples
 
 ### Maximum Likelihood Estimation using a grid approximation
-Just as a quick refresher: Our end goal is to find the weight of the apple, given the data we have. To formulate it in a Bayesian way: We'll ask what is the _probability_ of the apple having weight, $w$, given the measurements we took, $X$. And, because were formulating this in a Bayesian way, we use Bayes' Law to find the answer:
+Just to reiterate: Our end goal is to find the weight of the apple, given the data we have. To formulate it in a Bayesian way: We'll ask what is the _probability_ of the apple having weight, $w$, given the measurements we took, $X$. And, because were formulating this in a Bayesian way, we use Bayes' Law to find the answer:
 
 $$
 P(w|X) = \frac{P(X|w)P(w)}{P(X)}
@@ -229,6 +229,9 @@ Play around with the code and try to answer the following questions
 
 <script src="https://gist.github.com/bdhammel/8c95b028442e507f961e557c57d65be8.js"></script>
 
+## A final note
+
+I used standard error for reporting our prediction confidence; however, this is not a particular Bayesian thing to do. I do it to draw the comparison with taking the average and to check our work. In practice, you would not seek a point-estimate of your Posterior (i.e. the maximum). Instead, you would keep denominator in Bayes' Law so that the values in the Posterior are appropriately normalized and can be interpreted as a probability. But, how to do this will have to wait until a future blog post.
 
 <div id='ref'></div>
 ## 5. References
