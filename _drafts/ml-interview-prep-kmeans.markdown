@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "ML Interview Prep: K-means"
+title: "ML Interview Prep: K-means"
 description: This post is designed to be a quick overview of the K-means machine learning model
 image: /assets/ml-naive-bayes/two_prob_map.png
 tags: [machine learning, interviews, data science]
