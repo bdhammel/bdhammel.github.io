@@ -27,7 +27,7 @@ t &= d \cdot s \\
 \end{align}
 $$
 
-wherein $d$ is the 1 mile distance and $s$ s your walking speed. 
+wherein $d$ is the 1 mile distance and $s$ is your walking speed. 
 
 You reach the park center and see the drug kingpin talking with another person! You strategically pick a place to sit nearby and fake-read a newspaper. **You overhear him mention it took him 20 mins to walk to this location**. From the information provided, **do you now know the location of the kingpin's base of operation**? It took them the about the same time to reach the same point, is this person is your neighbor?
 
@@ -65,9 +65,9 @@ We now have our full Bayesian model.
 ~~~
 x1 ~ Uniform(-2, 2)         # sample starting location in x1
 x2 ~ Uniform(-2, 2)         # sample starting location in x2
-s ~ Normal(20, 2)           # sample walking speed
+s ~ Normal(19.5, .5)        # sample walking speed
 t = F(s, x1, x2)            # run forward problem to get predicted time
-y ~ Normal(t, 1.5)          # predicted time considering observational error
+y ~ Normal(t, 3/2)          # predicted time considering observational error
 ~~~
 
 To do anything useful with it we'll need to leverage MCMC. For python we have a few options at our disposal, I've chosen [numpyro](http://pyro.ai/numpyro/) for this example and use the NUTS MCMC sampler.[^3]
@@ -112,7 +112,7 @@ Obviously, we still can't tell if this person is our neighbor - they could live 
 
 <table style="width:100%">
   <tr>
-    <td style='border:1px solid #dddddd; padding:8px; background: #EAEAEA'> <small>I use this example because this really stresses the meat of your job as a data scientist (well, the meat of your job is cleaning data, but this is what gets you paid). Someone runs a model and blindly trust whatever number is returned is likely to be mislead. Instead, you need a healthy dosage of extreme skepticism to dig though the model and find how it might be misleading you. Once you find what's wrong, you need to think about what piece(s) of information will help narrow the result.</small></td>
+    <td style='border:1px solid #dddddd; padding:8px; background: #EAEAEA'> <small>I use this example because this really stresses the meat of your job as a data scientist (well, the meat of your job is cleaning data, but this is what gets you paid). Someone who runs a model and blindly trust whatever number is returned is likely to be mislead. Instead, you need a healthy dosage of extreme skepticism to dig though the model and find how it might be misleading you. Once you find what's wrong, you need to think about what piece(s) of information will help narrow the result.</small></td>
   </tr>
 </table>  
 
@@ -176,7 +176,7 @@ print(f"Probability the kingpin is your neighbor: {100*P:.2f}%")
 
 Lastly, how can we use this to inform our actions?
 
-How much time should we spend looking for the base of operations in our neighborhood? Well, if we have 5 days to find him, we should only spend 22.68% of it in our neighborhood, or about 1 day and 3 hours.
+How much time should we spend looking for the base of operations in our neighborhood? Well, if we have 5 days to find him, we should only spend 22.68% of it in our neighborhood, or about 1 day and 3 hours.[^6]
 
 
 ### Final remarks
@@ -191,3 +191,4 @@ Hopefully this gives you an idea of how to leverage MCMC to solve inverse proble
 [^3]: If you you want to know more about the NUTS MCMC sampler I strongly recommend this blog post [on MCMC sampling methods](https://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/)
 [^4]: This does a pretty good job reflecting the highest probability being near the mean, while supporting outliers (people who use to live in the neighborhood and have moved)
 [^5]: [Kernel density estimation is a way to estimate the probability density function (PDF) of a random variable in a non-parametric way](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.gaussian_kde.html)
+[^6]: [MCMC island hopping example](http://people.duke.edu/~ccc14/sta-663-2016/16A_MCMC.html)
