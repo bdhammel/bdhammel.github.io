@@ -32,7 +32,7 @@ You reach the park center and see the drug kingpin talking with another person! 
 
 ## The inverse problem
 
-This is the inverse problem. **We have observed an outcome (time it took to walk), and from this we want to infer a property of the world (starting destination)**.
+This is the [inverse problem](https://en.wikipedia.org/wiki/Inverse_problem). **We have observed an outcome (time it took to walk), and from this we want to infer a property of the world (starting destination)**.
 
 ### Complications with the inverse problem
 
@@ -139,7 +139,7 @@ For the sake of this example we'll stop here, but you can qualitatively tell tha
 
 #### What is the most probable location?
 
-The most probable location is not the average of these samples. Instead we need to find the point with the highest density of accepted starting locations, the mode. To do this we'll approximate the samplings as a pdf using a Gaussian kernel density estimation.[^5] We can then find the maximum point using gradient descent.
+The most probable location is not the average of these samples. Instead, we need to find the point with the highest density of accepted starting locations, the [mode](https://en.wikipedia.org/wiki/Mode_(statistics)#Example_for_a_skewed_distribution). To do this we'll approximate the samplings as a pdf using a Gaussian kernel density estimation.[^5] We can then find the maximum point using gradient descent.
 
 ~~~python
 from scipy.optimize import minimize
