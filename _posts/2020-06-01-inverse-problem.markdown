@@ -2,10 +2,9 @@
 layout: post
 title: "Solving Inverse Problems with MCMC"
 description: How to solve inverse problems by approaching them with a Bayesian perspective and leveraging Markov Chain Monte Carlo.
-image: /assets/inverse-prob/circle-city.png
+image: /assets/inverse-prob/detective.jpg
 tags: [markov chain monte carlo, physics, machine learning, Bayesian, data science]
 ---
-
 
 ## Problem preface
 
@@ -41,7 +40,7 @@ So, can we tell if this person is our neighbor? **No**.
 
 Very often, **inverse problems are ill posed**. We do not have enough information to completely solve the problem. Just as in this case, we don't know how fast they walk and, even if we did, the solution is not unique (discussed more below).
 
-**We are required to leverage assumptions and prior knowledge** if we want to find a solution to this incomplete problem. For example, let's say we take an educated guess that this individual walks _about_ the same speed as us based on their build. We formulate it mathematically by saying they walk $(19.5 \pm .5) \frac{\rm min}{\rm mile}$.
+**We are required to leverage assumptions and prior knowledge** if we want to find a solution to this incomplete problem. For example, let's say we take an educated guess that this individual walks _about_ the same speed as us based on their build. We formulate it mathematically by saying they walk a mile in $(19.5 \pm .5)$ minutes.
 
 ### Solving the inverse problem with MCMC 
 
@@ -140,7 +139,7 @@ For the sake of this example we'll stop here, but you can qualitatively tell tha
 
 #### What is the most probable location?
 
-The most probable location is not the average of these samples. Instead we need to find the point with the highest density of accepted starting locations, the mode. To do this we'll approximate the samplings as a pdf using a Gaussian kernel density estimation.[^5] We can then find the maximum point using gradient ascent.
+The most probable location is not the average of these samples. Instead we need to find the point with the highest density of accepted starting locations, the mode. To do this we'll approximate the samplings as a pdf using a Gaussian kernel density estimation.[^5] We can then find the maximum point using gradient descent.
 
 ~~~python
 from scipy.optimize import minimize
