@@ -8,7 +8,7 @@ tags: [markov chain monte carlo, physics, machine learning, Bayesian, data scien
 
 ## Problem preface
 
-You're a detective, and you're currently working to track down a notorious drug kingpin. **If you can find his base of operations**, then you'll be able to build a case against him.
+You're a detective, and you're currently working to track down a notorious drug kingpin. **If you can find his base-of-operations**, you'll be able to build a case against him.
 
 ![circle city]({{ site.url}}/assets/inverse-prob/detective.jpg)
 
@@ -28,19 +28,19 @@ $$
 
 wherein $d$ is the 1 mile distance and $s$ is your walking speed. 
 
-You reach the park center and see the drug kingpin talking with another person! You strategically pick a place to sit nearby and fake-read a newspaper. **You overhear him mention it took him 20 mins to walk to this location**. From the information provided, **do you now know the location of the kingpin's base of operation**? It took them the about the same time to reach the same point, is this person is your neighbor?
+You reach the park center and see the drug kingpin talking with another person! You strategically pick a place to sit nearby and fake-read a newspaper. **You overhear him mention it took him 20 mins to walk to this location**. From the information provided, **do you know the location of the kingpin's base-of-operation**? It took them the about the same time to reach the same point, is this person is your neighbor?
 
 ## The inverse problem
 
-This is the [inverse problem](https://en.wikipedia.org/wiki/Inverse_problem). **We have observed an outcome (time it took to walk), and from this we want to infer a property of the world (starting destination)**.
+This is the [inverse problem](https://en.wikipedia.org/wiki/Inverse_problem). **We have observed an outcome (time it took to walk), and we want to infer a property of the world (starting location)**.
 
 ### Complications with the inverse problem
 
 So, can we tell if this person is our neighbor? **No**.
 
-Very often, **inverse problems are ill posed**. We do not have enough information to completely solve the problem. Just as in this case, we don't know how fast they walk and, even if we did, the solution is not unique (discussed more below).
+Very often, **inverse problems are ill posed**. We do not have enough information to completely solve the problem: we don't know how fast they walk and, even if we did, the solution is not unique (discussed below).
 
-**We are required to leverage assumptions and prior knowledge** if we want to find a solution to this incomplete problem. For example, let's say we take an educated guess that this individual walks _about_ the same speed as us based on their build. We formulate it mathematically by saying they walk a mile in $(19.5 \pm .5)$ minutes.
+If we want to find a solution to this incomplete problem, **we will be required to leverage assumptions and prior knowledge**. For example, let's say we take an educated guess that this individual walks _about_ the same speed as us, based on their build. We formulate it mathematically by saying they walk a mile in $(19.5 \pm .5)$ minutes.
 
 ### Solving the inverse problem with MCMC 
 
@@ -69,7 +69,7 @@ t = F(s, x1, x2)            # run forward problem to get predicted time
 y ~ Normal(t, 3/2)          # predicted time considering observational error
 ~~~
 
-To do anything useful with it we'll need to leverage MCMC. For python we have a few options at our disposal, I've chosen [numpyro](http://pyro.ai/numpyro/) for this example and use the NUTS MCMC sampler.[^3]
+To do anything useful with it we'll need to leverage MCMC. For python, we have a few options at our disposal; I've chosen [numpyro](http://pyro.ai/numpyro/) for this example and use the NUTS MCMC sampler.[^3]
 
 ~~~python
 def model(obs):
@@ -115,9 +115,9 @@ Obviously, we still can't tell if this person is our neighbor - they could live 
   </tr>
 </table>  
 
-As you're eavesdropping on this conversation, you notice they are holding a sandwich bag. You know this deli; it's a poplar local spot. The people in the immediate neighborhood go to it all the time, but it's only a hole-in-the-wall so people further away don't really know about it. However, if someone from that neighborhood moves across the city, they'll still drive over to get their fix. This is useful information to us because it provides some information on the positional variables. 
+As you're eavesdropping on this conversation, you notice they are holding a sandwich bag. You know this deli - it's a poplar local spot. The people in the immediate neighborhood go to it all the time, but it's only a hole-in-the-wall so people further away don't really know about it. However, if someone from that neighborhood moves across the city, they'll still drive over to get their fix. This is useful information to us because it provides some information on the positional variables. 
 
-We fold this into our model by updating our prior guess on their starting location. We will assume a Laplacian distribution[^4] based on what we know about the deli.
+We fold this into our model by updating our prior guess on their starting location. We will assume a Laplacian distribution based on what we know about the deli.[^4]
 
 Our model is now:
 
@@ -135,7 +135,7 @@ We run the model again we get the following samples:
 
 ### Drawing conclusions
 
-For the sake of this example we'll stop here, but you can qualitatively tell that more information is needed to improve our model. But what can we do with the results that we have?
+You can qualitatively tell that more information is needed to improve our model; but, for the sake of this example, we'll stop here. **What can we do with the results that we have?**
 
 #### What is the most probable location?
 
@@ -180,7 +180,7 @@ How much time should we spend looking for the base of operations in our neighbor
 
 ### Final remarks
 
-Hopefully this gives you an idea of how to leverage MCMC to solve inverse problems.
+Hopefully this gives you an idea of how to leverage MCMC to solve inverse problems. You can view the full code here: https://gist.github.com/bdhammel/8db6eb110e678ed54d12c4fffb62bc8a
 
 ---
 ### References
