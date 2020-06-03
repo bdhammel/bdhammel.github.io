@@ -180,7 +180,7 @@ How much time should we spend looking for the base of operations in our neighbor
 
 ### Final remarks
 
-Hopefully this gives you an idea of how to leverage MCMC to solve inverse problems. You can view the full code here: https://gist.github.com/bdhammel/8db6eb110e678ed54d12c4fffb62bc8a
+Hopefully this gives you an idea of how to leverage MCMC to solve inverse problems. You can view the full code [on github](https://gist.github.com/bdhammel/8db6eb110e678ed54d12c4fffb62bc8a).
 
 ---
 ### References
