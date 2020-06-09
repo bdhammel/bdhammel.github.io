@@ -40,7 +40,7 @@ So, can we tell if this person is our neighbor? **No**.
 
 Very often, **inverse problems are ill posed**. We do not have enough information to completely solve the problem: we don't know how fast they walk and, even if we did, the solution is not unique (discussed below).
 
-If we want to find a solution to this incomplete problem, **we will be required to leverage assumptions and prior knowledge**. For example, let's say we take an educated guess that this individual walks _about_ the same speed as us, based on their build. We formulate it mathematically by saying they walk a mile in $(19.5 \pm .5)$ minutes.
+If we want to find a solution to this incomplete problem, **we will be required to leverage assumptions and prior knowledge**. For example, let's say we take an educated guess that, based on their build, this individual walks _about_ the same speed as us. We formulate it mathematically by saying they walk a mile in $(19.5 \pm .5)$ minutes.
 
 ### Solving the inverse problem with MCMC 
 
@@ -115,7 +115,7 @@ Obviously, we still can't tell if this person is our neighbor - they could live 
   </tr>
 </table>  
 
-As you're eavesdropping on this conversation, you notice they are holding a sandwich bag. You know this deli - it's a poplar local spot. The people in the immediate neighborhood go to it all the time, but it's only a hole-in-the-wall so people further away don't really know about it. However, if someone from that neighborhood moves across the city, they'll still drive over to get their fix. This is useful information to us because it provides some information on the positional variables. 
+As you're eavesdropping on this conversation, you notice they are holding a sandwich bag. You know this deli - it's a popular local spot. The people in the immediate neighborhood go to it all the time, but it's only a hole-in-the-wall so people further away don't really know about it. However, if someone from that neighborhood moves across the city, they'll still drive over to get their fix. This is useful information to us because it provides some information on the positional variables. 
 
 We fold this into our model by updating our prior guess on their starting location. We will assume a Laplacian distribution based on what we know about the deli.[^4]
 
@@ -186,7 +186,7 @@ Hopefully this gives you an idea of how to leverage MCMC to solve inverse proble
 ### References
 
 [^1]: If you ask "why a normal distribution" I strongly recommend this youtube video from [Statistical Rethinking Winter 2019 Lecture 03](https://youtu.be/h5aPo5wXN8E?t=506)
-[^2]: Let's assume that 99.7% of people round to the neirest 5 baised on their watch-hand integer. e.g. 3 is rounded to 5 but 2.9 is rounded to 0. The 99.7 percentile is 2$\sigma$ so our standard dieviation is $3/2$
+[^2]: Let's assume that 99.7% of people round to the nearest 5 baised on their watch-hand integer. e.g. 3 is rounded to 5 but 2.9 is rounded to 0. The 99.7 percentile is 2$\sigma$ so our standard dieviation is $3/2$
 [^3]: If you you want to know more about the NUTS MCMC sampler I strongly recommend this blog post [on MCMC sampling methods](https://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/)
 [^4]: This does a pretty good job reflecting the highest probability being near the mean, while supporting outliers (people who use to live in the neighborhood and have moved)
 [^5]: [Kernel density estimation is a way to estimate the probability density function (PDF) of a random variable in a non-parametric way](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.gaussian_kde.html)
