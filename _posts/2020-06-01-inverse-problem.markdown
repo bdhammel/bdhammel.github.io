@@ -57,7 +57,7 @@ where $(x_1, x_2)$ is a given starting location and $s$ is the walking speed. We
 
 We've already estimated this person walks about as fast as us. So, for each proposed starting location, we'll also have to generate a walking speed and we'll sample this from a Normal distribution.[^1]
 
-Lastly, we don't know if it took them _exactly_ 20 mins to walk. Typically, people tend to round to give an number divisible by 5, so we should incorporate this into our model. This is an "observational error".[^2]
+Lastly, we don't know if it took them _exactly_ 20 mins to walk. Typically, people tend to round times to give an number divisible by 5 in conversation (e.g. 12.2 minutes becomes 12 minutes), so we should incorporate this into our model. This is an "observational error".[^2]
 
 We now have our full Bayesian model.
 
@@ -97,7 +97,7 @@ X1      0.00      0.73      0.00     -1.03      1.04   5148.41      1.00
 X2     -0.02      0.73     -0.03     -1.05      1.02   5363.95      1.00
 ~~~
 
-This says that the inferred starting location is $(0,0)$ …basically the location we're standing. This doesn't make sense. Let's look at the samples to understand this more.
+This says that the average inferred starting location is $(0,0)$ …basically the location we're standing. This doesn't make sense. Let's look at the samples to understand this more.
 
 #### Interpreting our results
 
@@ -139,7 +139,7 @@ You can qualitatively tell that more information is needed to improve our model;
 
 #### What is the most probable location?
 
-The most probable location is not the average of these samples. Instead, we need to find the point with the highest density of accepted starting locations, the [mode](https://en.wikipedia.org/wiki/Mode_(statistics)#Example_for_a_skewed_distribution). To do this we'll approximate the samplings as a pdf using a Gaussian kernel density estimation.[^5] We can then find the maximum point using gradient descent.
+The most probable location is not the average of these samples (remember how that lead us astray in our first attempt?). Instead, we need to find the point with the highest density of accepted starting locations, the [mode](https://en.wikipedia.org/wiki/Mode_(statistics)#Example_for_a_skewed_distribution). To do this we'll approximate the samplings as a pdf using a Gaussian kernel density estimation.[^5] We can then find the maximum point using gradient descent.
 
 ~~~python
 from scipy.optimize import minimize
