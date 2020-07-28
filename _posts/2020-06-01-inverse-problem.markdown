@@ -2,7 +2,7 @@
 layout: post
 title: "Solving Inverse Problems with MCMC"
 description: How to solve inverse problems by approaching them with a Bayesian perspective and leveraging Markov Chain Monte Carlo.
-image: /assets/inverse-prob/detective.jpg
+image: assets/inverse-prob/detective.jpg
 tags: [markov chain monte carlo, physics, machine learning, Bayesian, data science]
 ---
 
