@@ -1,0 +1,136 @@
+I"�#<h2 id="velocity-interferometer-system-for-any-reflector">Velocity Interferometer System for Any Reflector</h2>
+
+<p>The Velocity Interferometer System for Any Reflector (VISAR) <a href="#ref">[Barker]</a> is a principal diagnostic in dynamic compression research. The VISAR works by analyzing the Doppler shift of a pulse of light which has been reflected off of a moving surface (e.g. the back surface of a sample as a shock wave emerges). By examining the frequency change of the light, the velocity of the moving surface can be found, allowing the material properties (such as the pressure) to be inferred from the application of classical mechanics including the laws of mass, momentum, and energy conservation, as well as knowledge of the initial physical condition of the target material <a href="#ref">[Zel’dovich]</a>.</p>
+
+<h2 id="visar-theory-of-operation">VISAR Theory of Operation</h2>
+
+<p>The frequency change in the VISAR’s probe beam, due to a moving target with velocity $v(t)$, is governed by the Doppler equation,</p>
+
+\[\begin{equation}
+\lambda (t)=\lambda_{0}\left( 1-\frac{2v(t)}{c} \right ).
+\end{equation}\]
+
+<p>The Doppler shifted light is passed through a Mach-Zehnder interferometer, where one leg of the interferometer is delayed by placing an etalon in the ray path. The recombination of the two legs generates a fringe comb pattern overlaid on the image of the target surface. A line-out of this is then recorded using a white-light streak camera. The result is an image with spatial and temporal information of the target, as seen in in the below figure <a href="#ref">[smith]</a>.</p>
+
+<p><img src="http://www.bdhammel.com/assets/visar/Raw_Data.png" alt="VISAR Raw data" /></p>
+
+<p>The shift in the fringes is directly proportional to the velocity of the object that the light was reflected from,</p>
+
+\[v \propto \left \{ \text{fringe shift}\right \}.\]
+
+<p>The proportionality constant of this relation is found by starting with the equation of a plane wave,</p>
+
+\[\begin{equation}
+\mathbf{E}=\mathbf{E_0}e^{i \left ( \mathbf{k}\cdot\mathbf{r} - \omega t + \delta \right )},
+\end{equation}\]
+
+<p>and solving for the superposition of the beams from both legs of the interferometer at the detector surface <a href="#ref">[Fowles]</a>,</p>
+
+\[\begin{align}
+I &amp;\equiv  \left | \mathbf{E} \right | \nonumber \\
+&amp;= \mathbf{E}\cdot\mathbf{E}^*  \nonumber \\
+&amp;=\left(\mathbf{E_1}+\mathbf{E_2}\right) \cdot \left(\mathbf{E_1^*}+\mathbf{E_2^*}\right) \nonumber \\
+%&amp;=\left |\mathbf{E_1}\right|^2+ \left|\mathbf{E_2} \right|^2 + \mathbf{E_{1,0}}\cdot \mathbf{E_{2,0}} \left ( \frac{e^{i \left ( \left (\mathbf{k_1} - \mathbf{k_1} \right ) \cdot\mathbf{r} - \omega_1 t + \delta\right )} + e^{-i \left ( \left (\mathbf{k_1} - \mathbf{k_2}\right ) \cdot\mathbf{r} - \omega_2 t + \delta\right )} }{2} \right )  \nonumber \\
+&amp;=I_1+I_2 + 2\mathbf{E_{1,0}}\cdot \mathbf{E_{2,0}}\cos \theta.
+\end{align}\]
+
+<p>The $2\mathbf{E_{1,0}}\cdot \mathbf{E_{2,0}}\cos \theta$ term describes the resulting interference. With</p>
+
+\[\theta = \mathbf{k_1 \cdot r_1} - \mathbf{k_2 \cdot r_2} - \omega_1 t_1 + \omega_2 t_2 + \delta_1 + \delta_2\]
+
+<p>and can be simplified as a time dependent phase with a constant offset, $\phi (t) + \delta_{0}$. Wherein</p>
+
+\[\begin{equation}
+\phi(t) = 2\pi F(t)
+\end{equation}\]
+
+<p>such that $F(t)$ is the fractional fringe shift, proportional to the velocity of the target. The intensities can then be grouped into a background term, $b(t)$, and amplitude of the interference, $a(t)$, for a general form:</p>
+
+\[\begin{equation}
+I(t) = b(t)+a(t)\cos[\phi (t) + \delta_{0}].
+\end{equation}\]
+
+<p>Considering the 1D case, with the optical system in perfect alignment such that all interferometer optic surfaces are perfectly parallel, the interference of two beams, $\mathbf{E_1}$ and $\mathbf{E_2}$, will be determined by the time delay,</p>
+
+\[\begin{equation}
+\tau = \frac{2h}{c}(n-1).
+\end{equation}\]
+
+<p>In which $\tau$ is a function of the etalon (thickness $h$) placed in the path of one leg of the interferometer. The Doppler-shifted frequency of the reference beam and the time delayed beam can then be used to find $\theta$.</p>
+
+<p>What this $\tau$ ends up meaning is that we’ll observe the Doppler-shifted frequency of the probe beam at two different times of its history. Because the position of the reflector has changed during these two times, the phase will have propagated a different distance, $r_1$ and $r_2$, for the interfering rays, $E_1$ and $E_2$. We rewrite the phase, $\psi$, as if the time of propagation, $t$, is the same - allowing us to drop the term $\omega t$ and considering the phase propagation as a function of distance, $r$:<a href="#ref">[Dolan]</a></p>
+
+\[\begin{align}
+&amp;&amp; \psi (t') &amp;= \mathbf{k}(t')\cdot \mathbf{r}(t') \\
+\text{such that} &amp;&amp; \phi &amp;= \psi_1 - \psi_2.
+\end{align}\]
+
+<p>To simplify the problem, we can assume this distance, $r$, is the distance the probe beam takes to the reflector plus the distance it takes from the reflector to the detector. Illustratively put:</p>
+
+<p><img src="http://www.bdhammel.com/assets/visar/phase-shift.png" alt="phase shift" /></p>
+
+<p>Because we will be making a relative comparison, we can drop terms which are consistent between the two electric fields. Thus, the distance from the source-to-the-reflector and the distance from the reflector-to-the-detector is assumed to be equal, and reduced to be the total distance that the reflector will move during the detection time, $T$:</p>
+
+\[\begin{align}
+&amp;&amp; d(t') &amp;= \int_{t'}^T v(t) dt \\
+\text{and} &amp;&amp; r(t') &amp;= 2d(t').
+\end{align}\]
+
+<p>During the propagation of the probe from the source-to-the-reflector, the wavelength of the light is the initial wavelength generated by the source, $k = \frac{2\pi}{\lambda_0}$. However, on the return path, the wavelength has now shifted, determined by the Doppler effect:</p>
+
+\[k(t') = \frac{2\pi c}{\lambda_0} \left ( \frac{1}{c-2v(t')} \right )\]
+
+<p>The interference term, $\phi$, can now be expressed in the following way:</p>
+
+\[\begin{align*}
+\phi(t) &amp;= \mathbf{k_1 r_1} - \mathbf{k_2 r_2} \\
+&amp;= k(t' - \tau) r(t' - \tau) -  k(t') r(t')  \\
+&amp;= \left \{ k(t' - \tau) + k_0 \right \} d(t' - \tau)  -  \left \{ k(t') + k_0 \right \} d(t')  \\
+\end{align*}\]
+
+<p>Substituting in the definition for $k$ and assuming that $v(t’) \ll c$ leads to the expression:</p>
+
+\[\begin{align*}
+\phi(t) &amp;= \frac{2\pi}{\lambda_0} \left \{ d(t'-\tau) - d(t')  + c\frac{d(t'-\tau)}{c-2v(t'-\tau)} + c\frac{d(t')}{c-2v(t')}\right \} \frac{\tau}{\tau} \\
+&amp;\rightarrow \frac{2\pi \tau}{\lambda_0} 2 v(t')
+\end{align*}\]
+
+<p>Allowing us to solve for $F(t)$ to get a resulting a Velocity Per Fringe (VPF) shift of:</p>
+
+\[\begin{equation}
+{\rm VPF} \equiv \frac{v(\tau)}{F(t)} = \frac{\lambda_0}{2\tau}.
+\end{equation}\]
+
+<p>Extending this formalism to all space, and taking into consideration the imaging properties of the line-VISAR system, the function of intensity takes on a form dependent on $x$ and $t$,</p>
+
+\[\begin{equation}
+I(x,t) = b(x,t)+a(x,t)\cos[\phi (x,t)+2\pi f_{0}x + \delta_{0} ].
+\end{equation}\]
+
+<p>The equations for VPF and $\tau$ are then adjusted to account for dispersion of light in the etalon and the shift in the image location due to the etalon’s index of refraction:</p>
+
+\[\begin{align}
+{\rm VPF} &amp;= \frac{\lambda_0}{2\tau(1+\delta)}, \\ 
+\tau &amp;= \frac{2h}{c}(n-1/n).
+\end{align}\]
+
+<h2 id="simulated-visar-data">Simulated VISAR data</h2>
+
+<p>Using this mathematical procedure, we can then generate synthetic VISAR data for a given velocity profile. Please visit my <a href="https://github.com/bdhammel/simulated-visar">GitHub repo on Simulated Line-Visar data</a></p>
+
+<p><img src="https://raw.githubusercontent.com/bdhammel/simulated-visar/master/media/sin.png" alt="Simulated VISAR data" /></p>
+
+<h3 id="-references"><a name="ref"></a> References</h3>
+
+<ol>
+  <li>R. F. Smith et al.,  “Ramp compression of diamond to five terapascals,” Nature, vol. 511, pp. 330–333, jul 2014.</li>
+  <li>L. Barker and R. Hollenbach, “Laser interferometer for measuring high velocities of any reflecting surface,” Journal of Applied Physics, vol. 43, pp. 4669–4675, November 1972.</li>
+  <li>Y. B. Zel’dovich and Y. P. Raizer, Physics of Shock Waves and High-Temperature Hydrodynamic Phenomena. Dover, 2002.</li>
+  <li>P. Celliers et al., “Line-imaging velocimeter for shock diagnostics at the OMEGA laser facility,” Review of Scientific Instruments, vol. 75, November 2004.</li>
+  <li>D. J. Robinson, “Optically relayed push-pull velocity interferometry resolved in time and position,” Master’s thesis, Washington State University, 2005.</li>
+  <li>G. Fowles, Introduction to Modern Optics. Dover, 1989.</li>
+  <li>M. Takeda et al., “Fourier-transform method of fringe-pattern analysis for computer-based topography and interferometry,” Journal of the Optical Society of America, vol. 72, pp. 156–160, January 1983.</li>
+  <li>D. H. Dolan, “Foundations of VISAR analysis.,” tech. rep., Sandia National Laboratories, Jun 2006.</li>
+</ol>
+
+:ET

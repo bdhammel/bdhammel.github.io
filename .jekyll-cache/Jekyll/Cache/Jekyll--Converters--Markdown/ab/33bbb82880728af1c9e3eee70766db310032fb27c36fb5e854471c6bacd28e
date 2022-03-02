@@ -1,0 +1,93 @@
+I"�<p>This post outlines the FFT analysis routine for line-VISAR data. The code implementing this  routine can be found here: <a href="https://github.com/bdhammel/line-visar-analysis">https://github.com/bdhammel/line-visar-analysis</a>. I benchmark this script against the published data by <a href="#ref">Smith et al.</a> on the ramp compression of diamond to 5 TPa.</p>
+
+<h2 id="analysis">Analysis</h2>
+
+<p>As stated in my previous post on Line-VISAR Theory, the fringe shift recorded is directly proportional to the velocity of the target. It is, therefore, the goal of the analysis routine to extract the percentage fringe shift at a given location and time. Several methods exist for accomplishing this. However, the Fourier transform method (described here), first proposed by <a href="#ref">Takeda et al</a>, has been determined to be the most accurate <a href="#ref">[Celliers]</a>.</p>
+
+<p>The raw data (shown above) is typically cropped to analyze the region of planar shock breakout (enclosed in the red rectangle, with reference fringes enclosed in green).</p>
+
+<p><img src="http://www.bdhammel.com/assets/visar/cropped_data.png" alt="VISAR working data" /></p>
+
+<p>This image can be described mathematically using the equation for intensity, $I(x, t)$,  with $ b(x,t ) = I_1+I_2 $ being the background and $ a(x,t) =  2\mathbf{E_1}\mathbf{E_2} $ describing the intensity of the fringes. $\phi (x,t)$ represents the phase of the fringes and $2\pi f_{0}x + \delta_{0} $ describes the linear phase ramp of the background fringe pattern. The goal is to find $ \phi (x,t) $, which is directly proportional to the velocity of the target. Rewriting the intensity equation in terms of its complex components yields:</p>
+
+\[\begin{align}
+&amp;&amp; f(x,t) &amp;= b(x,t)+c(x,t)e^{i2\pi f_{0}x} + c^*(x,t)e^{-i2\pi f_{0}x },&amp; \\
+\text{with} &amp;&amp; c(x,t) &amp;= \frac{1}{2}a(x,t)e^{i\delta_{0}}e^{i\phi (x,t)}. 
+\end{align}\]
+
+<p>A Fourier transform is applied to the data at each point-in-time</p>
+
+<p><img src="http://www.bdhammel.com/assets/visar/Spectrogram.png" alt="VISAR Spectrogram" /></p>
+
+<p>the background, $b(x,t)$, can then be removed by filtering specific frequencies (such that the pixel values are set to zero):</p>
+
+\[\require{cancel}
+\begin{align*}
+F(f,t) &amp;= B(f,t)+\int_{ -\infty }^{\infty} c(x,t) e^{i2\pi f_{0}x}e^{-ifx} \; dx + \int_{-\infty }^{\infty}c^*(x,t)e^{-i2\pi f_{0}x }e^{-ifx} \; dx \\[1.5ex]
+&amp;=B(f,t)+\int_{-\infty }^{\infty}c(x,t)e^{i2\pi (f_{0}-f) x} \; dx + \int_{-\infty }^{\infty}c^*(x,t)e^{-i2\pi (f_{0} +f )x} \;dx \\[1.5ex]
+&amp;=\cancelto{0}{B(f,t)}+\cancelto{0}{C^*(f+f_0,t)}+C(f-f_0,t).
+\end{align*}\]
+
+<p><img src="http://www.bdhammel.com/assets/visar/Reference_frequencies.png" alt="VISAR Reference Frequencies" /></p>
+
+<p>Applying an inverse Fourier transform:</p>
+
+\[\begin{align}
+d(x,t) &amp;= \int_{-\infty}^{\infty}C(f-f_0,t)e^{ixf} \; df \nonumber \\
+&amp;= \int_{-\infty}^{\infty}C(f-f_0,t) \left ( \cos(xf) + i\sin(xf) \right ) \; df  \label{eqn:ifft} \\
+&amp;=c(x,t)e^{2\pi i f_0x} \label{eqn:filtered}
+\end{align}\]
+
+<p>results in the filterd image.</p>
+
+<p><img src="http://www.bdhammel.com/assets/visar/filtered.png" alt="VISAR Filtered" /></p>
+
+<p>The above image has both a real and imaginary valued function. Where</p>
+
+\[\begin{align}
+&amp;&amp; \operatorname{Re} [d(x,t) ] &amp;\propto  \sin( \phi (x,t) + 2\pi f_0 x + \delta_0) \label{eqn:re},&amp; \\ 
+\text{and} &amp;&amp; \operatorname{Im} [d(x,t) ] &amp;\propto  \cos( \phi (x,t) + 2\pi f_0x + \delta_0) \label{eqn:im},
+\end{align}\]
+
+<p>are $\pi/2$ out of phase. Taking the $\arctan$ of the ratio allows the phase, $\phi (x,t) + 2\pi f_0x + \delta_0$, to be extracted:</p>
+
+\[\begin{equation*}
+W( \phi (x,t) + 2\pi f_0x + \delta_0) = \arctan\left ( \frac{\operatorname{Re} [d(x,t) ]}{\operatorname{Im} [d(x,t) ]} \right ).
+\end{equation*}\]
+
+<p><img src="http://www.bdhammel.com/assets/visar/Wrapped_Phase.png" alt="VISAR Wrapped Phase" /></p>
+
+<p>The resulting function $W$ has discontinuities representing $\pi$ shifts as the $\arctan$ moves through full rotations. The velocity signal can be constructed by removing these discontinuites and scaling the values by the proportionality factor VPF. The programatic method for reconstructing the velocity trace from the time dependent values in the wrapped phase can be accomplished via the psudocode bellow:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">_max_dphase</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.</span> <span class="o">-</span> <span class="n">_threshold</span>
+<span class="n">_min_dphase</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">_max_dphase</span>
+<span class="n">vpf</span> <span class="o">=</span> <span class="mf">1.998</span> <span class="c1"># velocity per fringe shift for a given etalon
+</span> 
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">image</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">column_idx</span> <span class="ow">in</span> <span class="n">lenth_of_row</span><span class="p">):</span>
+        <span class="n">dphase</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">row</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> 
+        <span class="k">if</span> <span class="n">dphase</span> <span class="o">&lt;</span> <span class="n">_min_dphase</span><span class="p">:</span>
+            <span class="n">dphase</span> <span class="o">+=</span> <span class="n">np</span><span class="p">.</span><span class="n">pi</span>
+        <span class="k">elif</span> <span class="n">dphase</span> <span class="o">&gt;</span> <span class="n">_max_dphase</span><span class="p">:</span>
+            <span class="n">dphase</span> <span class="o">-=</span> <span class="n">np</span><span class="p">.</span><span class="n">pi</span>
+        <span class="n">v</span> <span class="o">+=</span> <span class="n">dphase</span> <span class="o">*</span> <span class="n">vpf</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">pi</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="http://www.bdhammel.com/assets/visar/Velocity_Map.png" alt="VISAR Velocity Map" /></p>
+
+<p><img src="http://www.bdhammel.com/assets/visar/Velocity.png" alt="VISAR velocity" /></p>
+
+<h3 id="-references"><a name="ref"></a> References</h3>
+
+<ol>
+  <li>R. F. Smith et al.,  “Ramp compression of diamond to five terapascals,” Nature, vol. 511, pp. 330–333, jul 2014.</li>
+  <li>L. Barker and R. Hollenbach, “Laser interferometer for measuring high velocities of any reflecting surface,” Journal of Applied Physics, vol. 43, pp. 4669–4675, November 1972.</li>
+  <li>Y. B. Zel’dovich and Y. P. Raizer, Physics of Shock Waves and High-Temperature Hydrodynamic Phenomena. Dover, 2002.</li>
+  <li>P. Celliers et al., “Line-imaging velocimeter for shock diagnostics at the OMEGA laser facility,” Review of Scientific Instruments, vol. 75, November 2004.</li>
+  <li>D. J. Robinson, “Optically relayed push-pull velocity interferometry resolved in time and position,” Master’s thesis, Washington State University, 2005.</li>
+  <li>G. Fowles, Introduction to Modern Optics. Dover, 1989.</li>
+  <li>M. Takeda et al., “Fourier-transform method of fringe-pattern analysis for computer-based topography and interferometry,” Journal of the Optical Society of America, vol. 72, pp. 156–160, January 1983.</li>
+  <li>D. H. Dolan, “Foundations of VISAR analysis.,” tech. rep., Sandia National Laboratories, Jun 2006.</li>
+</ol>
+
+:ET
