@@ -1,0 +1,297 @@
+I"�\<p><strong><em>Under construction</em></strong></p>
+
+<p>These posts are designed to be a quick overview of each machine learning model. The target audience is people with some ML background who want a quick reference or refresher. The following questions are compiled out of common things brought up in interviews.</p>
+
+<ol>
+  <li>Top-level
+    <ol>
+      <li>What is the high-level version, explain in layman’s terms</li>
+      <li>What scenario should you use it in (classification vs regression, noisy data vs clean data)?</li>
+      <li>What assumptions does the model make about the data?</li>
+      <li>When does the model break/fail (adv &amp; dis-advantages)? What are alternatives?</li>
+    </ol>
+  </li>
+  <li>A bit more detail
+    <ol>
+      <li>How do you normalize the data for the model?</li>
+      <li>What’s the loss function used?</li>
+      <li>What’s the complexity?</li>
+    </ol>
+  </li>
+  <li>In-depth
+    <ol>
+      <li>Probabilistic interpretation</li>
+      <li>Derivation</li>
+      <li>Simple implementation</li>
+    </ol>
+  </li>
+  <li>More on training the model
+    <ol>
+      <li>How can you validate the model?</li>
+      <li>How do you deal with over-fitting?</li>
+      <li>How to deal with imbalanced data?</li>
+    </ol>
+  </li>
+</ol>
+
+<hr />
+
+<h2 id="1-top-level">1. Top-level</h2>
+
+<h3 id="11-high-level-explanation">1.1 High-level explanation</h3>
+
+<p>Logistic regression is a machine learning model for classification, most commonly used for binary classification. The model can be extended to multi-class classification; however, in practice, other approaches are considered more favorable for this task. <a href="#ref">[James et al. Section 4.3.5]</a>. In this post, we will only discuss the mechanics for binary classification.</p>
+
+<p>Logistic regression finds a line-of-separation, otherwise called a ‘decision boundary’, representing the separation in classes describing the given input features.</p>
+
+<p>It is defined by the functional form:</p>
+
+\[\begin{align*}
+y = f(x_1, x_2,\cdots,  x_N) &amp;= \sigma \left (\sum_i^N w_i x_i+b \right ) \\
+&amp;= \frac{1}{1+\exp\left\{ -(x^Tw+b) \right \}}.
+\end{align*}\]
+
+<p>Consider the example below, of two Gaussian clouds centered at (1,1) and (-1,-1):</p>
+
+<p><img src="http://localhost:4000/assets/ml-logistic-regress/fig1.png" alt="" /></p>
+
+<p>It should be obvious that the dashed dividing line, $x_2=-x_1$, separates the two classes, but lets explore this mathematically.</p>
+
+<p>For the sake of this example, we’ll drop the sigmoid from the equation above. Using this, we can describe the system as:</p>
+
+\[f(x_1, x_2) = x_2 + x_1 = 0\]
+
+<p>Where we get $w_1=1$ and $w_2=1$ from the dividing line $x_2=-x_1$ (we know this a priori in this example). We now have the following relationship:</p>
+
+\[f(x, x) = \left\{\begin{matrix}
+{\rm Blue} &amp; {\rm if } &lt; 0 \\
+{\rm Red} &amp; {\rm if } &gt; 0 \\
+\end{matrix}\right.\]
+
+<p>Taking the center point of one of the Gaussian clouds, $(-1,-1)$, and plugging it in to the above equation yields:</p>
+
+\[\begin{align*}
+f(-1,-1) &amp;= -2\\
+-2 &lt; 0 \therefore (-1,-1) &amp;= {\rm Blue}.
+\end{align*}\]
+
+<p>Whereas, the point (1,1) yields:</p>
+
+\[\begin{align*}
+f(1,1) &amp;= 2 \\
+2 &gt;0 \therefore (1,1) &amp;= {\rm Red}.
+\end{align*}\]
+
+<p>Now, the values 2 or -2 are not particularly illuminating. So, we use the sigmoid function to squash the output into a probability <a href="#ref">[Murphy, Section 1.4.6]</a>, such that the output $y&lt;.5\equiv{\rm Blue}$ and $y&gt;.5\equiv{\rm Red}$. To put this graphically:</p>
+
+<p><img src="http://localhost:4000/assets/ml-logistic-regress/fig2.png" alt="" /></p>
+
+<h3 id="12-what-scenario-should-you-use-logistic-regression">1.2 What scenario should you use logistic regression?</h3>
+
+<p>Logistic regression models are used mostly as a data analysis and inference tool, where the goal is to understand the role of the input variables in explaining the outcome. <a href="#ref">[Hastie et al. Section 4.4.1]</a></p>
+
+<h3 id="13-assumptions-of-linear-regression">1.3 Assumptions of linear regression</h3>
+
+<p>The approach makes the explicit assumption that your data can be separated by a line or hyper-plane. Like linear regression, logistic regression is a linear model <a href="#ref">[Murphy, Section 1.4.6]</a>.</p>
+
+<p>Therefore, logistic regression is an appropriate choice when classifying data that is linearly separable. This either has to be innately true or carefully constructed into custom ‘features’ - using sufficient domain knowledge. For example, consider the “donut” problem below:</p>
+
+<p><img src="http://localhost:4000/assets/ml-logistic-regress/fig3.png" alt="" /></p>
+
+<p>This is not a linear classification problem - no straight line will separate these classes. However, similar to the polynomial problem in my <a href="http://localhost:4000/ml-interview-prep-linear-regression/">post on linear regression</a>, we can construct a custom representation of the data by adding an extra dimension:</p>
+
+\[x_3 = \sqrt{x_2^2 + x_1^2}\]
+
+<p><img src="http://localhost:4000/assets/ml-logistic-regress/fig4.png" alt="" /></p>
+
+<p>These clusters can now be separated with a hyperplane in $(x_1, x_2)$-space, at $x_3 \approx 2$.</p>
+
+<h3 id="14-when-the-model-breaks--whats-a-good-backup">1.4 When the model breaks &amp; what’s a good backup?</h3>
+
+<p>The model will break when there is not a linear decision boundary the separates the two classes <a href="#ref">[Murphy, Section 1.4.6]</a>. Depending on the requirements of the problem goal, different methods may be implemented based on a speed-accuracy-and-explainability trade-off.</p>
+
+<p><img src="https://blogs.sas.com/content/subconsciousmusings/files/2017/04/machine-learning-cheet-sheet.png" alt="" /></p>
+
+<h2 id="2-a-bit-more-detail">2. A bit more detail</h2>
+
+<h3 id="21-normalization-of-data">2.1 Normalization of data</h3>
+
+<p>Like Linear regression, normalization is not strictly necessary for logistic regression; however, properly scaling the feature variables can make a huge difference in the speed of convergence during the learning phase. This is because slight variations in the weights of one feature can cause large swings in the error function. In this case, gradient decent will preferentially try to optimize to this variable, leading to oscillations in the loss-space and slowing down the rate of convergence (illustrated below) <a href="#ref">[Goodfellow et al. Section 4.3.1]</a>.</p>
+
+<p><img src="http://localhost:4000/assets/ml-linear-regress/scaling_gd.png" alt="" /></p>
+
+<h3 id="21-loss-function">2.1 Loss function</h3>
+
+<p>The loss function for binary logistic regression is the <em>cross-entropy error</em></p>
+
+\[\mathcal{L} = - \left \{ t\log(y) + (1-t)\log(1-y) \right \}\]
+
+<p>wherein $t$ is the target class, and $y$ is the class predicted by the model.</p>
+
+<p>It can be helpful to notice that only one of these terms will matter at a time. For example given a target class of $t=0$ only the second term will matter, $-\log(1-y)$. Whereas if $t=1$ only the first term will matter, $-\log(y)$.</p>
+
+<h3 id="23-whats-the-complexity">2.3 What’s the complexity</h3>
+
+<p>The complexity for logistic regression is the same as for linear regression:</p>
+
+<p><strong>training</strong>: $\mathcal{O}(p^2n+p^3) $<br />
+<strong>prediction</strong>: $\mathcal{O}(p)$</p>
+
+<p>Wherein $n$ is the number of training sample and $p$ is the number of features <a href="#ref">[8]</a></p>
+
+<h2 id="3-in-depth">3. In-depth</h2>
+
+<h3 id="31-probabilistic-interpretation">3.1 Probabilistic interpretation</h3>
+
+<p>Logistic regression operates on the fundamental assumption that the data falls into a binomial distribution and that each of the data points are independent from one-another.</p>
+
+<p>We approach this derivation this using <a href="https://en.wikipedia.org/wiki/Bayes%27_theorem">Bayes’ Law</a>. For a justification of the Bayesian approach, check out the <a href="http://localhost:4000/2018/10/16/ml-interview-prep-linear-regression.html">probablistic interpretation section, 3.1, of my post on linear regression</a>.</p>
+
+<p>To learn the system, we want to maximize the probability that we correctly predict the correct answer $\hat{Y},$ determined by the equation $\hat{Y} = \sigma \left ( WX \right )$, given our input features $X$ and the true class values $T$. i.e. we want to maximize $ P(\hat{Y}|X, T).$ This is equivalent to saying, “we want to maximise the probability that the weights are correct, given our inputs and class labels, $P(W | X, T)$. Using Bayes rule, we can now write:</p>
+
+\[P(W | X, T) = \frac{P(T | W, X) P(W)}{P(T)}\]
+
+<p>We assume all weights are equally likely and the dataset is balanced, therefore the term in this that we have control over is the likelihood, $P(T |W, X)$ <a href="#ref">[Bishop, Section 4.3.2]</a>. We want to maximize this term during training, thereby maximizing the probability that the data points, $X$, fall into the correct class for a given weight configuration, $W$, $P(T|W,X)$.</p>
+
+<p>We define the likelihood based on out prior belief that the data will fall into a <a href="https://en.wikipedia.org/wiki/Binomial_distribution">binomial distribution</a>.</p>
+
+\[\begin{align*}
+P(T | W) &amp;= P(t_1, t_2, \cdots, t_N | W) \\ 
+&amp;= \prod_{i}^{N} P(t_i | W) \\
+&amp;= \prod_{i}^{N} \hat{y}_i^{t_i}(1-\hat{y}_i)^{1-t_i}
+\end{align*}\]
+
+<p>Taking the negative log of this, to avoid multiply small numbers together and to reduce the complexity of calculating exponents, renders the cross-entropy loss function.</p>
+
+\[-  \log P(X|y) = \sum_i \left \{ t_i\log y_i + (1-t_i)\log (1-y_i) \right \}\]
+
+<p>Where $\hat{y_i} = P(C | W, x_i) = \sigma (Wx_i)$.</p>
+
+<p>To summarize, logistic regression fundamentally assumes the data falls into a binomial distribution, and by <strong>maximizing</strong> the log of the likelihood (log-likelihood) we <strong>minimizing</strong> the cross-entropy error <a href="#ref">[Bishop, Section 4.3.2]</a>.</p>
+
+<h3 id="32-derivations">3.2 Derivations</h3>
+
+<h4 id="321-closed-form-solution">3.2.1 Closed-form solution</h4>
+
+<p>Unlike Linear Regression, we cannot write a general closed-form solution to logistic regression <a href="#ref">[Bishop, Section 4.3.3]</a>.</p>
+
+<h4 id="322-numerical-solution">3.2.2 Numerical solution</h4>
+
+<p>We can use gradient decent,</p>
+
+\[w \leftarrow w - \eta \frac{d}{dw}\mathcal{L},\]
+
+<p>to find the solution numerically <a href="#ref">[Hastie et al. Section 4.4.1]</a>.</p>
+
+<p>With our definition of loss being the cross-entropy, we find it’s derivative with-respect-to the model weights using the chain rule:</p>
+
+\[\frac{d}{dw}\mathcal{L} = \frac{d\mathcal{L}}{dy}\frac{dy}{dz}\frac{dz}{dw}\]
+
+<p>where</p>
+
+\[\begin{align*}
+y &amp;= \sigma(z) \\
+z &amp;= w^Tx \\ \\[5mm]
+\end{align*}\]
+
+<p>We then find the derivatives of each component:</p>
+
+\[\begin{align*}
+\frac{d\mathcal{L}}{dy} &amp;= -\frac{d}{dy} \sum_i \left \{ t_i\log(y_i) + (1-t_i)\log(1-y_i) \right \} \\ 
+&amp;= - t\frac{1}{y_i} - (1-t_i)\frac{1}{1-y_i}, \\ \\[2mm]
+\frac{dy}{dz} &amp;= \frac{d}{dz} \frac{1}{1+\exp(-z)} \\
+&amp;= \frac{1}{1+\exp(-z)}\frac{\exp(-z)}{1+\exp(-z)} \\ 
+&amp;= y(1-y), \\ \\[2mm]
+\frac{dz}{dw} &amp;= \frac{d}{dw} w^Tx \\
+&amp;= x.
+\end{align*}\]
+
+<p>Rendering,</p>
+
+\[\begin{align*}
+\frac{d}{dw}\mathcal{L} = \sum_i (y_i-t_i)x
+\end{align*}\]
+
+<h3 id="33-simple-implementation">3.3 Simple Implementation</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">LogisticRegression</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">randn</span><span class="p">((</span><span class="n">order</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-1</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+        <span class="n">N</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">shape</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">X</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="mi">1</span><span class="p">))))</span>
+
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">epochs</span><span class="p">):</span>
+            <span class="n">Y_hat</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">perdict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+            <span class="n">dL</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">T</span><span class="p">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Y_hat</span><span class="o">-</span><span class="n">Y</span><span class="p">)</span>  <span class="c1"># X^T (Y_hat - Y)
+</span>            <span class="bp">self</span><span class="p">.</span><span class="n">W</span> <span class="o">-=</span> <span class="n">lr</span><span class="o">*</span><span class="n">dL</span>
+
+    <span class="k">def</span> <span class="nf">perdict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">np</span><span class="p">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">X</span><span class="p">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">W</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">coeff</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">W</span><span class="p">.</span><span class="n">flatten</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">generate_data</span><span class="p">():</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">3</span>
+    <span class="n">X</span><span class="p">[</span><span class="mi">100</span><span class="p">:,:]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">X</span><span class="p">[:</span><span class="mi">100</span><span class="p">,:]</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+    <span class="n">Y</span><span class="p">[</span><span class="mi">100</span><span class="p">:]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">Y</span><span class="o">==</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">Y</span><span class="o">==</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s">'b'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="p">.</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">Y</span><span class="o">==</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">Y</span><span class="o">==</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s">'r'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="p">.</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">"$x_1$"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">"$x_2$"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span>
+
+
+<span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">generate_data</span><span class="p">()</span>
+
+<span class="n">lr</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">lr</span><span class="p">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+
+<span class="n">w1</span><span class="p">,</span> <span class="n">w2</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">lr</span><span class="p">.</span><span class="n">coeff</span><span class="p">()</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">m</span> <span class="o">=</span> <span class="o">-</span><span class="n">w1</span><span class="o">/</span><span class="n">w2</span>
+<span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="p">.</span><span class="mi">5</span><span class="p">)</span><span class="o">/</span><span class="n">w2</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">m</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">b</span>
+
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"The decision boundary is along: x2 = </span><span class="si">{</span><span class="n">m</span><span class="p">:.</span><span class="mi">0</span><span class="n">f</span><span class="si">}</span><span class="s">x1 + </span><span class="si">{</span><span class="n">b</span><span class="p">:.</span><span class="mi">0</span><span class="n">f</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s">'--'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="http://localhost:4000/assets/ml-logistic-regress/fig5.png" alt="" /></p>
+
+<p><code class="language-plaintext highlighter-rouge">The decision boundary is along: x2 = -1x1 + 0</code></p>
+
+<h2 id="4-training-themodel">4. Training the model:</h2>
+<h3 id="41-how-can-you-validate-themodel">4.1 How can you validate the model?</h3>
+<h3 id="42-how-do-you-deal-with-over-fitting">4.2 How do you deal with over-fitting?</h3>
+<h3 id="43-how-to-deal-with-imbalanced-data">4.3 How to deal with imbalanced data?</h3>
+
+<div id="ref"></div>
+<h2 id="5-references">5. References</h2>
+
+<p>These notes above have been compiled from a variety of sources:</p>
+
+<ol>
+  <li><a href="https://www.amazon.com/Introduction-Statistical-Learning-Applications-Statistics/dp/1461471370">G. James, D. Witten, T. Hastie, and R. Tibshirani. An Introduction to Statistical Learning. Springer, 2017.</a></li>
+  <li><a href="https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf">C. M. Bishop. Pattern Recognition and Machine Learning. Springer, 2011.</a></li>
+  <li><a href="https://mitpress.mit.edu/books/machine-learning-1">K. P. Murphy. Machine Learning: A Probabilistic Perspective. The MIT Press, 2012.</a></li>
+  <li><a href="https://web.stanford.edu/~hastie/Papers/ESLII.pdf">T. Hastie, R. Tibshirani, and J. Friedman. The Elements of Statistical Learning, Second Edition. Springer, 2016.</a></li>
+  <li><a href="https://www.deeplearningbook.org/">I. Goodfellow, Y. Bengio, and A. Courville. Deep Learning. MIT Press, 2016.</a></li>
+  <li><a href="http://cs229.stanford.edu/notes/cs229-notes1.pdf">A. Ng, CS229 Lecture notes, 2018</a></li>
+  <li><a href="http://sebastianraschka.com/Articles/2014_about_feature_scaling.html">S. Raschka, About Feature Scaling, 2014</a></li>
+  <li><a href="https://www.thekerneltrip.com/machine/learning/computational-complexity-learning-algorithms/">Computational complexity learning algorithms</a></li>
+</ol>
+:ET

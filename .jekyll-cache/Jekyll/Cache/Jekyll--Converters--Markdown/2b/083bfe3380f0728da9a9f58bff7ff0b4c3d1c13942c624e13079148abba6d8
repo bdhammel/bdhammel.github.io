@@ -1,0 +1,2 @@
+I"q<p>This post outlines the FFT analysis routine for line-VISAR data. The code implementing this  routine can be found here: <a href="https://github.com/bdhammel/line-visar-analysis">https://github.com/bdhammel/line-visar-analysis</a>. I benchmark this script against the published data by <a href="#ref">Smith et al.</a> on the ramp compression of diamond to 5 TPa.</p>
+:ET

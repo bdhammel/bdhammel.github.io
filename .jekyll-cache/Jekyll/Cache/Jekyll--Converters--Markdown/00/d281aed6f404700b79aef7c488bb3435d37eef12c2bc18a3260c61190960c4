@@ -1,0 +1,219 @@
+I"�-<p>These posts are designed to be a quick overview of each machine learning model. The target audience is people with some ML background who want a quick reference or refresher. The following questions are compiled out of common things brought up in interviews.</p>
+
+<ol>
+  <li>Top-level
+    <ol>
+      <li>What is the high-level version, explain in layman’s terms</li>
+      <li>What scenario should you use it in (classification vs regression, noisy data vs clean data)?</li>
+      <li>What assumptions does the model make about the data?</li>
+      <li>When does the model break/fail (adv &amp; dis-advantages)? What are alternatives?</li>
+    </ol>
+  </li>
+  <li>A bit more detail
+    <ol>
+      <li>How do you normalize the data for the model?</li>
+      <li>What’s the complexity?</li>
+    </ol>
+  </li>
+  <li>In-depth
+    <ol>
+      <li>Probabilistic interpretation</li>
+      <li>Derivation</li>
+      <li>Simple implementation</li>
+    </ol>
+  </li>
+  <li>More on training the model
+    <ol>
+      <li>How can you validate the model?</li>
+      <li>How do you deal with over-fitting?</li>
+      <li>How to deal with imbalanced data?</li>
+    </ol>
+  </li>
+</ol>
+
+<hr />
+
+<h2 id="1-top-level">1. Top-level</h2>
+
+<h3 id="11-high-level-explanation">1.1 High-level Explanation</h3>
+
+<p>K means is an unsupervised clustering algorithm which will attempt to find the center of “like features” based on the summed euclidean distance of all data given. This algorithm is greedy in the sense that its decision to group things is absolute. Consider the example below of two Gaussian clouds. We assume that a K means algorithm found the center of the clusters to be $(-2,-2)={\rm Blue}$, and $(2,2)={\rm Red}$. We then get a new data point at location $(0,0.1)$, shown in black, and we ask “What cluster does this point belong to?”</p>
+
+<p>To find which cluster this new data point would belong to, we find the euclidean distance to the centers.</p>
+
+\[\begin{align*}
+\Delta_b &amp;=  \sqrt { \sum_i \left( c^b_i - x_i \right)^2 } \\
+&amp;= 2.9 \\ \\[5mm]
+\Delta_r &amp;=  \sqrt { \sum_i \left( c^r_i - x_i \right)^2 } \\ 
+&amp;= 2.76
+\end{align*}\]
+
+<p>Because $\Delta_r &lt; \Delta_b$ we say (with 100% confidence) that the new data point belongs to the ${\rm Red}$ cluster.</p>
+
+<h3 id="12-what-scenario-should-you-use-k-means">1.2 What scenario should you use K means?</h3>
+
+<p>K-means is a general-purpose clustering approach (the fastest). It can be used when even-sized spherical clusters can be assumed. It preforms best when there are only a few clusters.</p>
+
+<p>In industry, k-means is used in: User segmentation (based on behaviors, like purchase history, interests). Grouping inventory based on sales activity. Detecting bots from humans. Seeing if a tracked point is changing groups over time. Detect activity types in motion sensors</p>
+
+<h3 id="13-how-does-this-deal-with-outliers-skewed-data">1.3 How does this deal with outliers? Skewed data?</h3>
+
+<p>It is sensitive to outliers. (k-medians will be less sensitive.)</p>
+
+<p>With squared error metric, outliers will influence cluster formation.  Resulting clusters may not be truly representative of what they should be, SSE metric is higher as well.  Depending on application, it can be useful to discover and remove outliers beforehand.  Alternatively, outliers can be removed during preprocessing.  Keep track of SSE contributed by each point, and eliminate those points with unusually high contributions, especially over multiple runs.</p>
+
+<p>During post-processing, can also eliminate small clusters since they can frequently represent groups of outliers.</p>
+
+<h3 id="14-what-types-of-features-does-the-model-use">1.4 What types of features does the model use?</h3>
+
+<p>The model makes the assumption that the data is clustered into spherical groups: Text, and continuous data. It doesn’t work with categorical… but there are some ways to do it)</p>
+
+<ul>
+  <li>Assumes Numeric data. Doesn’t work with Categorical (Cardinal or Ordinal) data.</li>
+  <li>To avoid this, feature engineering can be done:</li>
+  <li>
+    <ol>
+      <li>Ordinal data can be replaced with arithmetic sequence of appropriate difference. Say, small/large can be replaced by 5/10. Because of unit normalization, difference doesn’t really matter.</li>
+    </ol>
+  </li>
+  <li>
+    <ol>
+      <li>For cardinal data the values can be converted to binary values. However, this increases the dimensions (leading to the curse of dimensionality). So another approach is to use a different distance for categorical data; like Gower distance in R, Hamming distance in k-modes. (Gower distance is a dissimilarity measure.)</li>
+    </ol>
+  </li>
+</ul>
+
+<h3 id="14-when-does--the-model-break">1.4 When does  the model break?</h3>
+<p>The model will break when the data does not fall into spherical groups. For example, consider two elliptical cluster:</p>
+
+<p>The “X-marker” marks the predicted centers of the ${\rm Red}$ and ${\rm Blue}$ clusters. We can see it’s converged to an incorrect location, despite there being an obvious separation of the data.</p>
+
+<h3 id="15-what-to-use-when-it-breaks-whats-a-good-back-up">1.5 What to use when it breaks? Whats a good back up?</h3>
+
+<p>It depends on how the method breaks:</p>
+
+<p>Sklearn has a good table on the use cases and fall-back models for clustering:</p>
+
+<p>http://scikit-learn.org/stable/modules/clustering.html</p>
+
+<p>DB scan seems pretty cool…</p>
+
+<p>One fix that is worth talking about in more detail is to use “soft kmeans,” also called “Fuzzy Clustering”. Soft kmeans will take into account the distance of a point from the centroid, thereby assigning a “confidence” to the value belonging to that cluster. This can be important for handling outliers, as in the first example. Soft kmeans is described more below.</p>
+
+<h2 id="2-a-bit-more-detail">2. A bit more detail</h2>
+
+<h3 id="21-normalize--of-data">2.1 Normalize  of data</h3>
+
+<p>Because we’re concerned with euclidean distance,</p>
+
+\[\Delta = \sqrt{ (x-\mu_x)^2 + (y-\mu_y)^2 },\]
+
+<p>if the coordinates have a different scaling, then k means will preferentially cluster the point on the axis with shorter distance. Therefore should scale the features to, make 0 mean and unit variance (from -1 to 1, along each dimension).</p>
+
+<p>In the end this depends on the data: latitude and longitude should not scaled, because this will cause distortions.</p>
+
+<h3 id="22-how-to-initialize-parameters">2.2 How to initialize parameters?</h3>
+
+<p>The parameter to be initialized is the k (number of clusters).</p>
+
+<p>Choosing the k centroids:</p>
+<ul>
+  <li>The most basic method is to choose k random samples from the dataset. [According to Andrew Ng, run k means multiple times, and choose the one with the lowest cost.]</li>
+  <li>
+    <ul>
+      <li>However, to avoid local minimum, one method is to use the k-means++ initialization scheme. This initializes the centroids to be (generally) distant from each other, leading to provably better results than random initialization. This is implemented in scikit-learn.
+        <h3 id="23-whats-the-loss-function-used">2.3 What’s the loss function used?</h3>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>Soft and hard Kmeans algorithms implement coordinate descent (not gradient descent), such that the center of the centroid is updated based on the mean (or weighted mean) of the data points assigned to that cluster. Because both of these functions are monotonically decreasing, kmeans is guaranteed to converge; however, it will probably converge to a local minima.</p>
+
+<h4 id="231-hard-kmeans">2.3.1 Hard Kmeans</h4>
+
+<p>The loss function for hard kmeans is the</p>
+
+\[\mu_i \leftarrow \cfrac{\sum_i x_i}{\sum_i i}\]
+
+<h4 id="231-soft-kmeans">2.3.1 Soft Kmeans</h4>
+
+<p>In soft k means, the loss function is weighted by a probability that the data point belongs to that cluster, denoted the ‘responsibility’, $r$.</p>
+
+\[\mu_i \leftarrow \cfrac{\sum_n r_i^n x^n}{\sum_n r_i^n }\]
+
+<p>with</p>
+
+\[r_{i}^n = \cfrac{ \exp \left \{- \beta \delta(\mu_i, x^n) \right \}}{\sum_j \exp \left \{- \beta \delta(\mu_j, x^n) \right \} }\]
+
+<p>$\delta$ being the euclidean distance between a point x_i and the closest centroid, $\mu$, and $\beta$ is a weighting constant (I think usually it’s just set to 1) <strong>Look this up</strong>.</p>
+
+<p>This method alleviates the ambiguity of a point belonging to a certain class, as in the first example of a point landing in the middle of two clusters.</p>
+
+<h4 id="233-visulization-of-soft-and-hard-kmeans">2.3.3 Visulization of Soft and Hard Kmeans</h4>
+
+<p>Consider the two gaussian clouds in 1D below</p>
+
+<h3 id="24-whats-the-complexity-does-it-scale">2.4 What’s the complexity? Does it scale?</h3>
+
+<p>The complexity of the problem is of the order</p>
+
+\[\mathcal{O}(I\cdot N\cdot D \cdot C)\]
+
+<p>wherein $I$ is iterations; $N$ is number of data points; $D$ is dimensions; and $C$ is the number of clusters. Some short cuts can be taken, such as only taken a small sample of the total number of data points (mini-batch). K-means will still struggle with large datasets, but it does better than the other options.</p>
+
+<h2 id="3-in-depth">3. In-depth</h2>
+
+<h3 id="31-derive-the-math">3.1 Derive the math</h3>
+
+<p>The math behind kmeans is quite simple, and there’s nothing really to derive, so we’ll just do a simple step-by-step example. Say we have data that we’re trying to cluster, we drop two centroids onto the data at random locations:</p>
+
+<p>To converge on the clusters we will do the following steps:</p>
+
+<ol>
+  <li>Calculate the distance from every single data point to centroid 1 and centroid 2</li>
+  <li>Assign each data point to the centroid that it is closer to</li>
+  <li>For every single data point assigned to a cluster, take the mean value $\frac{1}{N}\sum_i (x_i, y_i)$</li>
+  <li>Move the centroid to this coordinate</li>
+  <li>Repeat</li>
+</ol>
+
+<h3 id="32-simple-implementation">3.2 Simple implementation</h3>
+
+<h2 id="4-more-on-training-the-model">4. More on training the model</h2>
+
+<h3 id="41-how-to-deal-with-imbalanced-data">4.1 How to deal with imbalanced data?</h3>
+
+<p>k-means does not care about cluster cardinalities</p>
+
+<h3 id="42-how-well-does-it-generalize-to-unseen-data-over-fitting-vs-under-fitting">4.2 How well does it generalize to unseen data (over-fitting vs under-fitting)?</h3>
+
+<p>overfits if u set k=n, underfits if k = 1</p>
+
+<h3 id="43-what-if-you-have-many-more-features-than-sample-points-vice-versa-a-variation-of-the-above-overunder-fitting">4.3 What if you have MANY more features than sample points? Vice versa? (A variation of the above over/under fitting)</h3>
+
+<p>Curse of dimensionality. In high dimensions the (euclidean) distances are similar, making them pretty much useless.</p>
+
+<h3 id="44-how-can-you-validate-the-model">4.4 How can you validate the model?</h3>
+
+<h4 id="441-purity">4.4.1 Purity</h4>
+
+<p>External validation method:</p>
+
+\[P = \frac{1}{N} \sum_k^K \max_{j=1...K} \left | c_k \cap  t_j \right |\]
+
+<h4 id="442-davis-bouldin-index">4.4.2 Davis-Bouldin Index</h4>
+
+<p>Internal validation method:</p>
+
+\[DBI = \frac{1}{K}\sum_i^K \max_{j \neq k} \left [ \frac{\sigma_j + \sigma_k}{\delta(c_j, c_k)} \right ]\]
+
+<p>with $\sigma$ = average distance between each data point and the cluster center, i.e.</p>
+
+\[\sigma_j = \frac{1}{N}\sum_i \delta(c_j, x_i)\]
+
+<h3 id="45--does-the-model-emphasize-type-1-or-type-2-errors">4.5  Does the model emphasize Type 1 or Type 2 errors?</h3>
+
+<p>For anomaly detection, its shown to have LOW type 1 errors (false positives). We can use precision and recall (though not widely reused), but of course we need to know the labels</p>
+
+:ET

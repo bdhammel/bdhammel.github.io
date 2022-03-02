@@ -14,7 +14,7 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 title: B. D. Hammel
-email: bdhammel@gmail.com
+  # email: bdhammel@gmail.com
 description: AI researcher, physicist, python junkie, wannabe electrical engineer, outdoors enthusiast
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://www.bdhammel.com" # the base hostname & protocol for your site, e.g. http://example.com

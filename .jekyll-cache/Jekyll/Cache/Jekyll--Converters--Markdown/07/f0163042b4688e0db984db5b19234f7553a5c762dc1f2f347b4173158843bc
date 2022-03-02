@@ -1,0 +1,155 @@
+I"O(<h2 id="anatomy-of-a-neural-network">Anatomy of a Neural Network</h2>
+
+<p>This seems to be the most common illustration of a neural network.</p>
+
+<p><img src="http://localhost:4000/assets/backprop/nn.png" alt="" /></p>
+
+<p>In this diagram, the edges of the graph are the network weights and the nodes are the neurons. That is,</p>
+
+<p><img src="http://localhost:4000/assets/backprop/neuron.png" alt="" /></p>
+
+\[h_1 = {\rm activation} \left \{ \sum_i w_{1i} x_i + b_1  \right \}\]
+
+<p>Visualizing this network as a computational graph is a different representation, but it describes the same behaviors. However, this visualization will make it much easier to understand the mechanics of back propagation <a href="https://www.deeplearningbook.org/contents/optimization.html">[Goodfellow, s6.5.1]</a>.</p>
+
+<p><img src="http://localhost:4000/assets/backprop/graph.png" alt="" /></p>
+
+<p>Here, the edges are data (e.g. input data, weights, biases, intermediate results, etc) and the nodes are computational operations (e.g. dot product, relu, convolution, loss function). This is the visualization of a network you would get if you were to export a pytorch model and visualize it in <a href="https://netron.app/?url=https://media.githubusercontent.com/media/onnx/models/main/vision/classification/squeezenet/model/squeezenet1.0-3.onnx">netron</a>, or inspect <a href="https://www.tensorflow.org/guide/intro_to_graphs">the static graph of a tensorflow model</a>.</p>
+
+<h2 id="back-propagation">Back Propagation</h2>
+
+<p>Looking at the graph, we said the edges (connection) were data and the nodes (circles) were operations. In the forward direction these edges are our intermediate results, in the backwards direction these edges are our gradients. (For the sake of simplicity lets assume all values are scalars, at this time).</p>
+
+<p><img src="http://localhost:4000/assets/backprop/grad.png" alt="" /></p>
+
+<p>We want to update our model’s weights, $W$ and $b$, based on how right or how wrong our prediction is. To quantify how far off from our target we are, we’ll use the ${\rm L}_1$-Loss function (i.e. the absolute value of the difference).</p>
+
+\[L_1(y,t) = \sum_i |y_i-t_i|\]
+
+<p>with $y$ being our prediction and $t$ being our target value.</p>
+
+<p>Lets first look at updating $b_2$ using the <a href="https://en.wikipedia.org/wiki/Stochastic_gradient_descent">SGD updating scheme</a> with learning rate $\eta$.</p>
+
+\[b_2 \leftarrow b_2 - \eta \frac{d\mathcal{L}}{db_2}\]
+
+<p>To do this, we need to find $\frac{d\mathcal{L}}{db_2}$. This is our gradient.</p>
+
+<p>As you can see in the graph, $\mathcal{L}$ isn’t directly a function of $b_2$ . Instead we have the sequence of equations</p>
+
+\[\begin{align}
+  y_2 &amp;= b_2 + z_2   \\
+  \mathcal{L} &amp;= |y_2 - t|
+\end{align}\]
+
+<p><img src="http://localhost:4000/assets/backprop/dldb.png" alt="" /></p>
+
+<p>To better visualize the gradients, we’ll rewrite our sequence of equations above in operator form:</p>
+
+\[\begin{align}
+  y_2 &amp;= {\rm add}(b_2, z_2)  \\
+  \mathcal{L} &amp;= {\rm abs}(y_2, t)
+\end{align}\]
+
+<p>From this, we can see how the chain rule allows us to update $b$ based on $\mathcal{L}$</p>
+
+<p><img src="http://localhost:4000/assets/backprop/dplusdb.png" alt="" /></p>
+
+<p>where $\frac{d}{db_2}{\small \rm add_2}$ is the derivative of the operation $(z_2 + b_2)$ w.r.t. $b_2$</p>
+
+\[\begin{align}
+  &amp;\frac{d}{db_2} (z_2 + b_2) = 1  \\
+  &amp;\frac{d}{dy_2} {\rm abs}(y_2, t) = \text{sgn} (y_2-t)
+\end{align}\]
+
+<p>The gradient is then the product of all of the edges between the weight we want to update and our loss</p>
+
+<p><img src="http://localhost:4000/assets/backprop/dldb-chain.png" alt="" /></p>
+
+<p>For the other values we keep doing the same thing,</p>
+
+<p><img src="http://localhost:4000/assets/backprop/dplusdz.png" alt="" /></p>
+
+<p>Once we’ve calculated the gradient at an edge, we don’t need to recalculate it. If we’re finding the gradients upstream, we only need to preform the chain run back to the previous calculation.</p>
+
+<p><img src="http://localhost:4000/assets/backprop/dmuldw.png" alt="" /></p>
+
+<p>Where, in the above graph, we already know $\frac{d \mathcal{L}}{dz_2}$. such that</p>
+
+\[\begin{align}
+\frac{d \mathcal{L}}{dz_2} &amp; = \frac{d{\rm add_2}}{dz_2}\frac{d {\rm abs}}{dy_2}\\
+&amp; = 1 \cdot \text{sgn} (y_2-t)
+\end{align}\]
+
+<p>so we only need to calculate $\frac{d {\rm mul_2}}{dW_2}$.</p>
+
+\[\frac{d {\rm mul_2}}{dW_2} = x_2\]
+
+<p>giving us our weight update term</p>
+
+\[W_2 \leftarrow W_2 + \eta \frac{d\mathcal{L}}{dW_2}\]
+
+<p>wherein our gradient is:</p>
+
+\[\begin{align}
+  \frac{d\mathcal{L}}{dW_2} &amp;=  \frac{d {\rm mul_2}}{dW_2}\frac{d \mathcal{L}}{dz_2} \\
+  &amp;= x_2 \cdot 1 \cdot \text{sgn}(y_2-t)
+\end{align}\]
+
+<p>The whole graph can be filled in like this.</p>
+
+<p>If we were to write our own framework, we can put this into code by specifying the forward function, and the derivative of that function with respect to it’s inputs. The gradient we calculate from this is then passed to the parent operation to use in that calculation.</p>
+
+<p>For example, the operation of a dot product might look like this:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>class MatMul:
+     def __init__(self, shape):
+         self.w = np.random.rand(*shape)
+
+     def forward(self, x):
+         self.x = x
+         return self.x @ self.w
+
+     def backward(self, grad):
+         self.dldw = self.x.T @ grad
+         dldx = grad @ self.w.T
+         return dldx
+
+     def update(self, eta):
+         self.w += eta * self.dldw
+</code></pre></div></div>
+
+<p>where the derivatives are extended to support <a href="https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf">tensor values</a>.</p>
+
+<p>As Andre Karpathy said: <a href="https://karpathy.medium.com/yes-you-should-understand-backprop-e2f06eab496b">yes, you should really understand backprop</a> (which, btw, would be a really good article to read as a follow up). Hopefully this post has helped to make sense of this algorithm.</p>
+
+<p>To continue to build intuition, it can be helpful to play around with an autograd framework (like pytorch). Try to use the code snippit below to answers some questions like:</p>
+<ul>
+  <li>Why is it a bad idea to initialize all the weights in your network to 0?</li>
+  <li>Is it a problem if you only initialize one set of weights in your network to 0</li>
+  <li>What is the gradient of the <code class="language-plaintext highlighter-rouge">maxpool</code> function? Why does this make sense?</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">torch</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="n">nn</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">parameter</span><span class="p">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">retain_grad</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">w</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">parameter</span><span class="p">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">w</span><span class="p">.</span><span class="n">retain_grad</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">b</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">parameter</span><span class="p">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">b</span><span class="p">.</span><span class="n">retain_grad</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span> <span class="o">@</span> <span class="n">w</span> <span class="o">+</span> <span class="n">b</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">z</span><span class="p">.</span><span class="n">retain_grad</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">relu</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">l</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="nb">abs</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">l</span><span class="p">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">z</span><span class="p">.</span><span class="n">grad</span>  <span class="c1"># inspect the gradient of an intermediate result
+</span></code></pre></div></div>
+
+<p>Of course, there’s no better substitute for learning this than building your own autograd framework. I recommend <a href="https://nnfs.io">neural networks from scratch</a> as a step-by-step guide to building your own “pytorch” or “tensorflow”.</p>
+
+<div id="ref"></div>
+<h2 id="references">References</h2>
+<ul>
+  <li></li>
+</ul>
+:ET
