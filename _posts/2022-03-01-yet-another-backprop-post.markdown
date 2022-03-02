@@ -48,7 +48,11 @@ $$
 
 To do this, we need to find $\frac{d\mathcal{L}}{db_2}$. This is our gradient.
 
-As you can see in the graph, $\mathcal{L}$ isn't directly a function of $b_2$ . Instead we have the sequence of equations
+As you can see in the graph, $\mathcal{L}$ isn't directly a function of $b_2$.
+
+![]({{ site.url}}/assets/backprop/dldb.png)
+
+Instead we have the sequence of equations
 
 $$
 \begin{align}
@@ -56,8 +60,6 @@ $$
   \mathcal{L} &= |y_2 - t|
 \end{align}
 $$
-
-![]({{ site.url}}/assets/backprop/dldb.png)
 
 To better visualize the gradients, we'll rewrite our sequence of equations above in operator form:
 
@@ -112,7 +114,7 @@ $$
 giving us our weight update term
 
 $$
-W_2 \leftarrow W_2 + \eta \frac{d\mathcal{L}}{dW_2}
+W_2 \leftarrow W_2 - \eta \frac{d\mathcal{L}}{dW_2}
 $$
 
 wherein our gradient is:
@@ -147,7 +149,7 @@ class MatMul:
          return dldx
 
      def update(self, eta):
-         self.w += eta * self.dldw
+         self.w -= eta * self.dldw
 ```
 
 where the derivatives are extended to support [tensor values](https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf).
