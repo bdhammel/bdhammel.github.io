@@ -54,7 +54,7 @@ Consider the example below, of two Gaussian clouds centered at (1,1) and (-1,-1)
 
 ![]({{ site.url}}/assets/ml-logistic-regress/fig1.png)
 
-It should be obvious that the dashed dividing line, $x_2=-x_1$, separates the two classes, but lets explore this mathematically.
+It should be obvious that the dashed dividing line, $x_2=-x_1$, separates the two classes, but let's explore this mathematically.
 
 For the sake of this example, we'll drop the sigmoid from the equation above. Using this, we can describe the system as:
 
@@ -117,7 +117,7 @@ These clusters can now be separated with a hyperplane in $(x_1, x_2)$-space, at 
 
 ### 1.4 When the model breaks & what's a good backup?
 
-The model will break when there is not a linear decision boundary the separates the two classes [[Murphy, Section 1.4.6]](#ref). Depending on the requirements of the problem goal, different methods may be implemented based on a speed-accuracy-and-explainability trade-off.
+The model will break when there is not a linear decision boundary that separates the two classes [[Murphy, Section 1.4.6]](#ref). Depending on the requirements of the problem goal, different methods may be implemented based on a speed-accuracy-and-explainability trade-off.
 
 ![](https://blogs.sas.com/content/subconsciousmusings/files/2017/04/machine-learning-cheet-sheet.png)
 
@@ -125,7 +125,7 @@ The model will break when there is not a linear decision boundary the separates 
 
 ### 2.1 Normalization of data 
 
-Like Linear regression, normalization is not strictly necessary for logistic regression; however, properly scaling the feature variables can make a huge difference in the speed of convergence during the learning phase. This is because slight variations in the weights of one feature can cause large swings in the error function. In this case, gradient decent will preferentially try to optimize to this variable, leading to oscillations in the loss-space and slowing down the rate of convergence (illustrated below) [[Goodfellow et al. Section 4.3.1]](#ref).
+Like Linear regression, normalization is not strictly necessary for logistic regression; however, properly scaling the feature variables can make a huge difference in the speed of convergence during the learning phase. This is because slight variations in the weights of one feature can cause large swings in the error function. In this case, gradient descent will preferentially try to optimize to this variable, leading to oscillations in the loss-space and slowing down the rate of convergence (illustrated below) [[Goodfellow et al. Section 4.3.1]](#ref).
 
 ![]({{ site.url}}/assets/ml-linear-regress/scaling_gd.png)
 
@@ -148,17 +148,17 @@ The complexity for logistic regression is the same as for linear regression:
 **training**: $\mathcal{O}(p^2n+p^3) $  
 **prediction**: $\mathcal{O}(p)$
 
-Wherein $n$ is the number of training sample and $p$ is the number of features [[8]](#ref)
+Wherein $n$ is the number of training samples and $p$ is the number of features [[8]](#ref)
 
 ## 3. In-depth
 
 ### 3.1 Probabilistic interpretation 
 
-Logistic regression operates on the fundamental assumption that the data falls into a binomial distribution and that each of the data points are independent from one-another.  
+Logistic regression operates on the fundamental assumption that the data falls into a binomial distribution and that each of the data points is independent from one-another.  
 
 We approach this derivation this using [Bayes' Law](https://en.wikipedia.org/wiki/Bayes%27_theorem). For a justification of the Bayesian approach, check out the [probablistic interpretation section, 3.1, of my post on linear regression]({{site.url}}/2018/10/16/ml-interview-prep-linear-regression.html).
 
-To learn the system, we want to maximize the probability that we correctly predict the correct answer $\hat{Y},$ determined by the equation $\hat{Y} = \sigma \left ( WX \right )$, given our input features $X$ and the true class values $T$. i.e. we want to maximize $ P(\hat{Y}\|X, T).$ This is equivalent to saying, "we want to maximise the probability that the weights are correct, given our inputs and class labels, $P(W \| X, T)$. Using Bayes rule, we can now write:
+To learn the system, we want to maximize the probability that we correctly predict the correct answer $\hat{Y},$ determined by the equation $\hat{Y} = \sigma \left ( WX \right )$, given our input features $X$ and the true class values $T$. i.e. we want to maximize $ P(\hat{Y}\|X, T).$ This is equivalent to saying, "we want to maximize the probability that the weights are correct, given our inputs and class labels, $P(W \| X, T)$. Using Bayes rule, we can now write:
 
 $$
 P(W | X, T) = \frac{P(T | W, X) P(W)}{P(T)}
@@ -166,7 +166,7 @@ $$
 
 We assume all weights are equally likely and the dataset is balanced, therefore the term in this that we have control over is the likelihood, $P(T \|W, X)$ [[Bishop, Section 4.3.2]](#ref). We want to maximize this term during training, thereby maximizing the probability that the data points, $X$, fall into the correct class for a given weight configuration, $W$, $P(T\|W,X)$.
 
-We define the likelihood based on out prior belief that the data will fall into a [binomial distribution](https://en.wikipedia.org/wiki/Binomial_distribution).
+We define the likelihood based on our prior belief that the data will fall into a [binomial distribution](https://en.wikipedia.org/wiki/Binomial_distribution).
 
 $$
 \begin{align*}
@@ -194,7 +194,7 @@ Unlike Linear Regression, we cannot write a general closed-form solution to logi
 
 #### 3.2.2 Numerical solution
 
-We can use gradient decent, 
+We can use gradient descent,
 
 $$
 w \leftarrow w - \eta \frac{d}{dw}\mathcal{L},
@@ -202,7 +202,7 @@ $$
 
 to find the solution numerically [[Hastie et al. Section 4.4.1]](#ref).
 
-With our definition of loss being the cross-entropy, we find it's derivative with-respect-to the model weights using the chain rule:
+With our definition of loss being the cross-entropy, we find its derivative with-respect-to the model weights using the chain rule:
 
 $$
 \frac{d}{dw}\mathcal{L} = \frac{d\mathcal{L}}{dy}\frac{dy}{dz}\frac{dz}{dw}
@@ -252,11 +252,11 @@ class LogisticRegression:
         X = np.hstack((X, np.ones(shape=(N,1))))
 
         for _ in range(epochs):
-            Y_hat = self.perdict(X)
+            Y_hat = self.predict(X)
             dL = X.T.dot(Y_hat-Y)  # X^T (Y_hat - Y)
             self.W -= lr*dL
 
-    def perdict(self, X):
+    def predict(self, X):
         return 1/(1+np.exp(-X.dot(self.W)))
 
     def coeff(self):

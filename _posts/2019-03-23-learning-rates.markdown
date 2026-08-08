@@ -45,13 +45,13 @@ One of the choices you'll make before picking a learning rate is "What optimizer
  - [An overview of gradient descent optimization algorithms](http://ruder.io/optimizing-gradient-descent/)
  - [AdamW and Super-convergence is now the fastest way to train neural nets](https://www.fast.ai/2018/07/02/adam-weight-decay/)
 
-For this post, I'll only be talking about SGD. But, be aware that your choice of optimizer will also effect the learning rate you pick.
+For this post, I'll only be talking about SGD. But, be aware that your choice of optimizer will also affect the learning rate you pick.
 
 ## The connection between learning rate and batch size 
 
-Batch size is another one of those things you'll set initially in your problem. Usually this doesn't require too much thinking: you just increase the batch size until you get an OOM error on your GPU. But lets say you want to scale up and start doing distributed training. 
+Batch size is another one of those things you'll set initially in your problem. Usually this doesn't require too much thinking: you just increase the batch size until you get an OOM error on your GPU. But let's say you want to scale up and start doing distributed training.
 
-[When the minibatch size is multiplied by k, multiply the learning rate by k](https://arxiv.org/pdf/1706.02677.pdf) (All other hyperparameters are kept unchanged (weight decay, etc)
+[When the minibatch size is multiplied by k, multiply the learning rate by k](https://arxiv.org/pdf/1706.02677.pdf) (All other hyperparameters are kept unchanged (weight decay, etc))
 
 $$
 \begin{align*}
@@ -80,7 +80,7 @@ loss: 0.823: 100%|###################################################| 10/10 [03
 Test Accuracy: 62.72%
 ~~~
 
-We get ~63% accuracy, not bad for this little model. But this was pretty slow, it took about 20s/epoch on my Titian 1080ti. Lets bump up the batch size to 512 so it trains a bit faster.
+We get ~63% accuracy, not bad for this little model. But this was pretty slow, it took about 20s/epoch on my Titan 1080ti. Let's bump up the batch size to 512 so it trains a bit faster.
 
 ~~~
 $ python cifar10.py --batch-size 512 --lr .001
@@ -122,7 +122,7 @@ The most effective method I've found for managing learning rate is the approach 
 
 ![Reducing learning rate for resnet training]({{site.url}}/assets/learning-rate/resnet_loss.png)
 
-Every time the loss begins to plateau, the learning rate decreases by a set fraction. The belief is that the model has become caught in region similar to the "high learning rate" scenario shown at the start of this post (or visualized in the 'chaotic' landscape of the VGG-56 model above). Reducing the learning rate will allow the optimizer to more efficiently find the minimum in the loss surface. At this time, one might be concerned about converging to a local minimum. This is where building intuition from an illustrative representation can betray you, I encourage you to convince yourself of the discussion in the "Local minima in deep learning" section.
+Every time the loss begins to plateau, the learning rate decreases by a set fraction. The belief is that the model has become caught in a region similar to the "high learning rate" scenario shown at the start of this post (or visualized in the 'chaotic' landscape of the VGG-56 model above). Reducing the learning rate will allow the optimizer to more efficiently find the minimum in the loss surface. At this time, one might be concerned about converging to a local minimum. This is where building intuition from an illustrative representation can betray you, I encourage you to convince yourself of the discussion in the "Local minima in deep learning" section.
 
 
 ### Use a learning-rate finder
@@ -139,17 +139,17 @@ $$
 \mathcal{L} = \frac{1}{N}\sum_i^N (y_i-wx_i)^2
 $$
 
-If we step through values for $w$ systematically, we can built out a plot of the loss surface. Because this in 1D we can easily visualize it, exactly.
+If we step through values for $w$ systematically, we can build out a plot of the loss surface. Because this in 1D we can easily visualize it, exactly.
 
 ![linerar regression loss surface]({{site.url}}/assets/learning-rate/loss.png)
 
-As we expect, we see a minimum for $\mathcal{L}$ when $w=2.5$. In practice, we wouldn't want to generate this plot. The problem would quickly become intractable if you were to search over every permutation of parameters. Instead, we want to use gradient decent to iteratively converge on the correct $w$.
+As we expect, we see a minimum for $\mathcal{L}$ when $w=2.5$. In practice, we wouldn't want to generate this plot. The problem would quickly become intractable if you were to search over every permutation of parameters. Instead, we want to use gradient descent to iteratively converge on the correct $w$.
 
 $$
 w \leftarrow w - \eta \frac{d\mathcal{L}}{dw},
 $$
 
-To find the optimal learning rate, $\eta$, we randomly select a value for $w$. Lets say we pick "8". For $w=8$ there's a loss associated with that: ~1e3, given by the above graph.
+To find the optimal learning rate, $\eta$, we randomly select a value for $w$. Let's say we pick "8". For $w=8$ there's a loss associated with that: ~1e3, given by the above graph.
 
 We then take a tiny step, which is determined by the smallest learning rate we want to use (`min_lr` in the example implementation code), and recalculate our loss. We didn't move very far, so our loss is about the same, ~1e3.
 

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Maximum Likelihood Estimation and Maximum A Posterior Estimation"
+title:  "Maximum Likelihood Estimation and Maximum A Posteriori Estimation"
 description: A quick description on the difference between MLE and MAP and how to use them
 image: assets/mle-map/apple-scale.png
 tags: [machine learning, data science]
@@ -8,7 +8,7 @@ tags: [machine learning, data science]
 
 ## What is the difference between MLE and MAP?
 
-Maximum likelihood is a special case of Maximum A Posterior estimation. To be specific, MLE is what you get when you do MAP estimation using a _uniform_ prior. Both methods come about when we want to answer a question of the form: "What is the probability of scenario $Y$ given some data, $X$ i.e. $P(Y\|X)$.
+Maximum likelihood is a special case of Maximum A Posteriori estimation. To be specific, MLE is what you get when you do MAP estimation using a _uniform_ prior. Both methods come about when we want to answer a question of the form: "What is the probability of scenario $Y$ given some data, $X$ i.e. $P(Y\|X)$.
 
 A question of this form is commonly answered using Bayes' Law.
 
@@ -26,13 +26,13 @@ $$
 In this scenario, we can fit a statistical model to correctly predict the posterior, $P(Y\|X)$, by maximizing the likelihood, $P(X\|Y)$. Hence "Maximum Likelihood Estimation."
 
 **MAP**   
-If we know something about the probability of $Y$, we can incorporate it into the equation in the form of the prior, $P(Y)$. In This case, Bayes' laws has it's original form.
+If we know something about the probability of $Y$, we can incorporate it into the equation in the form of the prior, $P(Y)$. In this case, Bayes' law has its original form.
 
 $$
 P(Y|X) \propto P(X|Y)P(Y)
 $$
 
-We then find the posterior by taking into account the likelihood and our prior belief about $Y$. Hence "Maximum A Posterior".
+We then find the posterior by taking into account the likelihood and our prior belief about $Y$. Hence "Maximum A Posteriori".
 
 ## Using MLE or MAP estimation to answer a question
 
@@ -40,10 +40,10 @@ Let's say you have a barrel of apples that are all different sizes. You pick an 
 
 ![Apple on scale]({{ site.url}}/assets/mle-map/apple-scale.png)
 
-For the sake of this example, lets say you know the scale returns the weight of the object with an error of +/- a standard deviation of 10g (later, we'll talk about what happens when you don't know the error). We can describe this mathematically as:
+For the sake of this example, let's say you know the scale returns the weight of the object with an error of +/- a standard deviation of 10g (later, we'll talk about what happens when you don't know the error). We can describe this mathematically as:
 
 $$
-{\rm measurment} = {\rm weight} + \mathcal{N}(0, 10g)
+{\rm measurement} = {\rm weight} + \mathcal{N}(0, 10g)
 $$
 
 Let's also say we can weigh the apple as many times as we want, so we'll weigh it 100 times.  
@@ -63,7 +63,7 @@ $$
 
 `The weight of the apple is (69.62 +/- 1.03) g`
 
-<small> If the $\sqrt{N}$ doesnt look familiar, this is the ["standard error"](https://en.wikipedia.org/wiki/Standard_error)</small>
+<small> If the $\sqrt{N}$ doesn't look familiar, this is the ["standard error"](https://en.wikipedia.org/wiki/Standard_error)</small>
 
 No surprises, nothing fancy.
 
@@ -80,7 +80,7 @@ $$
 
 If we make no assumptions about the initial weight of our apple, then we can drop $P(w)$ [[K. Murphy 5.3]](#ref). We'll say all sizes of apples are equally likely (we'll revisit this assumption in the MAP approximation).
 
-Furthermore, we'll drop $P(X)$ - the probability of seeing our data. This is a normalization constant and will be important if we _do_ want to know the probabilities of apple weights. But, for right now, our end goal is to only to find the _most_ probable weight. P(X) is independent of $w$, so we can drop it if we're doing relative comparisons [[K. Murphy 5.3.2]](#ref).
+Furthermore, we'll drop $P(X)$ - the probability of seeing our data. This is a normalization constant and will be important if we _do_ want to know the probabilities of apple weights. But, for right now, our end goal is only to find the _most_ probable weight. P(X) is independent of $w$, so we can drop it if we're doing relative comparisons [[K. Murphy 5.3.2]](#ref).
 
 This leaves us with $P(X\|w)$, our likelihood, as in, what is the likelihood that we would see the data, $X$, given an apple of weight $w$. If we maximize this, we maximize the probability that we will guess the right weight.
 
@@ -106,7 +106,7 @@ So, if we multiply the probability that we would see each individual data point 
 
 There you have it, we see a peak in the likelihood right around the weight of the apple. 
 
-But, you'll notice that the units on the y-axis are in the range of 1e-164. This is because we took the product of a whole bunch of numbers less that 1. If we were to collect even more data, we would end up fighting numerical instabilities because we just cannot represent numbers that small on the computer. To make life computationally easier, we'll use the logarithm trick [[Murphy 3.5.3]](#ref).
+But, you'll notice that the units on the y-axis are in the range of 1e-164. This is because we took the product of a whole bunch of numbers less than 1. If we were to collect even more data, we would end up fighting numerical instabilities because we just cannot represent numbers that small on the computer. To make life computationally easier, we'll use the logarithm trick [[Murphy 3.5.3]](#ref).
 
 $$
 \begin{align}
@@ -128,7 +128,7 @@ These numbers are much more reasonable, and our peak is guaranteed in the same p
 
 **To implement this in code**
 
-Implementing this in code is very simple. The python snipped below accomplishes what we want to do.
+Implementing this in code is very simple. The python snippet below accomplishes what we want to do.
 
 ```Python
 from scipy.stats import norm
@@ -146,15 +146,15 @@ weight = weight_grid[np.argmax(likelihoods)]
 
 ### MLE grid approximation for multiple parameters
 
-Now lets say we don't know the error of the scale. We know that its additive random normal, but we don't know what the standard deviation is
+Now let's say we don't know the error of the scale. We know that its additive random normal, but we don't know what the standard deviation is
 
 $$
-{\rm measurment} = {\rm weight} + \mathcal{N}(0, \sigma)
+{\rm measurement} = {\rm weight} + \mathcal{N}(0, \sigma)
 $$
 
 We can use the exact same mechanics, but now we need to consider a new degree of freedom.
 
-In other words, we want to find the mostly likely weight of the apple **and** the most likely error of the scale
+In other words, we want to find the most likely weight of the apple **and** the most likely error of the scale
 
 $$
 P(w, \sigma |X) \propto P(X|w, \sigma)
@@ -170,7 +170,7 @@ The maximum point will then give us both our value for the apple's weight and th
 
 `The weight of the apple is (69.39 +/- .97) g`
 
-### Maximum A Posterior with a grid approximation
+### Maximum A Posteriori with a grid approximation
 
 In the above examples we made the assumption that all apple weights were equally likely. This simplified Bayes' law so that we only needed to maximize the likelihood
 

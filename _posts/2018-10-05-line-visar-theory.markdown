@@ -20,7 +20,7 @@ $$
 \end{equation}
 $$
 
-The Doppler shifted light is passed through a Mach-Zehnder interferometer, where one leg of the interferometer is delayed by placing an etalon in the ray path. The recombination of the two legs generates a fringe comb pattern overlaid on the image of the target surface. A line-out of this is then recorded using a white-light streak camera. The result is an image with spatial and temporal information of the target, as seen in in the below figure [[smith]](#ref).
+The Doppler shifted light is passed through a Mach-Zehnder interferometer, where one leg of the interferometer is delayed by placing an etalon in the ray path. The recombination of the two legs generates a fringe comb pattern overlaid on the image of the target surface. A line-out of this is then recorded using a white-light streak camera. The result is an image with spatial and temporal information of the target, as seen in the below figure [[smith]](#ref).
 
 ![VISAR Raw data]({{ site.url}}/assets/visar/Raw_Data.png)
 

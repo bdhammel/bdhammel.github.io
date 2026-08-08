@@ -35,7 +35,7 @@ These posts are designed to be a quick overview of each machine learning model. 
 
 ### 1.1 High-level Explanation
 
-Naive Bayes is a generative model for classification. Generative models are 'generative' because they explicit specify the likelihood of the data and the probability of class occurrence. Generative models differ from discriminative models which find a hard decision boundary - separating the target classes - by directly fitting the class posterior [[Murphy. 2.2.3.2]](#ref). Examples of discriminative models would be [logistic regression]({{site.url}}/ml-interview-prep-logistic-regression/) or Decision Trees.
+Naive Bayes is a generative model for classification. Generative models are 'generative' because they explicitly specify the likelihood of the data and the probability of class occurrence. Generative models differ from discriminative models which find a hard decision boundary - separating the target classes - by directly fitting the class posterior [[Murphy. 2.2.3.2]](#ref). Examples of discriminative models would be [logistic regression]({{site.url}}/ml-interview-prep-logistic-regression/) or Decision Trees.
 
 ![http://www.inf.ed.ac.uk/teaching/courses/iaml/2011/slides/naive.pdf]({{site.url}}/assets/ml-naive-bayes/generative_model.png)
 <center><small>Image credit: <a href='#ref'>V. Lavrenko</a></small></center><br/>
@@ -78,7 +78,7 @@ This is defined as the likelihood, e.g. What is the *likelihood* that a select p
 
 Next, we encode our **prior knowledge about the occurrence of the classes** $Y$. For digits, we'll say all values $\\{0, \cdots, 9\\}$ are equally likely. i.e. $P(Y) = 1/10$. However, if we knew this was not the case we can encode this information as well. As a trivial example: if we knew we were classifying binary values we would set $P(Y{=}0) = P(Y{=}1) = .5$ and $P(Y{=}2, \cdots, 9) = 0$.
 
-Now, if all were doing is picking the most likely class, we can drop the denominator $P(X)$. This is the **overall probability of seeing the data** and only serves as a normalization constant; so, it will be constant for each class. We can drop it and still obtain the most likely class:
+Now, if all we're doing is picking the most likely class, we can drop the denominator $P(X)$. This is the **overall probability of seeing the data** and only serves as a normalization constant; so, it will be constant for each class. We can drop it and still obtain the most likely class:
 
 $$
 \begin{align*}
@@ -128,7 +128,7 @@ Wherein $x_j$ is a value missing during inference.
 
 #### 1.2.4 Minority Class
 
-The dataset does not need to be balanced during training. Unlike a discriminative model (which is trained to directly predict the posterior; and, therefore, implicitly assumes the probability of class occurrences, NB requires an explicit description of the class occurrence [[Citation needed]](#ref).
+The dataset does not need to be balanced during training. Unlike a discriminative model (which is trained to directly predict the posterior; and, therefore, implicitly assumes the probability of class occurrences), NB requires an explicit description of the class occurrence [[Citation needed]](#ref).
 
 #### 1.2.5 Small datasets
 
@@ -139,7 +139,7 @@ Naive Bayes is a popular choice when density estimation methods are not appropri
 
 As stated above, NB makes the fundamental assumption that the data points are conditionally independent given the class label [[Murphy, 3.5; Pang-Ning, 5.3.3]](#ref):
 
-Additionally, if the data is continuous or too space, such that the MLE method for generating likelihood cannot be used, then a PDF must be assumed. In the example below, NB will classify the data as described by a Normal distribution. It will make this assumption even if the sample histogram does not immediately mimic the assumed PDF [[Lavrenko, Naive Bayes 3]](#ref).
+Additionally, if the data is continuous or too sparse, such that the MLE method for generating likelihood cannot be used, then a PDF must be assumed. In the example below, NB will classify the data as described by a Normal distribution. It will make this assumption even if the sample histogram does not immediately mimic the assumed PDF [[Lavrenko, Naive Bayes 3]](#ref).
 
 ![]({{site.url}}/assets/ml-naive-bayes/pdf.png)
 <center><small>Image credit: <a href='#ref'>V. Lavrenko</a></small></center><br/>
@@ -157,7 +157,7 @@ Another failure point with Naive Bayes is its inability to separate classes when
  
 #### 1.4.2 Zero-frequency occurrence / Black swan paradox
 
-If an MLE approach is use with Naive Bayes, then the implementer needs to be careful about handling rare-events. Because the finally probability is a function of the products of the likelihoods, an occurrence that has been seen for one class but never been seen for another (lets say $x_j$) will generate a probability of 0 for the second class. This is an unrealistic assumption, to base your entire prediction on the occurrence of one data point.
+If an MLE approach is use with Naive Bayes, then the implementer needs to be careful about handling rare-events. Because the final probability is a function of the products of the likelihoods, an occurrence that has been seen for one class but never been seen for another (let's say $x_j$) will generate a probability of 0 for the second class. This is an unrealistic assumption, to base your entire prediction on the occurrence of one data point.
 
 $$
 P(x_1 + \cdots + x_j + \cdots + x_d | y) = P(x_1|y) \times \cdots \times \underbrace{P(x_j|y)}_0 \times \cdots \times P(x_d|y)
@@ -204,7 +204,7 @@ The model assumes that the features, $X$, are *conditionally* independent from o
 
 ![]({{site.url}}/assets/ml-naive-bayes/cond_indp.png)
 
-**As an example:** if one were to look at the rate of heat stroke and the action of going to the beach, there might be a correlation. However, there is nothing intrinsic about going to the beach that causes heat stroke. So, if we consider an external factor, the temperature, we can model these features as mutually independent. Such that, you're more likely to go to the beach when its hot and your more likely to get heatstroke when its hot [[V. Lavrenko Naive Bayes 2]](#ref). In a NB classifier, the predicted class is this hidden dependence. Such that:
+**As an example:** if one were to look at the rate of heat stroke and the action of going to the beach, there might be a correlation. However, there is nothing intrinsic about going to the beach that causes heat stroke. So, if we consider an external factor, the temperature, we can model these features as mutually independent. Such that, you're more likely to go to the beach when it's hot and you're more likely to get heatstroke when it's hot [[V. Lavrenko Naive Bayes 2]](#ref). In a NB classifier, the predicted class is this hidden dependence. Such that:
 
 $$
 P(Y{=}A | x_1{=}B, x_2{=}C)
@@ -212,7 +212,7 @@ $$
 
 ### 3.2 Derivation
 
-The probability of a event $A$ **and** $B$ occurring, with the Naive Bayes assumption, is
+The probability of an event $A$ **and** $B$ occurring, with the Naive Bayes assumption, is
 
 $$
 P(A \cap B) = P(A|B)P(A).
@@ -236,7 +236,7 @@ $$
 P(H|E) = \cfrac{P(E|H)P(H)}{P(E)}.
 $$
 
-Furthermore, the probability of an event, $P(E)$, is not always intuitively clear. I believe is it more obvious to write this in terms of $P(E)$ as a normalization constant:
+Furthermore, the probability of an event, $P(E)$, is not always intuitively clear. I believe it is more obvious to write this in terms of $P(E)$ as a normalization constant:
 
 $$
 P(H|E) = \cfrac{P(E|H)P(H)}{\sum_{H'} P(E|H')P(H')}.
@@ -305,9 +305,9 @@ class NaiveBayes:
         # Calculate log P(Y|Y) = sum_i{log P(x_i|Y)} + log P(Y)
         # We do this for all cases simultaneously
         for class_, pram in self.params.items():
-            log_liklehood = norm.logpdf(X, loc=pram['means'], scale=pram['std']).sum(axis=1)
+            log_likelihood = norm.logpdf(X, loc=pram['means'], scale=pram['std']).sum(axis=1)
             log_prior = np.log(pram['prior'])
-            log_posterior[:, class_] = log_liklehood + log_prior
+            log_posterior[:, class_] = log_likelihood + log_prior
 
         return np.argmax(log_posterior, axis=1)
     
@@ -345,7 +345,7 @@ It's important to evaluate the classifier in the context of the prior. That is, 
 
 ### 4.2 How do you deal with over-fitting?
 
-Naive bays is a high-bias model, as it only has a few parameters, $\mathcal{O}(dc)$. For the most part, this makes it relatively immune to overfitting [[Murphy, 3.5]](#ref). However, the method in which NB is trained will effect is susceptibility to overfit. If the model is trained with a maximum likelihood procedure, then the likelihood is generated directly from the occurrences in the data. This can then creates the zero-frequency problem, discussed above. Under these circumstances, a distribution for the likelihood must be assumed, or, a strategy such as Laplace smoothing can be used [[Murphy 3.4.1.2]](#ref).
+Naive Bayes is a high-bias model, as it only has a few parameters, $\mathcal{O}(dc)$. For the most part, this makes it relatively immune to overfitting [[Murphy, 3.5]](#ref). However, the method in which NB is trained will affect its susceptibility to overfit. If the model is trained with a maximum likelihood procedure, then the likelihood is generated directly from the occurrences in the data. This can then create the zero-frequency problem, discussed above. Under these circumstances, a distribution for the likelihood must be assumed, or, a strategy such as Laplace smoothing can be used [[Murphy 3.4.1.2]](#ref).
 
 ### 4.3  How to deal with imbalanced data?
 

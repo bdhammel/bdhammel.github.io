@@ -51,7 +51,7 @@ Because $\Delta_r < \Delta_b$ we say (with 100% confidence) that the new data po
 
 ### 1.2 What scenario should you use K means?
 
-K-means is a general-purpose clustering approach (the fastest). It can be used when even-sized spherical clusters can be assumed. It preforms best when there are only a few clusters.
+K-means is a general-purpose clustering approach (the fastest). It can be used when even-sized spherical clusters can be assumed. It performs best when there are only a few clusters.
 
 In industry, k-means is used in: User segmentation (based on behaviors, like purchase history, interests). Grouping inventory based on sales activity. Detecting bots from humans. Seeing if a tracked point is changing groups over time. Detect activity types in motion sensors
 
@@ -65,7 +65,7 @@ During post-processing, can also eliminate small clusters since they can frequen
 
 ### 1.4 What types of features does the model use?
 
-The model makes the assumption that the data is clustered into spherical groups: Text, and continuous data. It doesn't work with categorical... but there are some ways to do it)
+The model makes the assumption that the data is clustered into spherical groups: Text, and continuous data. It doesn't work with categorical... but there are some ways to do it
 
 - Assumes Numeric data. Doesn't work with Categorical (Cardinal or Ordinal) data. 
 - To avoid this, feature engineering can be done: 
@@ -77,7 +77,7 @@ The model will break when the data does not fall into spherical groups. For exam
 
 The "X-marker" marks the predicted centers of the ${\rm Red}$ and ${\rm Blue}$ clusters. We can see it's converged to an incorrect location, despite there being an obvious separation of the data.  
 
-### 1.5 What to use when it breaks? Whats a good back up?
+### 1.5 What to use when it breaks? What's a good back up?
 
 It depends on how the method breaks:
 
@@ -101,7 +101,7 @@ $$
 
 if the coordinates have a different scaling, then k means will preferentially cluster the point on the axis with shorter distance. Therefore should scale the features to, make 0 mean and unit variance (from -1 to 1, along each dimension).
 
-In the end this depends on the data: latitude and longitude should not scaled, because this will cause distortions.
+In the end this depends on the data: latitude and longitude should not be scaled, because this will cause distortions.
 
 
 ### 2.2 How to initialize parameters?
@@ -142,7 +142,7 @@ $\delta$ being the euclidean distance between a point x_i and the closest centro
 
 This method alleviates the ambiguity of a point belonging to a certain class, as in the first example of a point landing in the middle of two clusters.
 
-#### 2.3.3 Visulization of Soft and Hard Kmeans
+#### 2.3.3 Visualization of Soft and Hard Kmeans
 
 Consider the two gaussian clouds in 1D below
 
@@ -154,7 +154,7 @@ $$
 \mathcal{O}(I\cdot N\cdot D \cdot C)
 $$
 
-wherein $I$ is iterations; $N$ is number of data points; $D$ is dimensions; and $C$ is the number of clusters. Some short cuts can be taken, such as only taken a small sample of the total number of data points (mini-batch). K-means will still struggle with large datasets, but it does better than the other options.
+wherein $I$ is iterations; $N$ is number of data points; $D$ is dimensions; and $C$ is the number of clusters. Some short cuts can be taken, such as only taking a small sample of the total number of data points (mini-batch). K-means will still struggle with large datasets, but it does better than the other options.
 
 
 
@@ -199,7 +199,7 @@ $$
 P = \frac{1}{N} \sum_k^K \max_{j=1...K} \left | c_k \cap  t_j \right |
 $$
 
-#### 4.4.2 Davis-Bouldin Index
+#### 4.4.2 Davies-Bouldin Index
 
 Internal validation method:
 
@@ -215,5 +215,5 @@ $$
 
 ### 4.5  Does the model emphasize Type 1 or Type 2 errors?
 
-For anomaly detection, its shown to have LOW type 1 errors (false positives). We can use precision and recall (though not widely reused), but of course we need to know the labels
+For anomaly detection, it's shown to have LOW type 1 errors (false positives). We can use precision and recall (though not widely reused), but of course we need to know the labels
 

@@ -54,7 +54,7 @@ d(x,t) &= \int_{-\infty}^{\infty}C(f-f_0,t)e^{ixf} \; df \nonumber \\
 \end{align}
 $$
 
-results in the filterd image. 
+results in the filtered image.
 
 ![VISAR Filtered]({{ site.url}}/assets/visar/filtered.png)
 
@@ -77,7 +77,7 @@ $$
 
 ![VISAR Wrapped Phase]({{ site.url}}/assets/visar/Wrapped_Phase.png)
 
-The resulting function $W$ has discontinuities representing $\pi$ shifts as the $\arctan$ moves through full rotations. The velocity signal can be constructed by removing these discontinuites and scaling the values by the proportionality factor VPF. The programatic method for reconstructing the velocity trace from the time dependent values in the wrapped phase can be accomplished via the psudocode bellow:
+The resulting function $W$ has discontinuities representing $\pi$ shifts as the $\arctan$ moves through full rotations. The velocity signal can be constructed by removing these discontinuities and scaling the values by the proportionality factor VPF. The programmatic method for reconstructing the velocity trace from the time dependent values in the wrapped phase can be accomplished via the pseudocode below:
  
 ~~~python
 _max_dphase = np.pi/2. - _threshold
@@ -85,7 +85,7 @@ _min_dphase = -1 * _max_dphase
 vpf = 1.998 # velocity per fringe shift for a given etalon
  
 for row in image:
-    for column_idx in lenth_of_row):
+    for column_idx in length_of_row):
         dphase = row[i] - row[i-1] 
         if dphase < _min_dphase:
             dphase += np.pi

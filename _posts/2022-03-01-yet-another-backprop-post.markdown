@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Yet another post on backprop"
-description: A step-by-step illistration of the back propogation algorithm
+description: A step-by-step illustration of the back propagation algorithm
 image: assets/backprop/dplusdb.png
 tags: [machine learning, interviews, data science]
 ---
@@ -28,7 +28,7 @@ Here, the edges are data (e.g. input data, weights, biases, intermediate results
 
 ## Back Propagation
 
-Looking at the graph, we said the edges (connection) were data and the nodes (circles) were operations. In the forward direction these edges are our intermediate results, in the backwards direction these edges are our gradients. (For the sake of simplicity lets assume all values are scalars, at this time).
+Looking at the graph, we said the edges (connection) were data and the nodes (circles) were operations. In the forward direction these edges are our intermediate results, in the backwards direction these edges are our gradients. (For the sake of simplicity let's assume all values are scalars, at this time).
 
 ![]({{ site.url}}/assets/backprop/grad.png)
 
@@ -40,7 +40,7 @@ $$
 
 with $y$ being our prediction and $t$ being our target value.
 
-Lets first look at updating $b_2$ using the [SGD updating scheme](https://en.wikipedia.org/wiki/Stochastic_gradient_descent) with learning rate $\eta$.
+Let's first look at updating $b_2$ using the [SGD updating scheme](https://en.wikipedia.org/wiki/Stochastic_gradient_descent) with learning rate $\eta$.
 
 $$
 b_2 \leftarrow b_2 - \eta \frac{d\mathcal{L}}{db_2}
@@ -92,7 +92,7 @@ For the other values we keep doing the same thing,
 ![]({{ site.url}}/assets/backprop/dplusdz.png)
 
 
-Once we've calculated the gradient at an edge, we don't need to recalculate it. If we're finding the gradients upstream, we only need to preform the chain run back to the previous calculation.
+Once we've calculated the gradient at an edge, we don't need to recalculate it. If we're finding the gradients upstream, we only need to perform the chain run back to the previous calculation.
 
 ![]({{ site.url}}/assets/backprop/dmuldw.png)
 
@@ -130,7 +130,7 @@ The whole graph can be filled in like this.
 
 ![]({{ site.url}}/assets/backprop/chain_rule.gif)
 
-If we were to write our own framework, we can put this into code by specifying the forward function, and the derivative of that function with respect to it's inputs. The gradient we calculate from this is then passed to the parent operation to use in that calculation.
+If we were to write our own framework, we can put this into code by specifying the forward function, and the derivative of that function with respect to its inputs. The gradient we calculate from this is then passed to the parent operation to use in that calculation.
 
 For example, the operation of a dot product might look like this:
 
@@ -156,7 +156,7 @@ where the derivatives are extended to support [tensor values](https://www.math.u
 
 As Andre Karpathy said: [yes, you should really understand backprop](https://karpathy.medium.com/yes-you-should-understand-backprop-e2f06eab496b) (which, btw, would be a really good article to read as a follow up). Hopefully this post has helped to make sense of this algorithm.
 
-To continue to build intuition, it can be helpful to play around with an autograd framework (like pytorch). Try to use the code snippit below to answers some questions like:
+To continue to build intuition, it can be helpful to play around with an autograd framework (like pytorch). Try to use the code snippet below to answer some questions like:
  - Why is it a bad idea to initialize all the weights in your network to 0?
  - Is it a problem if you only initialize one set of weights in your network to 0
  - The derivative of `relu` is the [Heavyside function](https://en.wikipedia.org/wiki/Heaviside_step_function). How might this lead to the [dead neuron issue](https://arxiv.org/abs/1903.06733). How does [leaky relu](https://paperswithcode.com/method/leaky-relu) correct this?

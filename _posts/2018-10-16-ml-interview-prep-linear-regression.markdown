@@ -46,7 +46,7 @@ The relationship between $y$ and $x$ is dictated by the proportionality factor $
 
 A closed form solution exists to find these values; meaning, we can find $w$ and $b$ without the use of numerical tricks or iterative methods.   
 
-Consider the following simple example, lets say we have these three data points from the line $y=3x+1$:
+Consider the following simple example, let's say we have these three data points from the line $y=3x+1$:
 
 ![Points from the line y=3x+1]({{ site.url}}/assets/ml-linear-regress/fig1.png)
 
@@ -101,15 +101,15 @@ print("The equation for the line is y = {:.0f}x + {:.0f}".format(*W.flatten()))
 
 `The equation for the line is y = 3x + 1`
 
-In practice it can be impractical to obtain the answer from this analytic solution. Only in well-behaved scenarios is the matrix $X$ invertible, and, in cases where it is, this is extremely computationally expensive to do when $X$ is large. Moreover, $X^{-1}$ can only be represented to a limited precision on a digital computer, further introducing errors [[Goodfellow Section 2.3]](#ref). Instead, methods like [Generalized least squares](https://en.wikipedia.org/wiki/Generalized_least_squares) are used; Or, we obtain the solution numerically using gradient decent (section 3.3).
+In practice it can be impractical to obtain the answer from this analytic solution. Only in well-behaved scenarios is the matrix $X$ invertible, and, in cases where it is, this is extremely computationally expensive to do when $X$ is large. Moreover, $X^{-1}$ can only be represented to a limited precision on a digital computer, further introducing errors [[Goodfellow Section 2.3]](#ref). Instead, methods like [Generalized least squares](https://en.wikipedia.org/wiki/Generalized_least_squares) are used; Or, we obtain the solution numerically using gradient descent (section 3.3).
 
 ### 1.2 What scenario should you use linear regression
-Linear regression is an appropriate choice for predicting continuous target values, $y$, from continuous descriptive variables, $x_i$. It is commonly used in scenarios where the speed of predicting the target value is most desired attribute, and where less emphasis needs to be placed on accuracy of the prediction (the reason for this will be apparent in the next section).
+Linear regression is an appropriate choice for predicting continuous target values, $y$, from continuous descriptive variables, $x_i$. It is commonly used in scenarios where the speed of predicting the target value is the most desired attribute, and where less emphasis needs to be placed on accuracy of the prediction (the reason for this will be apparent in the next section).
 
 ### 1.3 Assumptions of Linear Regression
 Linear regression works on the fundamental assumption that the predicted target value, $y$, is a linear combination of the descriptive values, $x_i$. Because of this, a significant amount of care needs to be taken in the construction of the model's feature set (descriptive values).
 
-An example of this is any prediction where the target is a direct linear combination of the descriptive values. Lets consider the case
+An example of this is any prediction where the target is a direct linear combination of the descriptive values. Let's consider the case
 
 $$
 y = w_1 x_1 + w_2 x_2.
@@ -170,7 +170,7 @@ If a linear dependence is not obtainable or if the appropriate equation can not 
 ### 2.1 Normalization of data
 
 Although normalization is not strictly necessary for linear regression, properly scaling the feature variables can make a huge difference in the speed of convergence during the learning phase.
-Consider a dataset with two features which are of significantly different magnitude, for example predicting housing prices based on yard size and number of bedrooms in the house. The yard size could be of order 1000 ft² while the number of bedrooms might range from 0–5. While learning, slight variations in the weights of one feature can cause large swings in the error function. In this case, gradient decent will preferentially try to optimize to this variable. This can lead to oscillations in the loss-space, slowing down the rate of convergence (illustrated below) [[Goodfellow et al. Section 4.3.1]](#ref).
+Consider a dataset with two features which are of significantly different magnitude, for example predicting housing prices based on yard size and number of bedrooms in the house. The yard size could be of order 1000 ft² while the number of bedrooms might range from 0–5. While learning, slight variations in the weights of one feature can cause large swings in the error function. In this case, gradient descent will preferentially try to optimize to this variable. This can lead to oscillations in the loss-space, slowing down the rate of convergence (illustrated below) [[Goodfellow et al. Section 4.3.1]](#ref).
 
 ![Normalization improves gradient descent]({{ site.url}}/assets/ml-linear-regress/scaling_gd.png)
 
@@ -198,7 +198,7 @@ This solution is not unique, due to the discontinuity in the derivative at $ Y=X
 **training**: $\mathcal{O}(p^2n+p^3) $  
 **prediction**: $\mathcal{O}(p)$
 
-Wherein $n$ is the number of training sample and $p$ is the number of features [[7]](#ref)
+Wherein $n$ is the number of training samples and $p$ is the number of features [[7]](#ref)
 
 ## 3. In-depth
 
@@ -248,7 +248,7 @@ L_2 &= \sum_i (y_i-\hat{y}_i)^2  .
 \end{align*}
 $$
 
-Therefore, the using the mean-squared-error as a loss function is a direct consequence of assuming noise in the dataset is drawn from a Normal distribution [[Bishop Section 1.2.5]](#ref). Similarly, if we had assumed a different likelihood distribution, such as a [Laplace distribution](https://en.wikipedia.org/wiki/Laplace_distributionr):
+Therefore, using the mean-squared-error as a loss function is a direct consequence of assuming noise in the dataset is drawn from a Normal distribution [[Bishop Section 1.2.5]](#ref). Similarly, if we had assumed a different likelihood distribution, such as a [Laplace distribution](https://en.wikipedia.org/wiki/Laplace_distributionr):
 
 $$
 P(y | \mu, b) = \frac{1}{2b} \exp \left \{ -\frac{\left | y - \mu \right |}{b}  \right \}.
@@ -289,7 +289,7 @@ $$
 
 See [this wikipedia page on linear regression estimation methods](https://en.wikipedia.org/wiki/Linear_regression#Estimation_methods) for other analytic solutions.
 
-#### 3.3.2 Derivation of gradient decent
+#### 3.3.2 Derivation of gradient descent
 
 In cases where it is infeasible to obtain the solution analytically, we find a solution numerically by iteratively converging on the condition $d\mathcal{L}/dw = 0$. We define this action as
 
@@ -311,13 +311,13 @@ $$
 \frac{d}{dw}\mathcal{L} = \sum^N_i 2(w^Tx_i-y_i) x_i
 $$
 
-Using matrix notation and absorbing the 2 into the learning rate, $\eta$, we can then use the following equation to minimize the loss using gradient decent [[Goodfellow, Section 5.9]](#ref)
+Using matrix notation and absorbing the 2 into the learning rate, $\eta$, we can then use the following equation to minimize the loss using gradient descent [[Goodfellow, Section 5.9]](#ref)
 
 $$
 W \leftarrow W-\eta X^T (XW-Y)
 $$
 
-The learning-rate is a somewhat-arbitrary constant chosen to dictate the rate-of-convergence. However, care must be exercised in selecting this value. Too high of a learning rage can lead to divergence of the problem [[learning-rate finder]]({{site.url}}/learning-rates/).
+The learning-rate is a somewhat-arbitrary constant chosen to dictate the rate-of-convergence. However, care must be exercised in selecting this value. Too high of a learning rate can lead to divergence of the problem [[learning-rate finder]]({{site.url}}/learning-rates/).
 
 ### 3.4 Simple implementation
 
@@ -332,11 +332,11 @@ class LinearRegression:
         Y = Y.T
         
         for _ in range(epochs):
-            err = self.perdict(X) - Y  # (Y_hat - Y)
+            err = self.predict(X) - Y  # (Y_hat - Y)
             dL = X.T.dot(err)          # 2 X^T (Y_hat - Y), absorbing 2 into the learning rate
             self.W -= lr*dL         # W <- W - lr * dL/dW
     
-    def perdict(self, X):
+    def predict(self, X):
         return X.dot(self.W)
     
     def coeff(self):
