@@ -18,15 +18,10 @@ title: B. D. Hammel
 description: AI researcher, physicist, python junkie, wannabe electrical engineer, outdoors enthusiast
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://www.bdhammel.com" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: bdhammel
 github_username:  bdhammel
 linkedin_username:  bdhammel
 
 google_analytics: UA-46949041-4
-
-twitter:
-  username: bdhammel
-  card: summary
 
 # Build settings
 permalink: /:title/
