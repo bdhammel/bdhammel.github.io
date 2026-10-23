@@ -55,8 +55,8 @@ Batch size is another one of those things you'll set initially in your problem. 
 
 $$
 \begin{align*}
-w_{t+k} &= w_t - \eta \frac{1}{n}\sum_{j<k}\sum_{x\ni  B} \nabla  l(x, w_{t+j}) \\
-\hat{w}_{t+k} &= w_t - \hat{\eta} \frac{1}{kn}\sum_{j<k}\sum_{x\ni  B} \nabla  l(x, w_{t+j})
+w_{t+k} &= w_t - \eta \frac{1}{n}\sum_{j<k}\sum_{x\in B_j} \nabla  l(x, w_{t+j}) \\
+\hat{w}_{t+1} &= w_t - \hat{\eta} \frac{1}{kn}\sum_{j<k}\sum_{x\in B_j} \nabla  l(x, w_t)
 \end{align*}
 $$
 
@@ -80,7 +80,7 @@ loss: 0.823: 100%|###################################################| 10/10 [03
 Test Accuracy: 62.72%
 ~~~
 
-We get ~63% accuracy, not bad for this little model. But this was pretty slow, it took about 20s/epoch on my Titan 1080ti. Let's bump up the batch size to 512 so it trains a bit faster.
+We get ~63% accuracy, not bad for this little model. But this was pretty slow, it took about 20s/epoch on my GTX 1080 Ti. Let's bump up the batch size to 512 so it trains a bit faster.
 
 ~~~
 $ python cifar10.py --batch-size 512 --lr .001
@@ -97,7 +97,7 @@ Test Accuracy: 17.67%
 Well... It trained faster, about 3s/epoch, but our accuracy plummeted. Let's apply what we learned above. We increased our batch size by approximately 100, so let's do the same to learning rate.
 
 ~~~
-$ python cifar.py --batch-size 512 --lr .1
+$ python cifar10.py --batch-size 512 --lr .1
 
     Hyperparameters
     ---------------
@@ -174,7 +174,7 @@ $$
 We can evaluate this function at an arbitrary distance away from our initial point:
 
 $$
-w=w_i + \eta\mathcal{L}'\Bigr|_{w=w_i}.
+w=w_i - \eta\mathcal{L}'\Bigr|_{w=w_i}.
 $$
 
 Such that we've defined this distance as a function of our learning rate $\eta$.
@@ -202,16 +202,16 @@ $$
 \begin{align*}
 \frac{d^2}{dw^2}\mathcal{L} \Bigr|_{w=w_i} &= \frac{1}{N}\sum_i^N \frac{d^2}{dw^2} (y_i-wx_i)^2 \\
 &= \frac{1}{N} \sum_{i}^{N} x_i^2 \frac{d^2}{dw^2} (w_f - w)^2  \\
-&= \frac{1}{N} \sum_{i}^{N} x_i^2 w_f  \\
+&= \frac{2}{N} \sum_{i}^{N} x_i^2  \\
 \end{align*}
 $$
 
 we confirm that the optimal learning rate will be independent of $w_i$.
 
-Substituting in our values above: $w_f=2.5$ and $x$ to be 100 points in the range $[0, 10)$. We get our optimal learning rate to be:
+Substituting in our values above, with $x$ being 100 points in the range $[0, 10)$, we get our optimal learning rate to be:
 
 $$
-\eta* = 1.2\mathrm{e}{-2}
+\eta^* = 1.5\mathrm{e}{-2}
 $$
 
 This will get us to the bottom in one step. And sure enough, if we examine our derived value on the loss v lr plots above, we see a minimum at this location - showing that we've reached the bottom on the loss surface.

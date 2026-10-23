@@ -20,7 +20,7 @@ $$
 h_1 = {\rm activation} \left \{ \sum_i w_{1i} x_i + b_1  \right \}
 $$
 
-Visualizing this network as a computational graph is a different representation, but it describes the same behaviors. However, this visualization will make it much easier to understand the mechanics of back propagation [[Goodfellow, s6.5.1]](https://www.deeplearningbook.org/contents/optimization.html).
+Visualizing this network as a computational graph is a different representation, but it describes the same behaviors. However, this visualization will make it much easier to understand the mechanics of back propagation [[Goodfellow, s6.5.1]](https://www.deeplearningbook.org/contents/mlp.html).
 
 ![]({{ site.url}}/assets/backprop/graph.png)
 
@@ -92,7 +92,7 @@ For the other values we keep doing the same thing,
 ![]({{ site.url}}/assets/backprop/dplusdz.png)
 
 
-Once we've calculated the gradient at an edge, we don't need to recalculate it. If we're finding the gradients upstream, we only need to perform the chain run back to the previous calculation.
+Once we've calculated the gradient at an edge, we don't need to recalculate it. If we're finding the gradients upstream, we only need to perform the chain rule back to the previous calculation.
 
 ![]({{ site.url}}/assets/backprop/dmuldw.png)
 
@@ -154,12 +154,12 @@ class MatMul:
 
 where the derivatives are extended to support [tensor values](https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf).
 
-As Andre Karpathy said: [yes, you should really understand backprop](https://karpathy.medium.com/yes-you-should-understand-backprop-e2f06eab496b) (which, btw, would be a really good article to read as a follow up). Hopefully this post has helped to make sense of this algorithm.
+As Andrej Karpathy said: [yes, you should really understand backprop](https://karpathy.medium.com/yes-you-should-understand-backprop-e2f06eab496b) (which, btw, would be a really good article to read as a follow up). Hopefully this post has helped to make sense of this algorithm.
 
 To continue to build intuition, it can be helpful to play around with an autograd framework (like pytorch). Try to use the code snippet below to answer some questions like:
  - Why is it a bad idea to initialize all the weights in your network to 0?
  - Is it a problem if you only initialize one set of weights in your network to 0
- - The derivative of `relu` is the [Heavyside function](https://en.wikipedia.org/wiki/Heaviside_step_function). How might this lead to the [dead neuron issue](https://arxiv.org/abs/1903.06733). How does [leaky relu](https://paperswithcode.com/method/leaky-relu) correct this?
+ - The derivative of `relu` is the [Heaviside function](https://en.wikipedia.org/wiki/Heaviside_step_function). How might this lead to the [dead neuron issue](https://arxiv.org/abs/1903.06733). How does [leaky relu](https://paperswithcode.com/method/leaky-relu) correct this?
 
 ```python
 >>> import torch

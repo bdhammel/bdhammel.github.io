@@ -57,7 +57,7 @@ We can represent these data points in the following matrix form, such that each 
 $$
 \begin{align*}
 
-Y &= wX+b \\
+Y &= XW \\
 
 \begin{bmatrix}
  1 \\
@@ -71,6 +71,10 @@ Y &= wX+b \\
  0   & 1 \\
  4.5 & 1 \\
  9   & 1 
+\end{bmatrix}
+\begin{bmatrix}
+ w \\
+ b
 \end{bmatrix}
 
 \end{align*}
@@ -101,7 +105,7 @@ print("The equation for the line is y = {:.0f}x + {:.0f}".format(*W.flatten()))
 
 `The equation for the line is y = 3x + 1`
 
-In practice it can be impractical to obtain the answer from this analytic solution. Only in well-behaved scenarios is the matrix $X$ invertible, and, in cases where it is, this is extremely computationally expensive to do when $X$ is large. Moreover, $X^{-1}$ can only be represented to a limited precision on a digital computer, further introducing errors [[Goodfellow Section 2.3]](#ref). Instead, methods like [Generalized least squares](https://en.wikipedia.org/wiki/Generalized_least_squares) are used; Or, we obtain the solution numerically using gradient descent (section 3.3).
+In practice it can be impractical to obtain the answer from this analytic solution. Only in well-behaved scenarios is the matrix $X^TX$ invertible, and, in cases where it is, this is extremely computationally expensive to do when $X$ is large. Moreover, $(X^TX)^{-1}$ can only be represented to a limited precision on a digital computer, further introducing errors [[Goodfellow Section 2.3]](#ref). Instead, methods like [Generalized least squares](https://en.wikipedia.org/wiki/Generalized_least_squares) are used; Or, we obtain the solution numerically using gradient descent (section 3.2.2).
 
 ### 1.2 What scenario should you use linear regression
 Linear regression is an appropriate choice for predicting continuous target values, $y$, from continuous descriptive variables, $x_i$. It is commonly used in scenarios where the speed of predicting the target value is the most desired attribute, and where less emphasis needs to be placed on accuracy of the prediction (the reason for this will be apparent in the next section).
@@ -179,7 +183,7 @@ Consider a dataset with two features which are of significantly different magnit
 The most commonly used error function for linear regression is the MSE:
 
 $$
-\mathcal{L} = \sum^N_i \left ( XW - Y \right ) ^2
+\mathcal{L} = \frac{1}{N}\sum^N_i \left ( XW - Y \right ) ^2
 $$
 
 This has the benefit that the solution is unique, and that the model can approach it stably. However, some drawback to it include its susceptibility to error due to placing heavy weight on any outlier data points.
@@ -191,7 +195,7 @@ $$
 \mathcal{L} = \sum^N_i \left | XW - Y \right |
 $$
 
-This solution is not unique, due to the discontinuity in the derivative at $ Y=XW$; however, it often performs better in situations with more outliers [[Murphy, Section 7.5]](#ref).
+This solution is not unique, due to the discontinuity in the derivative at $ Y=XW$; however, it often performs better in situations with more outliers [[Murphy, Section 7.4]](#ref).
 
 ### 2.3 What's the complexity
 
@@ -230,7 +234,7 @@ $$
 To calculate this efficiently when we extend to all input points $x_i$, we take the $\log$ of $P$; otherwise, we'll be multiplying many numbers <1 together (if we don't, we'll end up with inaccuracies due to underflow) and also because it is less computationally expensive to compute [[Murphy 3.5.3]](#ref).
 
 $$
-\log P = \sum_i \left [ -\frac{1}{2} \log (2\pi \sigma) - \frac{1}{2} \frac{(y_i - \mu_i)^2}{\sigma^2} \right ] 
+\log P = \sum_i \left [ -\frac{1}{2} \log (2\pi \sigma^2) - \frac{1}{2} \frac{(y_i - \mu_i)^2}{\sigma^2} \right ] 
 $$
 
 And drop the constant terms:
@@ -248,7 +252,7 @@ L_2 &= \sum_i (y_i-\hat{y}_i)^2  .
 \end{align*}
 $$
 
-Therefore, using the mean-squared-error as a loss function is a direct consequence of assuming noise in the dataset is drawn from a Normal distribution [[Bishop Section 1.2.5]](#ref). Similarly, if we had assumed a different likelihood distribution, such as a [Laplace distribution](https://en.wikipedia.org/wiki/Laplace_distributionr):
+Therefore, using the mean-squared-error as a loss function is a direct consequence of assuming noise in the dataset is drawn from a Normal distribution [[Bishop Section 1.2.5]](#ref). Similarly, if we had assumed a different likelihood distribution, such as a [Laplace distribution](https://en.wikipedia.org/wiki/Laplace_distribution):
 
 $$
 P(y | \mu, b) = \frac{1}{2b} \exp \left \{ -\frac{\left | y - \mu \right |}{b}  \right \}.
@@ -256,8 +260,8 @@ $$
 
 Then we would have arrived at a different loss function. In the case of a Laplace distribution, this would be the L1 loss function [[Murphy Section 7.4]](#ref).
 
-### 3.3 Derivations
-#### 3.3.1 Derivation of the analytic solution
+### 3.2 Derivations
+#### 3.2.1 Derivation of the analytic solution
 
 We assume that the best fit line to the data will be one which minimizes the squared error. From calculus we know $\mathcal{L}$ will be at a minimum when $\frac{d}{dW} \mathcal{L}=0$
 
@@ -289,7 +293,7 @@ $$
 
 See [this wikipedia page on linear regression estimation methods](https://en.wikipedia.org/wiki/Linear_regression#Estimation_methods) for other analytic solutions.
 
-#### 3.3.2 Derivation of gradient descent
+#### 3.2.2 Derivation of gradient descent
 
 In cases where it is infeasible to obtain the solution analytically, we find a solution numerically by iteratively converging on the condition $d\mathcal{L}/dw = 0$. We define this action as
 
@@ -319,7 +323,7 @@ $$
 
 The learning-rate is a somewhat-arbitrary constant chosen to dictate the rate-of-convergence. However, care must be exercised in selecting this value. Too high of a learning rate can lead to divergence of the problem [[learning-rate finder]]({{site.url}}/learning-rates/).
 
-### 3.4 Simple implementation
+### 3.3 Simple implementation
 
 ```python
 class LinearRegression:

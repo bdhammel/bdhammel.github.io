@@ -65,7 +65,7 @@ $$
 Where we get $w_1=1$ and $w_2=1$ from the dividing line $x_2=-x_1$ (we know this a priori in this example). We now have the following relationship:
 
 $$
-f(x, x) = \left\{\begin{matrix}
+f(x_1, x_2) = \left\{\begin{matrix}
 {\rm Blue} & {\rm if } < 0 \\
 {\rm Red} & {\rm if } > 0 \\
 \end{matrix}\right.
@@ -97,7 +97,7 @@ Now, the values 2 or -2 are not particularly illuminating. So, we use the sigmoi
 
 Logistic regression models are used mostly as a data analysis and inference tool, where the goal is to understand the role of the input variables in explaining the outcome. [[Hastie et al. Section 4.4.1]](#ref)
 
-### 1.3 Assumptions of linear regression
+### 1.3 Assumptions of logistic regression
 
 The approach makes the explicit assumption that your data can be separated by a line or hyper-plane. Like linear regression, logistic regression is a linear model [[Murphy, Section 1.4.6]](#ref).
 
@@ -113,7 +113,7 @@ $$
 
 ![]({{ site.url}}/assets/ml-logistic-regress/fig4.png)
 
-These clusters can now be separated with a hyperplane in $(x_1, x_2)$-space, at $x_3 \approx 2$.
+These clusters can now be separated with a hyperplane in $(x_1, x_2, x_3)$-space, at $x_3 \approx 2$.
 
 ### 1.4 When the model breaks & what's a good backup?
 
@@ -129,7 +129,7 @@ Like Linear regression, normalization is not strictly necessary for logistic reg
 
 ![]({{ site.url}}/assets/ml-linear-regress/scaling_gd.png)
 
-### 2.1 Loss function
+### 2.2 Loss function
 
 The loss function for binary logistic regression is the *cross-entropy error*
 
@@ -154,7 +154,7 @@ Wherein $n$ is the number of training samples and $p$ is the number of features 
 
 ### 3.1 Probabilistic interpretation 
 
-Logistic regression operates on the fundamental assumption that the data falls into a binomial distribution and that each of the data points is independent from one-another.  
+Logistic regression operates on the fundamental assumption that the data falls into a Bernoulli distribution and that each of the data points is independent from one-another.  
 
 We approach this derivation this using [Bayes' Law](https://en.wikipedia.org/wiki/Bayes%27_theorem). For a justification of the Bayesian approach, check out the [probablistic interpretation section, 3.1, of my post on linear regression]({{site.url}}/2018/10/16/ml-interview-prep-linear-regression.html).
 
@@ -166,7 +166,7 @@ $$
 
 We assume all weights are equally likely and the dataset is balanced, therefore the term in this that we have control over is the likelihood, $P(T \|W, X)$ [[Bishop, Section 4.3.2]](#ref). We want to maximize this term during training, thereby maximizing the probability that the data points, $X$, fall into the correct class for a given weight configuration, $W$, $P(T\|W,X)$.
 
-We define the likelihood based on our prior belief that the data will fall into a [binomial distribution](https://en.wikipedia.org/wiki/Binomial_distribution).
+We define the likelihood based on our prior belief that the data will fall into a [Bernoulli distribution](https://en.wikipedia.org/wiki/Bernoulli_distribution).
 
 $$
 \begin{align*}
@@ -179,12 +179,12 @@ $$
 Taking the negative log of this, to avoid multiply small numbers together and to reduce the complexity of calculating exponents, renders the cross-entropy loss function. 
 
 $$
--  \log P(X|y) = \sum_i \left \{ t_i\log y_i + (1-t_i)\log (1-y_i) \right \}
+-  \log P(T|W) = -\sum_i \left \{ t_i\log y_i + (1-t_i)\log (1-y_i) \right \}
 $$
 
 Where $\hat{y_i} = P(C \| W, x_i) = \sigma (Wx_i)$.
 
-To summarize, logistic regression fundamentally assumes the data falls into a binomial distribution, and by **maximizing** the log of the likelihood (log-likelihood) we **minimizing** the cross-entropy error [[Bishop, Section 4.3.2]](#ref). 
+To summarize, logistic regression fundamentally assumes the data falls into a Bernoulli distribution, and by **maximizing** the log of the likelihood (log-likelihood) we **minimize** the cross-entropy error [[Bishop, Section 4.3.2]](#ref). 
 
 ### 3.2 Derivations
 
@@ -222,7 +222,7 @@ We then find the derivatives of each component:
 $$
 \begin{align*}
 \frac{d\mathcal{L}}{dy} &= -\frac{d}{dy} \sum_i \left \{ t_i\log(y_i) + (1-t_i)\log(1-y_i) \right \} \\ 
-&= - t\frac{1}{y_i} - (1-t_i)\frac{1}{1-y_i}, \\ \\[2mm]
+&= - t_i\frac{1}{y_i} + (1-t_i)\frac{1}{1-y_i}, \\ \\[2mm]
 \frac{dy}{dz} &= \frac{d}{dz} \frac{1}{1+\exp(-z)} \\
 &= \frac{1}{1+\exp(-z)}\frac{\exp(-z)}{1+\exp(-z)} \\ 
 &= y(1-y), \\ \\[2mm]
@@ -235,7 +235,7 @@ Rendering,
 
 $$
 \begin{align*}
-\frac{d}{dw}\mathcal{L} = \sum_i (y_i-t_i)x
+\frac{d}{dw}\mathcal{L} = \sum_i (y_i-t_i)x_i
 \end{align*}
 $$
 
@@ -291,7 +291,7 @@ w1, w2, b = lr.coeff()
 
 x = np.linspace(-2, 2, 100)
 m = -w1/w2
-b = (b-.5)/w2
+b = -b/w2
 y = m*x + b
 
 print(f"The decision boundary is along: x2 = {m:.0f}x1 + {b:.0f}")

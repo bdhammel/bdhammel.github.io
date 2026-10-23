@@ -10,17 +10,25 @@ This post outlines the FFT analysis routine for line-VISAR data. The code implem
 
 ## Analysis
 
-As stated in my previous post on Line-VISAR Theory, the fringe shift recorded is directly proportional to the velocity of the target. It is, therefore, the goal of the analysis routine to extract the percentage fringe shift at a given location and time. Several methods exist for accomplishing this. However, the Fourier transform method (described here), first proposed by [Takeda et al](#ref), has been determined to be the most accurate [[Celliers]](#ref).
+As stated in my post on [Line-VISAR Theory]({{site.url}}/line-visar-theory/), the fringe shift recorded is directly proportional to the velocity of the target. It is, therefore, the goal of the analysis routine to extract the percentage fringe shift at a given location and time. Several methods exist for accomplishing this. However, the Fourier transform method (described here), first proposed by [Takeda et al](#ref), has been determined to be the most accurate [[Celliers]](#ref).
 
-The raw data (shown above) is typically cropped to analyze the region of planar shock breakout (enclosed in the red rectangle, with reference fringes enclosed in green). 
+The raw data (shown in the Line-VISAR Theory post) is typically cropped to analyze the region of planar shock breakout (enclosed in the red rectangle, with reference fringes enclosed in green). 
 
 ![VISAR working data]({{ site.url}}/assets/visar/cropped_data.png)
 
-This image can be described mathematically using the equation for intensity, $I(x, t)$,  with $ b(x,t ) = I_1+I_2 $ being the background and $ a(x,t) =  2\mathbf{E_1}\mathbf{E_2} $ describing the intensity of the fringes. $\phi (x,t)$ represents the phase of the fringes and $2\pi f_{0}x + \delta_{0} $ describes the linear phase ramp of the background fringe pattern. The goal is to find $ \phi (x,t) $, which is directly proportional to the velocity of the target. Rewriting the intensity equation in terms of its complex components yields:
+This image can be described mathematically using the equation for intensity,
+
+$$
+\begin{equation}
+I(x,t) = b(x,t)+a(x,t)\cos[\phi (x,t)+2\pi f_{0}x + \delta_{0} ],
+\end{equation}
+$$
+
+with $ b(x,t ) = I_1+I_2 $ being the background and $ a(x,t) =  2\mathbf{E_1}\mathbf{E_2} $ describing the intensity of the fringes. $\phi (x,t)$ represents the phase of the fringes and $2\pi f_{0}x + \delta_{0} $ describes the linear phase ramp of the background fringe pattern. The goal is to find $ \phi (x,t) $, which is directly proportional to the velocity of the target. Rewriting the intensity equation in terms of its complex components yields:
 
 $$
 \begin{align}
-&& f(x,t) &= b(x,t)+c(x,t)e^{i2\pi f_{0}x} + c^*(x,t)e^{-i2\pi f_{0}x },& \\
+&& I(x,t) &= b(x,t)+c(x,t)e^{i2\pi f_{0}x} + c^*(x,t)e^{-i2\pi f_{0}x },& \\
 \text{with} && c(x,t) &= \frac{1}{2}a(x,t)e^{i\delta_{0}}e^{i\phi (x,t)}. 
 \end{align}
 $$
@@ -35,7 +43,7 @@ the background, $b(x,t)$, can then be removed by filtering specific frequencies 
 $$
 \require{cancel}
 \begin{align*}
-F(f,t) &= B(f,t)+\int_{ -\infty }^{\infty} c(x,t) e^{i2\pi f_{0}x}e^{-ifx} \; dx + \int_{-\infty }^{\infty}c^*(x,t)e^{-i2\pi f_{0}x }e^{-ifx} \; dx \\[1.5ex]
+F(f,t) &= B(f,t)+\int_{ -\infty }^{\infty} c(x,t) e^{i2\pi f_{0}x}e^{-i2\pi fx} \; dx + \int_{-\infty }^{\infty}c^*(x,t)e^{-i2\pi f_{0}x }e^{-i2\pi fx} \; dx \\[1.5ex]
 &=B(f,t)+\int_{-\infty }^{\infty}c(x,t)e^{i2\pi (f_{0}-f) x} \; dx + \int_{-\infty }^{\infty}c^*(x,t)e^{-i2\pi (f_{0} +f )x} \;dx \\[1.5ex]
 &=\cancelto{0}{B(f,t)}+\cancelto{0}{C^*(f+f_0,t)}+C(f-f_0,t).
 \end{align*}
@@ -48,8 +56,8 @@ Applying an inverse Fourier transform:
 
 $$
 \begin{align}
-d(x,t) &= \int_{-\infty}^{\infty}C(f-f_0,t)e^{ixf} \; df \nonumber \\
-&= \int_{-\infty}^{\infty}C(f-f_0,t) \left ( \cos(xf) + i\sin(xf) \right ) \; df  \label{eqn:ifft} \\
+d(x,t) &= \int_{-\infty}^{\infty}C(f-f_0,t)e^{i2\pi xf} \; df \nonumber \\
+&= \int_{-\infty}^{\infty}C(f-f_0,t) \left ( \cos(2\pi xf) + i\sin(2\pi xf) \right ) \; df  \label{eqn:ifft} \\
 &=c(x,t)e^{2\pi i f_0x} \label{eqn:filtered}
 \end{align}
 $$
@@ -62,8 +70,8 @@ The above image has both a real and imaginary valued function. Where
 
 $$
 \begin{align}
-&& \operatorname{Re} [d(x,t) ] &\propto  \sin( \phi (x,t) + 2\pi f_0 x + \delta_0) \label{eqn:re},& \\ 
-\text{and} && \operatorname{Im} [d(x,t) ] &\propto  \cos( \phi (x,t) + 2\pi f_0x + \delta_0) \label{eqn:im},
+&& \operatorname{Re} [d(x,t) ] &\propto  \cos( \phi (x,t) + 2\pi f_0 x + \delta_0) \label{eqn:re},& \\ 
+\text{and} && \operatorname{Im} [d(x,t) ] &\propto  \sin( \phi (x,t) + 2\pi f_0x + \delta_0) \label{eqn:im},
 \end{align}
 $$
 
@@ -71,7 +79,7 @@ are $\pi/2$ out of phase. Taking the $\arctan$ of the ratio allows the phase, $\
 
 $$
 \begin{equation*}
-W( \phi (x,t) + 2\pi f_0x + \delta_0) = \arctan\left ( \frac{\operatorname{Re} [d(x,t) ]}{\operatorname{Im} [d(x,t) ]} \right ).
+W( \phi (x,t) + 2\pi f_0x + \delta_0) = \arctan\left ( \frac{\operatorname{Im} [d(x,t) ]}{\operatorname{Re} [d(x,t) ]} \right ).
 \end{equation*}
 $$
 
@@ -85,7 +93,7 @@ _min_dphase = -1 * _max_dphase
 vpf = 1.998 # velocity per fringe shift for a given etalon
  
 for row in image:
-    for column_idx in length_of_row):
+    for i in range(1, len(row)):
         dphase = row[i] - row[i-1] 
         if dphase < _min_dphase:
             dphase += np.pi
@@ -107,6 +115,6 @@ for row in image:
  4. P. Celliers et al., “Line-imaging velocimeter for shock diagnostics at the OMEGA laser facility,” Review of Scientific Instruments, vol. 75, November 2004.
  5. D. J. Robinson, “Optically relayed push-pull velocity interferometry resolved in time and position,” Master’s thesis, Washington State University, 2005.
  6. G. Fowles, Introduction to Modern Optics. Dover, 1989.
- 7. M. Takeda et al., “Fourier-transform method of fringe-pattern analysis for computer-based topography and interferometry,” Journal of the Optical Society of America, vol. 72, pp. 156–160, January 1983.
+ 7. M. Takeda et al., “Fourier-transform method of fringe-pattern analysis for computer-based topography and interferometry,” Journal of the Optical Society of America, vol. 72, pp. 156–160, January 1982.
  8. D. H. Dolan, “Foundations of VISAR analysis.,” tech. rep., Sandia National Laboratories, Jun 2006.
 

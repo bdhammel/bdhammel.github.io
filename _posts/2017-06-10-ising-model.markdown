@@ -23,7 +23,7 @@ The change in energy of the system is dictated by the interaction of a dipole wi
 
 $$
 \begin{equation}
-\Delta E=-2J\sum_{k}s_{l}s_{k}
+\Delta E=2J\sum_{k}s_{l}s_{k}
 \end{equation}
 $$
 

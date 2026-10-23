@@ -111,11 +111,11 @@ But, you'll notice that the units on the y-axis are in the range of 1e-164. This
 $$
 \begin{align}
 \log P(X|w) &= \log \prod_{i}^{N} p(x_i | w) \\
-&= \sum_{i}^{N} \log p(d_i | w)
+&= \sum_{i}^{N} \log p(x_i | w)
 \end{align}
 $$
 
-This is the _log likelihood_. We can do this because the likelihood is a [monotonically increasing function](https://en.wikipedia.org/wiki/Monotonic_function)
+This is the _log likelihood_. We can do this because the logarithm is a [monotonically increasing function](https://en.wikipedia.org/wiki/Monotonic_function)
 
 ![Log Likelihood]({{ site.url}}/assets/mle-map/log-likelihood.png)
 

@@ -45,7 +45,7 @@ and solving for the superposition of the beams from both legs of the interferome
 
 $$
 \begin{align}
-I &\equiv  \left | \mathbf{E} \right | \nonumber \\
+I &\equiv  \left | \mathbf{E} \right |^2 \nonumber \\
 &= \mathbf{E}\cdot\mathbf{E}^*  \nonumber \\
 &=\left(\mathbf{E_1}+\mathbf{E_2}\right) \cdot \left(\mathbf{E_1^*}+\mathbf{E_2^*}\right) \nonumber \\
 %&=\left |\mathbf{E_1}\right|^2+ \left|\mathbf{E_2} \right|^2 + \mathbf{E_{1,0}}\cdot \mathbf{E_{2,0}} \left ( \frac{e^{i \left ( \left (\mathbf{k_1} - \mathbf{k_1} \right ) \cdot\mathbf{r} - \omega_1 t + \delta\right )} + e^{-i \left ( \left (\mathbf{k_1} - \mathbf{k_2}\right ) \cdot\mathbf{r} - \omega_2 t + \delta\right )} }{2} \right )  \nonumber \\
@@ -57,7 +57,7 @@ $$
 The $2\mathbf{E_{1,0}}\cdot \mathbf{E_{2,0}}\cos \theta$ term describes the resulting interference. With 
 
 $$
-\theta = \mathbf{k_1 \cdot r_1} - \mathbf{k_2 \cdot r_2} - \omega_1 t_1 + \omega_2 t_2 + \delta_1 + \delta_2 $$ 
+\theta = \mathbf{k_1 \cdot r_1} - \mathbf{k_2 \cdot r_2} - \omega_1 t_1 + \omega_2 t_2 + \delta_1 - \delta_2 $$ 
 
 and can be simplified as a time dependent phase with a constant offset, $\phi (t) + \delta_{0}$. Wherein 
 
@@ -129,7 +129,7 @@ Substituting in the definition for $k$ and assuming that $v(t') \ll c$ leads to 
 
 $$
 \begin{align*}
-\phi(t) &= \frac{2\pi}{\lambda_0} \left \{ d(t'-\tau) - d(t')  + c\frac{d(t'-\tau)}{c-2v(t'-\tau)} + c\frac{d(t')}{c-2v(t')}\right \} \frac{\tau}{\tau} \\
+\phi(t) &= \frac{2\pi}{\lambda_0} \left \{ d(t'-\tau) - d(t')  + c\frac{d(t'-\tau)}{c-2v(t'-\tau)} - c\frac{d(t')}{c-2v(t')}\right \} \frac{\tau}{\tau} \\
 &\rightarrow \frac{2\pi \tau}{\lambda_0} 2 v(t')
 \end{align*}
 $$
@@ -138,7 +138,7 @@ Allowing us to solve for $F(t)$ to get a resulting a Velocity Per Fringe (VPF) s
 
 $$
 \begin{equation}
-{\rm VPF} \equiv \frac{v(\tau)}{F(t)} = \frac{\lambda_0}{2\tau}.
+{\rm VPF} \equiv \frac{v(t)}{F(t)} = \frac{\lambda_0}{2\tau}.
 \end{equation}
 $$
 
@@ -174,6 +174,6 @@ Using this mathematical procedure, we can then generate synthetic VISAR data for
  4. P. Celliers et al., “Line-imaging velocimeter for shock diagnostics at the OMEGA laser facility,” Review of Scientific Instruments, vol. 75, November 2004.
  5. D. J. Robinson, “Optically relayed push-pull velocity interferometry resolved in time and position,” Master’s thesis, Washington State University, 2005.
  6. G. Fowles, Introduction to Modern Optics. Dover, 1989.
- 7. M. Takeda et al., “Fourier-transform method of fringe-pattern analysis for computer-based topography and interferometry,” Journal of the Optical Society of America, vol. 72, pp. 156–160, January 1983.
+ 7. M. Takeda et al., “Fourier-transform method of fringe-pattern analysis for computer-based topography and interferometry,” Journal of the Optical Society of America, vol. 72, pp. 156–160, January 1982.
  8. D. H. Dolan, “Foundations of VISAR analysis.,” tech. rep., Sandia National Laboratories, Jun 2006.
 

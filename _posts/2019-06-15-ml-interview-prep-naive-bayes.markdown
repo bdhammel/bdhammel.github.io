@@ -106,7 +106,7 @@ However, even in scenarios where the naive assumption is not true, the NB classi
 
 Some instances where you see Naive Bayes commonly used are in scenarios where the datasets contains noisy data, missing data, a class imbalance, or when the dataset is small and the dimensionality is large. This is assuming one knows an accurate model for the prior and likelihood distributions (see below for discussion).
 
-#### 1.2.2 Noisy data
+#### 1.2.1 Noisy data
 
 NB is well equipped to handle noisy data. Consider the example of an email spam detector. **Background** noise might be stop words, like "the", "is", "and", "at", or "which". In our spam/not-spam classifier for emails, these words would show up with the same regularity in each classification model. That is, the *likelihood* of seeing "the" is the same for an email that is spam and one that is not spam:
 
@@ -116,23 +116,23 @@ $$
 
 In this case, the likelihood for spam/not-spam would both increase by the same constant, making this feature irrelevant for the classification decision. So, we don't need to clean these features from our dataset [[T. Pang-Ning, 5.3.3]](#ref).
 
-#### 1.2.3 Missing values
+#### 1.2.2 Missing values
 
 Naive Bayes is very capable of handling missing values during inference. In this case, only the likelihoods based on the observed values are calculated [[V. Lavrenko IAML5.14]](#ref).
 
 $$
-P(x_1 + \cdots + x_j + \cdots + x_d | y) = \prod^d_{i \neq j} P(x_i | y)
+P(x_1, \cdots, x_j, \cdots, x_d | y) = \prod^d_{i \neq j} P(x_i | y)
 $$
 
 Wherein $x_j$ is a value missing during inference.
 
-#### 1.2.4 Minority Class
+#### 1.2.3 Minority Class
 
 The dataset does not need to be balanced during training. Unlike a discriminative model (which is trained to directly predict the posterior; and, therefore, implicitly assumes the probability of class occurrences), NB requires an explicit description of the class occurrence [[Citation needed]](#ref).
 
-#### 1.2.5 Small datasets
+#### 1.2.4 Small datasets
 
-Naive Bayes is a popular choice when density estimation methods are not appropriate, such as when the dimensionality of the data is high and the dataset is small [[Hastie 6.6.3]](#ref). The model only has $\mathcal{O}(CD)$ parameters - in the MNIST example we had C=10 (digits) and D=2 ($\mu$ and $\sigma$). The simplicity of this model makes it relatively immune to overfitting [[Murphy 3.5]](#ref).
+Naive Bayes is a popular choice when density estimation methods are not appropriate, such as when the dimensionality of the data is high and the dataset is small [[Hastie 6.6.3]](#ref). The model only has $\mathcal{O}(CD)$ parameters - in the MNIST example we had C=10 (digits) and D=784 (pixels), with a $\mu$ and $\sigma$ for each. The simplicity of this model makes it relatively immune to overfitting [[Murphy 3.5]](#ref).
 
 
 ### 1.3 What assumptions does the model make about the data?
@@ -160,7 +160,7 @@ Another failure point with Naive Bayes is its inability to separate classes when
 If an MLE approach is use with Naive Bayes, then the implementer needs to be careful about handling rare-events. Because the final probability is a function of the products of the likelihoods, an occurrence that has been seen for one class but never been seen for another (let's say $x_j$) will generate a probability of 0 for the second class. This is an unrealistic assumption, to base your entire prediction on the occurrence of one data point.
 
 $$
-P(x_1 + \cdots + x_j + \cdots + x_d | y) = P(x_1|y) \times \cdots \times \underbrace{P(x_j|y)}_0 \times \cdots \times P(x_d|y)
+P(x_1, \cdots, x_j, \cdots, x_d | y) = P(x_1|y) \times \cdots \times \underbrace{P(x_j|y)}_0 \times \cdots \times P(x_d|y)
 $$
 
 This is typically combatted using Laplace smoothing [[Murphy 3.4.1.2; Lavrenko IAML5.13]](#ref). Effectively, a small number is added to every probability to ensure there is never a multiplication by zero.
@@ -175,7 +175,7 @@ This is typically combatted using Laplace smoothing [[Murphy 3.4.1.2; Lavrenko I
 
 Although it is not strictly necessary to normalize the data going into a NB classifier, not doing so can add unnecessary complexity [[citation needed]](#ref): 
 
-During the training of the model, a small number, $\epsilon$, is added to the standard deviation as a smoothing parameter to avoid division by zero. i.e. $ \exp \\{  (\mu-x)^2 / 2(\sigma + \epsilon)^2 \\}$
+During the training of the model, a small number, $\epsilon$, is added to the standard deviation as a smoothing parameter to avoid division by zero. i.e. $ \exp \\{ -(\mu-x)^2 / 2(\sigma + \epsilon)^2 \\}$
 
 If the features, $x$, vary in range, then the smoothing parameter would have to change to reflect this. This value can have a significant effect on the accuracy of the model. To convince yourself of this, try changing $\epsilon$ in the code below.
 
@@ -200,11 +200,11 @@ $$
 
 ### 3.1 Probabilistic Interpretation
 
-The model assumes that the features, $X$, are *conditionally* independent from one another. For example, in a data set it might appear that there is a correlation between the occurrences of $B$ and $C$. However, if it can be assumed that $B$ and $C$ are actually *mutually* independent and the correlation can be attributed to the existence of an external factor, $A$, then we can apply Naive Bayes. 
+The model assumes that the features, $X$, are *conditionally* independent from one another. For example, in a data set it might appear that there is a correlation between the occurrences of $B$ and $C$. However, if it can be assumed that $B$ and $C$ are actually *conditionally* independent given $A$ and the correlation can be attributed to the existence of an external factor, $A$, then we can apply Naive Bayes. 
 
 ![]({{site.url}}/assets/ml-naive-bayes/cond_indp.png)
 
-**As an example:** if one were to look at the rate of heat stroke and the action of going to the beach, there might be a correlation. However, there is nothing intrinsic about going to the beach that causes heat stroke. So, if we consider an external factor, the temperature, we can model these features as mutually independent. Such that, you're more likely to go to the beach when it's hot and you're more likely to get heatstroke when it's hot [[V. Lavrenko Naive Bayes 2]](#ref). In a NB classifier, the predicted class is this hidden dependence. Such that:
+**As an example:** if one were to look at the rate of heat stroke and the action of going to the beach, there might be a correlation. However, there is nothing intrinsic about going to the beach that causes heat stroke. So, if we consider an external factor, the temperature, we can model these features as conditionally independent given the temperature. Such that, you're more likely to go to the beach when it's hot and you're more likely to get heatstroke when it's hot [[V. Lavrenko Naive Bayes 2]](#ref). In a NB classifier, the predicted class is this hidden dependence. Such that:
 
 $$
 P(Y{=}A | x_1{=}B, x_2{=}C)
@@ -212,22 +212,22 @@ $$
 
 ### 3.2 Derivation
 
-The probability of an event $A$ **and** $B$ occurring, with the Naive Bayes assumption, is
+The probability of an event $A$ **and** $B$ occurring is
 
 $$
-P(A \cap B) = P(A|B)P(A).
+P(A \cap B) = P(A|B)P(B).
 $$
 
 Likewise, the probability of an event $B$ **and** $A$ occurring is 
 
 $$
-P(B \cap A) = P(B|A)P(B).
+P(B \cap A) = P(B|A)P(A).
 $$
 
 Because $P(A \cap B) == P(B \cap A)$ we can set the two equations equal to each other and find a description for the probability of $A$ occurring, given $B$ occurring:
 
 $$
-P(A|B) = \cfrac{P(B|A)P(B)}{P(A)}.
+P(A|B) = \cfrac{P(B|A)P(A)}{P(B)}.
 $$
 
 I don't find the terms $A$ and $B$ particularly illuminating, so we can rewrite this in the Diachronic form: describing the probability of a hypothesis, $H$, being true, given some observations (or evidence), $E$, existing. 
@@ -302,7 +302,7 @@ class NaiveBayes:
         num_classes = len(self.params)
         log_posterior = np.zeros((N, num_classes))  # placeholder, we want to predict a class for each case
         
-        # Calculate log P(Y|Y) = sum_i{log P(x_i|Y)} + log P(Y)
+        # Calculate log P(Y|X) = sum_i{log P(x_i|Y)} + log P(Y)
         # We do this for all cases simultaneously
         for class_, pram in self.params.items():
             log_likelihood = norm.logpdf(X, loc=pram['means'], scale=pram['std']).sum(axis=1)
@@ -317,7 +317,7 @@ class NaiveBayes:
 
 
 print("Loading data... ")
-X, Y = fetch_openml('mnist_784', version=1, return_X_y=True)
+X, Y = fetch_openml('mnist_784', version=1, return_X_y=True, as_frame=False)
 Y = Y.astype(int)
 print("Done")
 
@@ -349,7 +349,7 @@ Naive Bayes is a high-bias model, as it only has a few parameters, $\mathcal{O}(
 
 ### 4.3  How to deal with imbalanced data?
 
-Discussed in section 1.2.5 - Minority Class
+Discussed in section 1.2.3 - Minority Class
 
 <div id='ref'></div>
 ## 5. References

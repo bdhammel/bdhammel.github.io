@@ -26,7 +26,7 @@ t &= d \cdot s \\
 \end{align}
 $$
 
-wherein $d$ is the 1 mile distance and $s$ is your walking speed. 
+wherein $d$ is the 1 mile distance and $s$ is your walking pace (minutes per mile). 
 
 You reach the park center and see the drug kingpin talking with another person! You strategically pick a place to sit nearby and fake-read a newspaper. **You overhear him mention it took him 20 mins to walk to this location**. From the information provided, **do you know the location of the kingpin's base-of-operation**? It took them about the same time to reach the same point, is this person your neighbor?
 
@@ -53,11 +53,11 @@ F(x_1, x_2, s) &= s \cdot \sqrt{x_1^2 + x_2^2} \\
 \end{align}
 $$
 
-where $(x_1, x_2)$ is a given starting location and $s$ is the walking speed. We can then propose (randomly guess) a set of candidate points and run them through the forward problem, we then see if the solution makes sense by comparing the result to our observation, 20 min. **If the result matches our observation, we'll save that candidate starting location as a plausible solution.** We assume we are completely ignorant about their starting location, so we pull our random guesses from a uniform distribution across the entire city (2 miles x 2 miles). 
+where $(x_1, x_2)$ is a given starting location and $s$ is the walking pace. We can then propose (randomly guess) a set of candidate points and run them through the forward problem, we then see if the solution makes sense by comparing the result to our observation, 20 min. **If the result matches our observation, we'll save that candidate starting location as a plausible solution.** We assume we are completely ignorant about their starting location, so we pull our random guesses from a uniform distribution across the entire city (4 miles x 4 miles). 
 
 We've already estimated this person walks about as fast as us. So, for each proposed starting location, we'll also have to generate a walking speed and we'll sample this from a Normal distribution.[^1]
 
-Lastly, we don't know if it took them _exactly_ 20 mins to walk. Typically, people tend to round times to give a number divisible by 5 in conversation (e.g. 12.2 minutes becomes 12 minutes), so we should incorporate this into our model. This is an "observational error".[^2]
+Lastly, we don't know if it took them _exactly_ 20 mins to walk. Typically, people tend to round times to give a number divisible by 5 in conversation (e.g. 18.7 minutes becomes 20 minutes), so we should incorporate this into our model. This is an "observational error".[^2]
 
 We now have our full Bayesian model.
 
@@ -65,7 +65,7 @@ We now have our full Bayesian model.
 x1 ~ Uniform(-2, 2)         # sample starting location in x1
 x2 ~ Uniform(-2, 2)         # sample starting location in x2
 s ~ Normal(19.5, .5)        # sample walking speed
-t = F(s, x1, x2)            # run forward problem to get predicted time
+t = F(x1, x2, s)            # run forward problem to get predicted time
 y ~ Normal(t, 3/2)          # predicted time considering observational error
 ~~~
 
@@ -125,7 +125,7 @@ Our model is now:
 x1 ~ Laplacian(-1.5, .1)    # sample starting location in x1
 x2 ~ Laplacian(1, .1)       # sample starting location in x2
 s ~ Normal(19.5, .5)        # sample walking speed
-t = F(s, x1, x2)            # run forward problem to get predicted time
+t = F(x1, x2, s)            # run forward problem to get predicted time
 y ~ Normal(t, 3/2)          # predicted time considering observational error
 ~~~
 
@@ -186,7 +186,7 @@ Hopefully this gives you an idea of how to leverage MCMC to solve inverse proble
 ### References
 
 [^1]: If you ask "why a normal distribution" I strongly recommend this youtube video from [Statistical Rethinking Winter 2019 Lecture 03](https://youtu.be/h5aPo5wXN8E?t=506)
-[^2]: Let's assume that 99.7% of people round to the nearest 5 based on their watch-hand integer. e.g. 3 is rounded to 5 but 2.9 is rounded to 0. The 99.7 percentile is 2$\sigma$ so our standard deviation is $3/2$
+[^2]: Let's assume that 95% of people round to the nearest 5 based on their watch-hand integer. e.g. 3 is rounded to 5 but 2.9 is rounded to 0. The 95% interval is $\pm 2\sigma$ so our standard deviation is $3/2$
 [^3]: If you want to know more about the NUTS MCMC sampler I strongly recommend this blog post [on MCMC sampling methods](https://elevanth.org/blog/2017/11/28/build-a-better-markov-chain/)
 [^4]: This does a pretty good job reflecting the highest probability being near the mean, while supporting outliers (people who used to live in the neighborhood and have moved)
 [^5]: [Kernel density estimation is a way to estimate the probability density function (PDF) of a random variable in a non-parametric way](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.gaussian_kde.html)
